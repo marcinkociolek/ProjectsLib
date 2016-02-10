@@ -1205,9 +1205,16 @@ int ProcessOptions::LoadParams(string XmlFileName)
 string ProcessOptions::ShowParams(void)
 {
 	string OutString = "";
-	OutString += "Input Directory:\t" + InFolderName1 + "\n";
+	OutString += "Input Directory 1:\t" + InFolderName1 + "\n";
+
 	OutString += "Input Directory 2:\t" + InFolderName2 + "\n";
 	OutString += "Input file name 2:\t" + FileNameBase2 + InFileExtension2 + "\n";
+	OutString += "Input Directory 3:\t" + InFolderName3 + "\n";
+	OutString += "Input Directory 4:\t" + InFolderName4 + "\n";
+	OutString += "Input Directory 5:\t" + InFolderName5 + "\n";
+	OutString += "Input Directory 6:\t" + InFolderName6 + "\n";
+
+
 	OutString += "Output Directory:\t" + OutFolderName1 + "\n";
 	OutString += "Output file name:\t" + FileNameBase1 + ".bmp" + "\n";
 	OutString += "Output Directory 2:\t" + OutFolderName2 + "\n";
