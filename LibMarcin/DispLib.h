@@ -147,6 +147,9 @@ const unsigned char colormapB[256] =
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 //---------------------------------------------------------------------------
 Mat ShowImage16PseudoColor(Mat Im16, float minVal, float maxVal);
+Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal);
+
+
 Mat ShowRegion(Mat ImReg);
 
 Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB);

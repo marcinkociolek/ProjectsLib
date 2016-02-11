@@ -35,24 +35,67 @@ Mat ShowImage16PseudoColor(Mat Im16, float minVal, float maxVal)
 
     for (int i = 0; i < maxXY; i++)
     {
-        for(int k = 0; k < 3; k++)
-        {
-            value = (float)(*wIm16) * gain - offset;
-            if (value > 255)
-                value = 255;
-            if (value < 0)
-                value = 0;
-            index = floor(value);
+  
+		value = (float)(*wIm16) * gain - offset;
+		if (value > 255)
+			value = 255;
+		if (value < 0)
+			value = 0;
+		index = floor(value);
 
-            *wImOut = colormapB[index];
-            wIm16++;
-            *wImOut = colormapG[index];
-            wIm16++;
-            *wImOut = colormapR[index];
-            wIm16++;
-        }
-            wImOut++;
-    }
+		*wImOut = colormapB[index];
+		wImOut++;
+		*wImOut = colormapG[index];
+		wImOut++;
+		*wImOut = colormapR[index];
+		wImOut++;
+		wIm16++;
+	}
+    return ImOut;
+}
+//---------------------------------------------------------------------------
+Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal)
+{
+    int maxX = ImF.cols;
+    int maxY = ImF.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+
+    if(!maxXY)
+        return ImOut;
+
+    ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
+
+    float difference = maxVal - minVal;
+    if(difference == 0)
+        difference = 1;
+    float gain = 255/difference;
+    float offset = gain * minVal;
+
+    float value;
+    unsigned char index;
+
+    float *wImF = (float *)ImF.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+		value = (float)(*wImF) * gain - offset;
+		if (value > 255)
+			value = 255;
+		if (value < 0)
+			value = 0;
+		index = floor(value);
+
+		*wImOut = colormapB[index];
+		wImOut++;
+		*wImOut = colormapG[index];
+		wImOut++;
+		*wImOut = colormapR[index];
+		wImOut++;
+		wImF++;
+	}
     return ImOut;
 }
 //---------------------------------------------------------------------------
