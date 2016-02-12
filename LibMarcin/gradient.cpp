@@ -98,6 +98,59 @@ Mat GradientDown(Mat ImIn)
     return ImOut;
 }
 //---------------------------------------------------------------------------
+Mat HorizontalGradientDown(Mat ImIn)
+{
+    Mat ImF, ImOut;
+    ImIn.convertTo(ImF,CV_32F);
+
+    int maxX = ImIn.cols;
+    int maxY = ImIn.rows;
+    int maxXY = maxX * maxY;
+    int maxXa = maxX - 1;
+    int maxYa = maxY - 1;
+
+    ImOut = Mat::zeros(maxY,maxX,CV_32F);
+
+    float *wImOut = (float*)ImOut.data;
+    float *wImIn;
+    float *wImInL;
+    float *wImInR;
+
+    wImIn = (float*)ImF.data;
+    wImInL = wImIn - 1;
+    wImInR = wImIn + 1;
+
+    float GradL;
+    float GradR;
+    for(int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        if( x > 0 )
+            GradL = *wImIn - *wImInL;
+        else
+            GradL = 0;
+
+        if( x < maxXa)
+            GradR = *wImIn - *wImInR;
+        else
+            GradR = 0;
+
+        if(GradR < GradL)
+            *wImOut = GradL;
+        else
+            *wImOut = GradR;
+
+        wImIn++;
+        wImInL++;
+        wImInR++;
+
+        wImOut++;
+    }
+    return ImOut;
+}
+//-----------------------------------------------------------------------------------------------------------------------
 Mat GradientThresh(Mat ImIn,float threshold)
 {
     Mat ImOut;

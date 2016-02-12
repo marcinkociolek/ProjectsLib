@@ -7,6 +7,8 @@ using namespace cv;
 
 
 Mat GradientDown(Mat ImIn);
+Mat HorizontalGradientDown(Mat ImIn);
+
 Mat GradientThresh(Mat ImIn,float threshold);
 Mat RemovingTinyReg9(Mat ImReg);
 void FillBorderWithValue(Mat ImReg, float value);
