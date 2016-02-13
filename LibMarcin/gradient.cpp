@@ -150,6 +150,49 @@ Mat HorizontalGradientDown(Mat ImIn)
     }
     return ImOut;
 }
+//---------------------------------------------------------------------------
+Mat HorizontalAbsGradient(Mat ImIn)
+{
+    Mat ImF, ImOut;
+    ImIn.convertTo(ImF,CV_32F);
+
+    int maxX = ImIn.cols;
+    int maxY = ImIn.rows;
+    int maxXY = maxX * maxY;
+    int maxXa = maxX - 1;
+    int maxYa = maxY - 1;
+
+    ImOut = Mat::zeros(maxY,maxX,CV_32F);
+
+    float *wImOut = (float*)ImOut.data;
+    float *wImIn;
+    float *wImInL;
+    float *wImInR;
+
+    wImIn = (float*)ImF.data;
+    wImInL = wImIn - 1;
+    wImInR = wImIn + 1;
+
+    float GradL;
+    float GradR;
+    for(int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        if( x > 0 & x < maxXa )
+            *wImOut = sqrt((*wImInL - *wImInL)*(*wImInL - *wImInL));
+        else
+            *wImOut = 0;
+
+        //wImIn++;
+        wImInL++;
+        wImInR++;
+
+        wImOut++;
+    }
+    return ImOut;
+}
 //-----------------------------------------------------------------------------------------------------------------------
 Mat GradientThresh(Mat ImIn,float threshold)
 {
@@ -1214,6 +1257,127 @@ void RegionErosion13(Mat ImR)
     delete[] ImRTemp;
 }
 //------------------------------------------------------------------------------//---------------------------------------------------------------------------
+void RegionErosionHorisontal13(Mat ImR)
+{
+// renewed version erodes whole imaga
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+    int maxXa = maxX - 1;
+    int maxXb = maxX - 2;
+
+    int maxYa = maxY - 1;
+    int maxYb = maxY - 2;
+
+    unsigned short *ImRTemp = new unsigned short[maxXY];
+
+    unsigned short *wImRTemp = ImRTemp;
+
+    unsigned short *wImR0  = (unsigned short*)ImR.data;
+    unsigned short *wImR1  = wImR0 - (2 * maxX);
+    unsigned short *wImR2  = wImR0 - maxX - 1;
+    unsigned short *wImR3  = wImR0 - maxX;
+    unsigned short *wImR4  = wImR0 - maxX + 1;
+    unsigned short *wImR5  = wImR0 - 2;
+    unsigned short *wImR6  = wImR0 - 1;
+    unsigned short *wImR7  = wImR0 + 1;
+    unsigned short *wImR8  = wImR0 + 2;
+    unsigned short *wImR9  = wImR0 + maxX - 1;
+    unsigned short *wImR10 = wImR0 + maxX;
+    unsigned short *wImR11 = wImR0 + maxX + 1;
+    unsigned short *wImR12 = wImR0 + (2 * maxX);
+
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        unsigned int product = (unsigned int)*wImR0;
+
+        if (y > 1)
+        {
+            product *= (unsigned int)*wImR1;
+        }
+        if (y > 0 && x > 0)
+        {
+            product *= (unsigned int)*wImR2;
+        }
+        if (y > 0)
+        {
+            product *= (unsigned int)*wImR3;
+        }
+        if (y > 0 && x < maxXa)
+        {
+            product *= (unsigned int)*wImR4;
+        }
+        if (x > 1)
+        {
+            product *= (unsigned int)*wImR5;
+        }
+        if (x > 0)
+        {
+            product *= (unsigned int)*wImR6;
+        }
+        if (x < maxXa)
+        {
+            product *= (unsigned int)*wImR7;
+        }
+        if (x < maxXb)
+        {
+            product *= (unsigned int)*wImR8;
+        }
+
+        if (y < maxYa && x > 0)
+        {
+            product *= (unsigned int)*wImR9;
+        }
+        if (y < maxYa)
+        {
+            product *= (unsigned int)*wImR10;
+        }
+        if (y < maxYa && x < maxXa)
+        {
+            product *= (unsigned int)*wImR11;
+        }
+        if (y < maxYb)
+        {
+            product *= (unsigned int)*wImR12;
+        }
+
+        if(product)
+            *wImRTemp = 1;
+        else
+            *wImRTemp = 0;
+
+
+        wImRTemp++;
+
+        wImR0++;
+        wImR1++;
+        wImR2++;
+        wImR3++;
+        wImR4++;
+        wImR5++;
+        wImR6++;
+        wImR7++;
+        wImR8++;
+        wImR9++;
+        wImR10++;
+        wImR11++;
+        wImR12++;
+    }
+    wImRTemp = ImRTemp;
+    wImR0 = (unsigned short*)ImR.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+        *wImR0 = *wImRTemp;
+        wImRTemp++;
+        wImR0++;
+    }
+    delete[] ImRTemp;
+}
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 Mat GetContour5(Mat ImR)
 {

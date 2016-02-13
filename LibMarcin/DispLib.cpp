@@ -81,7 +81,7 @@ Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal)
 
     for (int i = 0; i < maxXY; i++)
     {
-		value = (float)(*wImF) * gain - offset;
+        value = *wImF * gain - offset;
 		if (value > 255)
 			value = 255;
 		if (value < 0)
