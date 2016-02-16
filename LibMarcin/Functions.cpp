@@ -779,6 +779,34 @@ int RedundantWaveletEnergyFileOutput(Mat ImIn, bool displayResult, bool saveResu
 
 // ----------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
+float MatFMeanRoiU8(Mat ImIn, Mat Roi)
+{
+	int maxXY = ImIn.cols  * ImIn.rows;
+	
+	if (!maxXY)
+		return -1.0;
+	if (ImIn.cols != Roi.cols || ImIn.rows != Roi.rows)
+		return -2.0;
+	if (ImIn.depth() != CV_32F)
+		return -3.0;
+	if (Roi.depth() != CV_8U)
+		ImIn.convertTo(Roi, CV_8U);
+
+	float *wImIn = (float*)ImIn.data;
+	unsigned char *wRoi = (unsigned char *)Roi.data;
+
+	double sum = 0;
+	
+	for (int i = 0; i < maxXY; i++)
+	{
+		if(*wRoi)
+			sum += double(*wImIn);
+		wImIn++;
+		wRoi++;
+	}
+	return (float)(sum / (double)maxXY);
+}
+// ----------------------------------------------------------------------------------------------------------
 float MatFMeanAndStd(Mat ImIn, float *mean, float *stdDev)
 {
 	int maxTileXY = ImIn.cols  * ImIn.rows;

@@ -37,7 +37,7 @@ Mat AbsImage(Mat ImIn, Mat Roi);
 
 int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel);
 
-
+float MatFMeanRoiU8(Mat ImIn, Mat Roi);
 float MatFMeanAndStd(Mat ImIn, float *mean, float *stdDev);
 int* MatFMeanAndStd(Mat ImIn, float *mean, float *stdDev, int *min, int *max);
 int* FistogramFeatures(int* Histogram, int binSize, int *perc1, int *perc99, int *perm1, int *perm999);

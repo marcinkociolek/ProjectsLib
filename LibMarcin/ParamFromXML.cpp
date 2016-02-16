@@ -47,6 +47,16 @@ ProcessOptions::ProcessOptions()
 	OutFolderName2 = "";
 
 	displayResult = 0;
+	displaySmallImage = 0;
+
+	tileShape = 1;
+
+	maxTileX = 40;
+	maxTileY = 40;
+
+	tileShiftX = 40;
+	tileShiftY = 40;
+
 	goThru = 1;
 	showTiles = 1;
 
@@ -90,9 +100,6 @@ ProcessOptions::ProcessOptions()
 	displayMax4 = 0;
 	displayMin4 = 255;
 
-
-	maxTileX = 40;
-	maxTileY = 40;
 	tileLineThickness = 1;
 	lineHalfLength = 20;
 	
@@ -551,6 +558,117 @@ int ProcessOptions::LoadParams(string XmlFileName)
 		else
 			displayResult = 0;
 	}
+
+	pElem = hParameters.FirstChild("dispaySmallImage").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: display Small Image";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: display Small Image";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		if (ValStr == "Y")
+		{
+			displaySmallImage = 1;
+		}
+		else
+			displaySmallImage = 0;
+	}
+
+	pElem = hParameters.FirstChild("tileShape").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry:tileShape";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: tileShape";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		tileShape = stoi(ValStr);
+	}
+
+	pElem = hParameters.FirstChild("maxTileX").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: maxTileX";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: maxTileX";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		maxTileX = stoi(ValStr);
+	}
+
+	pElem = hParameters.FirstChild("maxTileY").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: MaxTileY";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: MaxTileY";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		maxTileY = stoi(ValStr);
+	}
+
+	pElem = hParameters.FirstChild("tileShiftX").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: tileShiftX";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: tileShiftX";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		tileShiftX = stoi(ValStr);
+	}
+
+	pElem = hParameters.FirstChild("tileShiftY").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: tileShiftY";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: tileShiftY";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		tileShiftY = stoi(ValStr);
+	}
+
+
+
+
 
 	pElem = hParameters.FirstChild("showTiles").Element();
 	if (!pElem)
@@ -1079,39 +1197,7 @@ int ProcessOptions::LoadParams(string XmlFileName)
 		displayMin4 = stof(ValStr);
 	}
 
-	pElem = hParameters.FirstChild("maxTileX").Element();
-	if (!pElem)
-	{
-		OutStr =+ "No entry: maxTileX";
-		OutStr += "\n";
-	}
-	else if (!pElem->GetText())
-	{
-		OutStr = +"Empty entry: maxTileX";
-		OutStr += "\n";
-	}
-	else
-	{
-		ValStr = pElem->GetText();
-		maxTileX = stoi(ValStr);
-	}
-	
-	pElem = hParameters.FirstChild("maxTileY").Element();
-	if (!pElem)
-	{
-		OutStr =+ "No entry: MaxTileY";
-		OutStr += "\n";
-	}
-	else if (!pElem->GetText())
-	{
-		OutStr = +"Empty entry: MaxTileY";
-		OutStr += "\n";
-	}
-	else
-	{
-		ValStr = pElem->GetText();
-		maxTileY = stoi(ValStr);
-	}
+
 	
 	pElem = hParameters.FirstChild("tileLineThickness").Element();
 	if (!pElem)

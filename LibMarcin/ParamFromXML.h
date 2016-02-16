@@ -44,8 +44,19 @@ public:
 	string OutFolderName2;
 
 	bool displayResult;
-	bool goThru;
+	bool displaySmallImage;
+
+	int tileShape;
+
+	int maxTileX;
+	int maxTileY;
+
+	int tileShiftX;
+	int tileShiftY;
+
 	bool showTiles;
+
+	bool goThru;
 
 	bool useSecondImage;
 	int medianKernelSize1;
@@ -86,8 +97,6 @@ public:
 	float displayMax4;
 	float displayMin4;
 
-	int maxTileX;
-	int maxTileY;
 	int tileLineThickness;
 	int lineHalfLength;
 
