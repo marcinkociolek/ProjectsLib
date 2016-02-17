@@ -790,7 +790,7 @@ float MatFMeanRoiU8(Mat ImIn, Mat Roi)
 	if (ImIn.depth() != CV_32F)
 		return -3.0;
 	if (Roi.depth() != CV_8U)
-		ImIn.convertTo(Roi, CV_8U);
+		Roi.convertTo(Roi, CV_8U);
 
 	float *wImIn = (float*)ImIn.data;
 	unsigned char *wRoi = (unsigned char *)Roi.data;

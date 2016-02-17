@@ -785,32 +785,42 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	int maxY = ImInFloat.rows;
 	int maxXY = maxX*maxY;
 
-	float *wImInF;
-	float *wOriginImInF;
-	float *wEndImInF;
-	//int maxKernelX, maxKernelY, maxKernelXY, centerKernelX, centerKernelY;
+	if (!maxXY)
+		return Mat::ones(1,1,CV_32S)*(-1);
+	if (ImInFloat.cols != Roi.cols || ImInFloat.rows != Roi.rows)
+		return Mat::ones(1, 1, CV_32S)*(-2);;
+	if (ImInFloat.depth() != CV_32F)
+		return Mat::ones(1, 1, CV_32S)*(-3);;
+	if (Roi.depth() != CV_8U)
+		Roi.convertTo(Roi, CV_8U);
+
 
 	float gainCoef = (binCount - 1) / (maxNorm - minNorm);
 	float offsetCoef = gainCoef * minNorm;
 
 
-	float spX, spY;
-	float spX0, spX1, spY0, spY1;
-	float coef00, coef01, coef10, coef11;
+	float spX, spY;							//second point coordinates
+	float spX0, spX1, spY0, spY1;			//second point walues
+	float coef00, coef01, coef10, coef11;	//second point coefficients
 
 	int maxOffsetX, minOffsetX, maxOffsetY, minOffsetY;
-	float *wSP00;
+
+	float *wImInF;							//first piont pointer
+	float *wSP00;							//interpolated piont pointers
 	float *wSP01;
 	float *wSP10;
 	float *wSP11;
 
-	Mat COM = Mat::zeros(binCount, binCount, CV_32S);
+	unsigned char *wRoi;					//first point Roi pointer
+	unsigned char *wRoi00;					//interpolated point Roi pointer
+	unsigned char *wRoi01;
+	unsigned char *wRoi10;
+	unsigned char *wRoi11;
 
+	
+	float *wOriginImInF;
+	float *wEndImInF;
 
-
-	wImInF = (float*)ImInFloat.data;
-	wOriginImInF = (float*)ImInFloat.data;
-	wEndImInF = (float*)ImInFloat.data + maxXY;
 	//Second point coordinates
 	spX = (float)(ofset)*sin((angle)* PI / 180.0);
 	spY = (float)(ofset)*cos((angle)* PI / 180.0);
@@ -825,26 +835,29 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	if (spY1 == spY0)
 		spY1 = spY0 + 1;
 
-	//Second Point coeficients
+	//Second Point coefficients
 	coef00 = (spY1 - spY)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
 	coef01 = (spY1 - spY)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
 	coef10 = (spY - spY0)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
 	coef11 = (spY - spY0)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
 
 
-
-	// second point pointer
-	//float wtSP[20];
-	//float *wSP[20];
-	//int countSP;
-
-
+	wImInF = (float*)ImInFloat.data;
 	// second point pointers
 	wSP00 = wImInF + (int)spY0 * maxX + (int)spX0;
 	wSP01 = wImInF + (int)spY0 * maxX + (int)spX1;
 	wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
 	wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
 
+	wRoi = (unsigned char*)Roi.data;
+	// second point Roi pointers
+	wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
+	wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;
+	wRoi10 = wRoi + (int)spY1 * maxX + (int)spX0;
+	wRoi11 = wRoi + (int)spY1 * maxX + (int)spX1;
+
+	wOriginImInF = (float*)ImInFloat.data;
+	wEndImInF = (float*)ImInFloat.data + maxXY;
 
 	minOffsetX = 0;
 	if (minOffsetX > spX0)
@@ -871,6 +884,7 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	if (maxOffsetY < spY1)
 		maxOffsetY = spY1;
 
+	Mat COM = Mat::zeros(binCount, binCount, CV_32S);
 
 	for (int i = 0; i < maxXY; i++)
 	{
@@ -906,6 +920,17 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		if ((y + maxOffsetY) >= maxY)
 			pointersInRange = 0;
 
+		if (!*wRoi)
+			pointersInRange = 0;
+		if (!*wRoi00)
+			pointersInRange = 0;
+		if (!*wRoi01)
+			pointersInRange = 0;
+		if (!*wRoi10)
+			pointersInRange = 0;
+		if (!*wRoi11)
+			pointersInRange = 0;
+
 		if (pointersInRange)
 		{
 			float valSP = *wSP00 * coef00 + *wSP01 * coef01 + *wSP10 * coef10 + *wSP11 * coef11;
@@ -930,6 +955,12 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		wSP10++;
 		wSP11++;
 		wImInF++;
+
+		wRoi++;
+		wRoi00++;
+		wRoi01++;
+		wRoi10++;
+		wRoi11++;
 	}
 
 	// oposit direction
@@ -969,6 +1000,12 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
 	wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
 
+	wRoi = (unsigned char*)Roi.data;
+	// second point pointers
+	wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
+	wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;
+	wRoi10 = wRoi + (int)spY1 * maxX + (int)spX0;
+	wRoi11 = wRoi + (int)spY1 * maxX + (int)spX1;
 
 	minOffsetX = 0;
 	if (minOffsetX > spX0)
@@ -1030,6 +1067,17 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		if ((y + maxOffsetY) >= maxY)
 			pointersInRange = 0;
 
+		if (!*wRoi)
+			pointersInRange = 0;
+		if (!*wRoi00)
+			pointersInRange = 0;
+		if (!*wRoi01)
+			pointersInRange = 0;
+		if (!*wRoi10)
+			pointersInRange = 0;
+		if (!*wRoi11)
+			pointersInRange = 0;
+		
 		if (pointersInRange)
 		{
 			float valSP = *wSP00 * coef00 + *wSP01 * coef01 + *wSP10 * coef10 + *wSP11 * coef11;
@@ -1054,11 +1102,13 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		wSP10++;
 		wSP11++;
 		wImInF++;
+
+		wRoi++;
+		wRoi00++;
+		wRoi01++;
+		wRoi10++;
+		wRoi11++;
 	}
-
-
-
-
 
 	return COM;
 }
