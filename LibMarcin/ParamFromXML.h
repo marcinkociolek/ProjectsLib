@@ -43,6 +43,9 @@ public:
 	string OutFolderName1;
 	string OutFolderName2;
 
+	int preprocessType;
+	int preprocessKernelSize;
+
 	bool displayResult;
 	bool displaySmallImage;
 
@@ -59,7 +62,6 @@ public:
 	bool goThru;
 
 	bool useSecondImage;
-	int medianKernelSize1;
 
 	bool textOut;
 	int normalisation;

@@ -62,7 +62,8 @@ ProcessOptions::ProcessOptions()
 
 	useSecondImage = 0;
 
-	medianKernelSize1 = 0;
+	preprocessType = 0;
+	preprocessKernelSize = 3;
 
 	textOut = 0;
 	normalisation = 0;
@@ -511,21 +512,40 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	string ValStr;
 
 
-	pElem = hPreprocess.FirstChild("medianKernelSize1").Element();
+	pElem = hPreprocess.FirstChild("preprocessType").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: medianKernelSize1";
+		OutStr = +"No entry: preprocessType";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: medianKernelSize1";
+		OutStr = +"Empty entry: preprocessType";
 		OutStr += "\n";
 	}
 	else
 	{
 		ValStr = pElem->GetText();
-		medianKernelSize1 = stoi(ValStr);
+		preprocessType = stoi(ValStr);
+	}
+
+	pElem = hPreprocess.FirstChild("preprocessKernelSize").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: preprocessKernelSize";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: preprocessKernelSize";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		preprocessKernelSize = stoi(ValStr);
+		if (preprocessKernelSize < 3)
+			preprocessKernelSize = 3;
 	}
 
 	pElem = hRoot.FirstChild("parameters").Element();
@@ -1291,20 +1311,59 @@ int ProcessOptions::LoadParams(string XmlFileName)
 string ProcessOptions::ShowParams(void)
 {
 	string OutString = "";
-	OutString += "Input Directory 1:\t" + InFolderName1 + "\n";
+	OutString += "Input Directory 1:\t"		+ InFolderName1		+ "\n";
+	OutString += "Input FileNameBase 1:\t"	+ FileNameBase1		+ "\n";
+	OutString += "File Name Extension 1:\t" + InFileExtension1	+ "\n";
+	OutString += "Input FileNameBase 1:\t"	+ InFilePattern1	+ "\n";
 
-	OutString += "Input Directory 2:\t" + InFolderName2 + "\n";
-	OutString += "Input file name 2:\t" + FileNameBase2 + InFileExtension2 + "\n";
-	OutString += "Input Directory 3:\t" + InFolderName3 + "\n";
-	OutString += "Input Directory 4:\t" + InFolderName4 + "\n";
-	OutString += "Input Directory 5:\t" + InFolderName5 + "\n";
-	OutString += "Input Directory 6:\t" + InFolderName6 + "\n";
+	OutString += "Input Directory 2:\t"		+ InFolderName2		+ "\n";
+	OutString += "Input FileNameBase 2:\t"	+ FileNameBase2		+ "\n";
+	OutString += "File Name Extension 2:\t" + InFileExtension2	+ "\n";
+	OutString += "Input FileNameBase 2:\t"	+ InFilePattern2	+ "\n";
 
+	OutString += "Input Directory 3:\t"		+ InFolderName3		+ "\n";
+	OutString += "Input FileNameBase 3:\t"	+ FileNameBase3		+ "\n";
+	OutString += "File Name Extension 3:\t" + InFileExtension3	+ "\n";
+	OutString += "Input FileNameBase 3:\t"	+ InFilePattern3	+ "\n";
+
+	OutString += "Input Directory 4:\t"		+ InFolderName4		+ "\n";
+	OutString += "Input FileNameBase 4:\t"	+ FileNameBase4		+ "\n";
+	OutString += "File Name Extension 4:\t" + InFileExtension4	+ "\n";
+	OutString += "Input FileNameBase 4:\t"	+ InFilePattern4	+ "\n";
+
+	OutString += "Input Directory 5:\t"		+ InFolderName5		+ "\n";
+	OutString += "Input FileNameBase 5:\t"	+ FileNameBase5		+ "\n";
+	OutString += "File Name Extension 5:\t" + InFileExtension5	+ "\n";
+	OutString += "Input FileNameBase 5:\t"	+ InFilePattern5	+ "\n";
+
+	OutString += "Input Directory 6:\t"		+ InFolderName6		+ "\n";
+	OutString += "Input FileNameBase 6:\t"	+ FileNameBase6		+ "\n";
+	OutString += "File Name Extension 6:\t" + InFileExtension6	+ "\n";
+	OutString += "Input FileNameBase 6:\t"	+ InFilePattern6	+ "\n";
 
 	OutString += "Output Directory:\t" + OutFolderName1 + "\n";
-	OutString += "Output file name:\t" + FileNameBase1 + ".bmp" + "\n";
 	OutString += "Output Directory 2:\t" + OutFolderName2 + "\n";
-	OutString += "Output file name 2:\t" + FileNameBase2 + ".bmp" + "\n";
+	
+	OutString += "Preprocess Type:\t";
+	OutString += to_string(preprocessType);
+	OutString += " - ";
+	switch (preprocessType)
+	{
+	case 1:
+		OutString += "average blurr";
+		break;
+	case 2:
+		OutString += "median blurr";
+		break;
+	default:
+		OutString += "none";
+		break;
+	}
+	OutString += "\n";
+
+	OutString += "Preprocess kernel size:\t";
+	OutString += to_string(preprocessKernelSize);
+	OutString += "\n";
 
 	OutString += "Display result:\t";
 	if (displayResult)
@@ -1312,6 +1371,47 @@ string ProcessOptions::ShowParams(void)
 	else
 		OutString += "N";
 	OutString += "\n";
+
+	OutString += "Display small image:\t";
+	if (displaySmallImage)
+		OutString += "Y";
+	else
+		OutString += "N";
+	OutString += "\n";
+
+	OutString += "Tile Shape:\t";
+	OutString += to_string(tileShape);
+	OutString += " - ";
+	switch (tileShape)
+	{
+	case 1:
+		OutString += "Rectangular";
+		break;
+	case 2:
+		OutString += "Elyptical";
+		break;
+	default:
+		OutString += "none";
+		break;
+	}
+	OutString += "\n";
+
+	OutString += "Tile size x:\t";
+	OutString += to_string(maxTileX);
+	OutString += "\n";
+
+	OutString += "Tile size y:\t";
+	OutString += to_string(maxTileY);
+	OutString += "\n";
+
+	OutString += "Tile shift x:\t";
+	OutString += to_string(tileShiftX);
+	OutString += "\n";
+
+	OutString += "Tile shift y:\t";
+	OutString += to_string(tileShiftY);
+	OutString += "\n";
+
 
 	OutString += "Show tiles:\t";
 	if (showTiles)
@@ -1343,6 +1443,31 @@ string ProcessOptions::ShowParams(void)
 
 	OutString += "Normalisation:\t";
 	OutString += to_string(normalisation);
+	OutString += " - ";
+	switch (tileShape)
+	{
+	case 1:
+		OutString += "Tile min - max";
+		break;
+	case 2:
+		OutString += "Global min - max";
+		break;
+	case 3:
+		OutString += "Tile +/- 3 sigma";
+		break;
+	case 4:
+		OutString += "Global +/- 3 sigma";
+		break;
+	case 5:
+		OutString += "Tile 1%-99%";
+		break;
+	case 6:
+		OutString += "Global 1%-99%";
+		break;
+	default:
+		OutString += "none";
+		break;
+	}
 	OutString += "\n";
 
 	OutString += "Bin count:\t";
@@ -1440,12 +1565,20 @@ string ProcessOptions::ShowParams(void)
 	OutString += to_string(displayMin2);
 	OutString += "\n";
 
-	OutString += "Max Tile X:\t";
-	OutString += to_string(maxTileX);
+	OutString += "Display Max3:\t";
+	OutString += to_string(displayMax3);
 	OutString += "\n";
 
-	OutString += "Max TileY:\t";
-	OutString += to_string(maxTileY);
+	OutString += "Display Min3:\t";
+	OutString += to_string(displayMin3);
+	OutString += "\n";
+
+	OutString += "Display Max4:\t";
+	OutString += to_string(displayMax4);
+	OutString += "\n";
+
+	OutString += "Display Min4:\t";
+	OutString += to_string(displayMin4);
 	OutString += "\n";
 
 	OutString += "Tile Line Thickness>:\t";
