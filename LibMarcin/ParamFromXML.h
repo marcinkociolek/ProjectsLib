@@ -53,11 +53,13 @@ public:
 
 	int maxTileX;
 	int maxTileY;
-
-	int tileShiftX;
-	int tileShiftY;
+	int shiftTileX;
+	int shiftTileY;
+	int offsetTileX;
+	int offsetTileY;
 
 	bool showTiles;
+	int tileLineThickness;
 
 	bool goThru;
 
@@ -99,7 +101,8 @@ public:
 	float displayMax4;
 	float displayMin4;
 
-	int tileLineThickness;
+	int imposedLineThickness;
+	bool lineLengthPropToConfidence;
 	int lineHalfLength;
 
 	float angleStep;

@@ -791,8 +791,8 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		return Mat::ones(1, 1, CV_32S)*(-2);;
 	if (ImInFloat.depth() != CV_32F)
 		return Mat::ones(1, 1, CV_32S)*(-3);;
-	if (Roi.depth() != CV_8U)
-		Roi.convertTo(Roi, CV_8U);
+	if (Roi.depth() != CV_16U)
+		Roi.convertTo(Roi, CV_16U);
 
 
 	float gainCoef = (binCount - 1) / (maxNorm - minNorm);
@@ -811,11 +811,11 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	float *wSP10;
 	float *wSP11;
 
-	unsigned char *wRoi;					//first point Roi pointer
-	unsigned char *wRoi00;					//interpolated point Roi pointer
-	unsigned char *wRoi01;
-	unsigned char *wRoi10;
-	unsigned char *wRoi11;
+	unsigned short *wRoi;					//first point Roi pointer
+	unsigned short *wRoi00;					//interpolated point Roi pointer
+	unsigned short *wRoi01;
+	unsigned short *wRoi10;
+	unsigned short *wRoi11;
 
 	
 	float *wOriginImInF;
@@ -849,7 +849,7 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
 	wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
 
-	wRoi = (unsigned char*)Roi.data;
+	wRoi = (unsigned short*)Roi.data;
 	// second point Roi pointers
 	wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
 	wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;
@@ -1000,7 +1000,7 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 	wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
 	wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
 
-	wRoi = (unsigned char*)Roi.data;
+	wRoi = (unsigned short*)Roi.data;
 	// second point pointers
 	wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
 	wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;

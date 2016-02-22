@@ -54,11 +54,17 @@ ProcessOptions::ProcessOptions()
 	maxTileX = 40;
 	maxTileY = 40;
 
-	tileShiftX = 40;
-	tileShiftY = 40;
+	shiftTileX = 40;
+	shiftTileY = 40;
+
+	offsetTileX = 40;
+	offsetTileY = 40;
+
+	
+	showTiles = 1;
+	tileLineThickness = 1;
 
 	goThru = 1;
-	showTiles = 1;
 
 	useSecondImage = 0;
 
@@ -101,7 +107,8 @@ ProcessOptions::ProcessOptions()
 	displayMax4 = 0;
 	displayMin4 = 255;
 
-	tileLineThickness = 1;
+	imposedLineThickness = 1;
+	lineLengthPropToConfidence = 0;
 	lineHalfLength = 20;
 	
 	angleStep = 1;
@@ -652,41 +659,73 @@ int ProcessOptions::LoadParams(string XmlFileName)
 		maxTileY = stoi(ValStr);
 	}
 
-	pElem = hParameters.FirstChild("tileShiftX").Element();
+	pElem = hParameters.FirstChild("shiftTileX").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: tileShiftX";
+		OutStr = +"No entry: shiftTileX";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: tileShiftX";
+		OutStr = +"Empty entry: shiftTileX";
 		OutStr += "\n";
 	}
 	else
 	{
 		ValStr = pElem->GetText();
-		tileShiftX = stoi(ValStr);
+		shiftTileX = stoi(ValStr);
 	}
 
-	pElem = hParameters.FirstChild("tileShiftY").Element();
+	pElem = hParameters.FirstChild("shiftTileY").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: tileShiftY";
+		OutStr = +"No entry: shiftTileY";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: tileShiftY";
+		OutStr = +"Empty entry: shiftTileY";
 		OutStr += "\n";
 	}
 	else
 	{
 		ValStr = pElem->GetText();
-		tileShiftY = stoi(ValStr);
+		shiftTileY = stoi(ValStr);
 	}
 
+	pElem = hParameters.FirstChild("offsetTileX").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: offsetTileX";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: offsetTileX";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		offsetTileX = stoi(ValStr);
+	}
 
+	pElem = hParameters.FirstChild("offsetTileY").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: offsetTileY";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: offsetTileY";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		offsetTileY = stoi(ValStr);
+	}
 
 
 
@@ -711,6 +750,24 @@ int ProcessOptions::LoadParams(string XmlFileName)
 		else
 			showTiles = 0;
 	}
+
+	pElem = hParameters.FirstChild("tileLineThickness").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: tileLineThickness";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: tileLineThickness";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		tileLineThickness = stoi(ValStr);
+	}
+
 
 	pElem = hParameters.FirstChild("goThru").Element();
 	if (!pElem)
@@ -1218,23 +1275,46 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	}
 
 
-	
-	pElem = hParameters.FirstChild("tileLineThickness").Element();
+
+	pElem = hParameters.FirstChild("imposedLineThickness").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: tileLineThickness";
+		OutStr =+ "No entry: iposedLineThickness";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr =+ "Empty entry: tileLineThickness";
+		OutStr =+ "Empty entry: iposedLineThickness";
 		OutStr += "\n";
 	}
 	else
 	{
 		ValStr = pElem->GetText();
-		tileLineThickness = stoi(ValStr);
+		imposedLineThickness = stoi(ValStr);
 	}
+
+	pElem = hParameters.FirstChild("lineLengthPropToConfidence").Element();
+	if (!pElem)
+	{
+		OutStr = +"No entry: lineLength Prop To Confidence";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr = +"Empty entry: line LengthProp To Confidence";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		if (ValStr == "Y")
+		{
+			lineLengthPropToConfidence = 1;
+		}
+		else
+			lineLengthPropToConfidence = 0;
+	}
+
 
 	pElem = hParameters.FirstChild("lineHalfLength").Element();
 	if (!pElem)
@@ -1312,34 +1392,34 @@ string ProcessOptions::ShowParams(void)
 {
 	string OutString = "";
 	OutString += "Input Directory 1:\t"		+ InFolderName1		+ "\n";
-	OutString += "Input FileNameBase 1:\t"	+ FileNameBase1		+ "\n";
+	OutString += "Input File Name Base 1:\t"	+ FileNameBase1		+ "\n";
 	OutString += "File Name Extension 1:\t" + InFileExtension1	+ "\n";
-	OutString += "Input FileNameBase 1:\t"	+ InFilePattern1	+ "\n";
+	OutString += "Input File Name Base 1:\t"	+ InFilePattern1	+ "\n";
 
 	OutString += "Input Directory 2:\t"		+ InFolderName2		+ "\n";
-	OutString += "Input FileNameBase 2:\t"	+ FileNameBase2		+ "\n";
-	OutString += "File Name Extension 2:\t" + InFileExtension2	+ "\n";
-	OutString += "Input FileNameBase 2:\t"	+ InFilePattern2	+ "\n";
+	OutString += "Input File Name Base 2:\t"	+ FileNameBase2		+ "\n";
+	OutString += "File Name Extensiom 2:\t" + InFileExtension2	+ "\n";
+	OutString += "Input File Name Pattern 2:\t"	+ InFilePattern2	+ "\n";
 
 	OutString += "Input Directory 3:\t"		+ InFolderName3		+ "\n";
-	OutString += "Input FileNameBase 3:\t"	+ FileNameBase3		+ "\n";
+	OutString += "Input File Name Base 3:\t"	+ FileNameBase3		+ "\n";
 	OutString += "File Name Extension 3:\t" + InFileExtension3	+ "\n";
-	OutString += "Input FileNameBase 3:\t"	+ InFilePattern3	+ "\n";
+	OutString += "Input File Name Pattern 3:\t"	+ InFilePattern3	+ "\n";
 
 	OutString += "Input Directory 4:\t"		+ InFolderName4		+ "\n";
-	OutString += "Input FileNameBase 4:\t"	+ FileNameBase4		+ "\n";
+	OutString += "Input File Name Base 4:\t"	+ FileNameBase4		+ "\n";
 	OutString += "File Name Extension 4:\t" + InFileExtension4	+ "\n";
-	OutString += "Input FileNameBase 4:\t"	+ InFilePattern4	+ "\n";
+	OutString += "Input File Name Pattern 4:\t"	+ InFilePattern4	+ "\n";
 
 	OutString += "Input Directory 5:\t"		+ InFolderName5		+ "\n";
-	OutString += "Input FileNameBase 5:\t"	+ FileNameBase5		+ "\n";
+	OutString += "Input File Name Base 5:\t"	+ FileNameBase5		+ "\n";
 	OutString += "File Name Extension 5:\t" + InFileExtension5	+ "\n";
-	OutString += "Input FileNameBase 5:\t"	+ InFilePattern5	+ "\n";
+	OutString += "Input File Name Pattern 5:\t"	+ InFilePattern5	+ "\n";
 
 	OutString += "Input Directory 6:\t"		+ InFolderName6		+ "\n";
-	OutString += "Input FileNameBase 6:\t"	+ FileNameBase6		+ "\n";
+	OutString += "Input File Name Base 6:\t"	+ FileNameBase6		+ "\n";
 	OutString += "File Name Extension 6:\t" + InFileExtension6	+ "\n";
-	OutString += "Input FileNameBase 6:\t"	+ InFilePattern6	+ "\n";
+	OutString += "Input File Name Base 6:\t"	+ InFilePattern6	+ "\n";
 
 	OutString += "Output Directory:\t" + OutFolderName1 + "\n";
 	OutString += "Output Directory 2:\t" + OutFolderName2 + "\n";
@@ -1405,11 +1485,19 @@ string ProcessOptions::ShowParams(void)
 	OutString += "\n";
 
 	OutString += "Tile shift x:\t";
-	OutString += to_string(tileShiftX);
+	OutString += to_string(shiftTileX);
 	OutString += "\n";
 
 	OutString += "Tile shift y:\t";
-	OutString += to_string(tileShiftY);
+	OutString += to_string(shiftTileY);
+	OutString += "\n";
+
+	OutString += "Tile offset x:\t";
+	OutString += to_string(offsetTileX);
+	OutString += "\n";
+
+	OutString += "Tile offset y:\t";
+	OutString += to_string(offsetTileY);
 	OutString += "\n";
 
 
@@ -1418,6 +1506,10 @@ string ProcessOptions::ShowParams(void)
 		OutString += "Y";
 	else
 		OutString += "N";
+	OutString += "\n";
+
+	OutString += "Tile Line Thickness>:\t";
+	OutString += to_string(tileLineThickness);
 	OutString += "\n";
 
 	OutString += "Go thru:\t";
@@ -1581,8 +1673,8 @@ string ProcessOptions::ShowParams(void)
 	OutString += to_string(displayMin4);
 	OutString += "\n";
 
-	OutString += "Tile Line Thickness>:\t";
-	OutString += to_string(tileLineThickness);
+	OutString += "Imposed Line Thickness>:\t";
+	OutString += to_string(imposedLineThickness);
 	OutString += "\n";
 
 	OutString += "Line Half Length:\t";
