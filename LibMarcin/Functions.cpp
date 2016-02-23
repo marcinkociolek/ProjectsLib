@@ -779,7 +779,7 @@ int RedundantWaveletEnergyFileOutput(Mat ImIn, bool displayResult, bool saveResu
 
 // ----------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
-float MatFMeanRoiU8(Mat ImIn, Mat Roi)
+float MatFMeanRoi(Mat ImIn, Mat Roi,unsigned short roiNr)
 {
 	int maxXY = ImIn.cols  * ImIn.rows;
 	
@@ -789,8 +789,8 @@ float MatFMeanRoiU8(Mat ImIn, Mat Roi)
 		return -2.0;
 	if (ImIn.depth() != CV_32F)
 		return -3.0;
-	if (Roi.depth() != CV_8U)
-		Roi.convertTo(Roi, CV_8U);
+	if (Roi.depth() != CV_16U)
+		Roi.convertTo(Roi, CV_16U);
 
 	float *wImIn = (float*)ImIn.data;
 	unsigned char *wRoi = (unsigned char *)Roi.data;
@@ -799,7 +799,7 @@ float MatFMeanRoiU8(Mat ImIn, Mat Roi)
 	
 	for (int i = 0; i < maxXY; i++)
 	{
-		if(*wRoi)
+		if(*wRoi == roiNr)
 			sum += double(*wImIn);
 		wImIn++;
 		wRoi++;

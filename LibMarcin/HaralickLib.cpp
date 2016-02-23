@@ -779,7 +779,7 @@ Mat COMCardone4(Mat ImInFloat, int ofset, float angle, int binCount, float maxNo
 	return COM;
 }
 //-------------------------------------------------------------------------------------------------------------
-Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, float maxNorm, float minNorm, int interpolation)
+Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, float maxNorm, float minNorm, int interpolation, unsigned short roiNr)
 {
 	int maxX = ImInFloat.cols;
 	int maxY = ImInFloat.rows;
@@ -920,16 +920,19 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		if ((y + maxOffsetY) >= maxY)
 			pointersInRange = 0;
 
-		if (!*wRoi)
-			pointersInRange = 0;
-		if (!*wRoi00)
-			pointersInRange = 0;
-		if (!*wRoi01)
-			pointersInRange = 0;
-		if (!*wRoi10)
-			pointersInRange = 0;
-		if (!*wRoi11)
-			pointersInRange = 0;
+		if (pointersInRange)
+		{
+			if (*wRoi != roiNr)
+				pointersInRange = 0;
+			if (*wRoi00 != roiNr)
+				pointersInRange = 0;
+			if (*wRoi01 != roiNr)
+				pointersInRange = 0;
+			if (*wRoi10 != roiNr)
+				pointersInRange = 0;
+			if (*wRoi11 != roiNr)
+				pointersInRange = 0;
+		}
 
 		if (pointersInRange)
 		{
@@ -1067,16 +1070,19 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 		if ((y + maxOffsetY) >= maxY)
 			pointersInRange = 0;
 
-		if (!*wRoi)
-			pointersInRange = 0;
-		if (!*wRoi00)
-			pointersInRange = 0;
-		if (!*wRoi01)
-			pointersInRange = 0;
-		if (!*wRoi10)
-			pointersInRange = 0;
-		if (!*wRoi11)
-			pointersInRange = 0;
+		if (pointersInRange)
+		{
+			if (*wRoi != roiNr)
+				pointersInRange = 0;
+			if (*wRoi00 != roiNr)
+				pointersInRange = 0;
+			if (*wRoi01 != roiNr)
+				pointersInRange = 0;
+			if (*wRoi10 != roiNr)
+				pointersInRange = 0;
+			if (*wRoi11 != roiNr)
+				pointersInRange = 0;
+		}
 		
 		if (pointersInRange)
 		{
