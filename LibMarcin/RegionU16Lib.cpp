@@ -1285,5 +1285,140 @@ void GetContour9(Mat ImR)
     }
     delete[] ImRTemp;
 }
+//---------------------------------------------------------------------------
+int CenterOfMas(Mat ImReg, int *centerX, int *centerY)
+{
+    unsigned short *wImReg = (unsigned short *)ImReg.data;
+    int maxX = ImReg.cols;
+    int maxY = ImReg.rows;
+    //int maxXY = maxX * maxY;
+
+    int pixCount = 0;
+    int posX = 0;
+    int posY = 0;
+    for(int y = 0; y <maxY; y++)
+    {
+        for(int x = 0; x <maxX; x++)
+        {
+            if(*wImReg)
+            {
+                pixCount++;
+                posX += x;
+                posY += y;
+            }
+            wImReg++;
+        }
+    }
+    *centerX = posX / pixCount;
+    *centerY = posY / pixCount;
+    return 1;
+}
+//---------------------------------------------------------------------------
+int CenterOfMas(Mat ImReg, int *centerX, int *centerY, unsigned short reg)
+{
+	unsigned short *wImReg = (unsigned short *)ImReg.data;
+	int maxX = ImReg.cols;
+	int maxY = ImReg.rows;
+	//int maxXY = maxX * maxY;
+
+	int pixCount = 0;
+	int posX = 0;
+	int posY = 0;
+	for (int y = 0; y <maxY; y++)
+	{
+		for (int x = 0; x <maxX; x++)
+		{
+			if (*wImReg == reg)
+			{
+				pixCount++;
+				posX += x;
+				posY += y;
+			}
+			wImReg++;
+		}
+	}
+	*centerX = posX / pixCount;
+	*centerY = posY / pixCount;
+	return 1;
+}
+//---------------------------------------------------------------------------
+int PartOfRegionAtTheAngle(Mat ImReg, Mat ImRegOut,  int centerX, int centerY,
+                           int directionDeg, int angleDeg,
+                           unsigned short inRegNr, unsigned short outRegNr)
+{
+    int maxX = ImReg.cols;
+    int maxY = ImReg.rows;
+    //int centerX, centerY;
+    //CenterOfMas(ImReg, maxX, maxY, &centerX, &centerY);
+
+    int fi1Dec = directionDeg - angleDeg - 90;// - M_PI_2;
+    int fi2Dec = directionDeg + angleDeg - 90;// - M_PI_2;
 
 
+    double fi1 = (double)fi1Dec * 3.14159 /double(180);
+    double fi2 = (double)fi2Dec * 3.14159 /double(180);
+
+    double m1, m2, n1, n2;
+    if(cos(fi1) != 0)
+    {
+        m1 = tan(fi1);
+    }
+    else
+    {
+        m1 = 100000;
+    }
+    n1 = centerY - int((double)centerX * m1);
+
+    if(cos(fi2) != 0)
+    {
+        m2 = tan(fi2);
+    }
+    else
+    {
+        m2 = 100000;
+    }
+    n2 = centerY - int((double)centerX * m2);
+
+
+    //*(ImReg + centerX + centerY * maxX) = 7;
+    unsigned short *wImReg = (unsigned short *)ImReg.data;
+    unsigned short *wImRegOut = (unsigned short *)ImRegOut.data;
+    for(int y = 0; y <maxY; y++)
+    {
+        for(int x = 0; x <maxX; x++)
+        {
+            bool cond1 = 0;
+            bool cond2 = 0;
+            if(cos(fi1) < 0 && cos(fi2) < 0)
+            {
+                cond1 = (y <  int((double)x*m1 + n1));
+                cond2 = (y >= int((double)x*m2 + n2));
+            }
+            if(cos(fi1) < 0 && cos(fi2) >= 0)
+            {
+                cond1 = (y <  int((double)x*m1 + n1));
+                cond2 = (y < int((double)x*m2 + n2));
+            }
+            if(cos(fi1) >= 0 && cos(fi2) >= 0)
+            {
+                cond1 = (y >=  int((double)x*m1 + n1));
+                cond2 = (y < int((double)x*m2 + n2));
+            }
+            if(cos(fi1) >= 0 && cos(fi2) < 0)
+            {
+                cond1 = (y >=  int((double)x*m1 + n1));
+                cond2 = (y >= int((double)x*m2 + n2));
+            }
+
+            if( cond1 && cond2 && (*wImReg == inRegNr))
+            {
+                *wImRegOut = outRegNr;
+            }
+            wImReg++;
+            wImRegOut++;
+
+        }
+    }
+    return 1;
+}
+//---------------------------------------------------------------------------

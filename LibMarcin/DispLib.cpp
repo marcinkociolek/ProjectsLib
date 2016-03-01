@@ -172,6 +172,42 @@ Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB)
     return ImOut;
 }
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+Mat ShowSolidRegionOnImageInBlack(Mat ImReg, Mat ImRGB)
+{
+	int maxX = ImReg.cols;
+	int maxY = ImReg.rows;
+	int maxXY = maxX * maxY;
+
+	Mat ImOut;
+	ImRGB.copyTo(ImOut);
+
+
+	unsigned short * wImReg = (unsigned short *)ImReg.data;
+	char *wImOut = (char *)ImOut.data;
+	for (int i = 0; i < maxXY; i++)
+	{
+		if (*wImReg)
+		{
+			*wImOut = 0;
+			wImOut++;
+			*wImOut = 0;
+			wImOut++;
+			*wImOut = 0;
+			wImOut++;
+		}
+		else
+		{
+			wImOut++;
+			wImOut++;
+			wImOut++;
+		}
+
+		wImReg++;
+	}
+	return ImOut;
+}
+//---------------------------------------------------------------------------
 
 /*
 //---------------------------------------------------------------------------

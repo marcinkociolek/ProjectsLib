@@ -153,6 +153,7 @@ Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal);
 Mat ShowRegion(Mat ImReg);
 
 Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB);
+Mat ShowSolidRegionOnImageInBlack(Mat ImReg, Mat ImRGB);
 /*
 
 void MakeWhiteBitmap(Graphics::TBitmap *Bitmap);

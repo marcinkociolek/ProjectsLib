@@ -28,6 +28,15 @@ void RegionErosion13(Mat ImR);
 
 Mat GetContour5(Mat ImR);
 
+
+//-----------------------------------------------------------------------------
+int CenterOfMas(Mat ImReg, int *centerX, int *centerY);
+int CenterOfMas(Mat ImReg, int *centerX, int *centerY, unsigned short reg);
+
+int PartOfRegionAtTheAngle(Mat ImReg, Mat ImRegOut,  int centerX, int centerY,
+                           int directionDeg, int angleDeg,
+                           unsigned short inRegNr, unsigned short outRegNr);
+
 //void ShowRegionOnImage16(Mat ImReg, Mat ImRGB);
 
 #endif // GRADIENT
