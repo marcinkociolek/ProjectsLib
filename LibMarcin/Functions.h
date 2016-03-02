@@ -35,7 +35,7 @@ Mat MeanEnergyImage(Mat ImIn, Mat Roi);
 float MeanAbsCalculaton(Mat ImIn, Mat Roi);
 Mat AbsImage(Mat ImIn, Mat Roi);
 
-int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel);
+int MaskImageInPseudocolorsI(Mat ImIn, Mat Roi, unsigned char grayLevel);
 
 float MatFMeanRoi(Mat ImIn, Mat Roi, unsigned short roiNr);
 

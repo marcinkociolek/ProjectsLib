@@ -4,7 +4,7 @@
 //#include <opencv2/imgproc/imgproc.hpp>
 //---------------------------------------------------------------------------
 
-#pragma package(smart_init)
+//#pragma package(smart_init)
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -206,6 +206,50 @@ Mat ShowSolidRegionOnImageInBlack(Mat ImReg, Mat ImRGB)
 		wImReg++;
 	}
 	return ImOut;
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------
+int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel)
+{
+    int maxX, maxY;
+    maxX = ImIn.cols;
+    maxY = ImIn.rows;
+
+    int maxXRoi, maxYRoi;// maxXm1, maxYm1;
+    maxXRoi = Roi.cols;
+    maxYRoi = Roi.rows;
+
+    Mat ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
+
+    if ((maxX != maxXRoi) | (maxY != maxYRoi))
+        return 0;
+    //	maxXm1 = maxX - 1;
+    //	maxYm1 = maxY - 1;
+
+    unsigned char *wBImIn = (unsigned char*)ImIn.data;
+    unsigned char *wGImIn = wBImIn + 1;
+    unsigned char *wRImIn = wBImIn + 2;
+    unsigned short *wRoi = (unsigned short*)Roi.data;
+    for (int y = 0; y < maxY; y++)
+    {
+        for (int x = 0; x < maxX; x++)
+        {
+            if (*wRoi == 0)
+            {
+                *wBImIn = grayLevel;
+                *wGImIn = grayLevel;
+                *wRImIn = grayLevel;
+
+            }
+
+            wBImIn += 3;
+            wGImIn += 3;
+            wRImIn += 3;
+            wRoi++;
+        }
+    }
+    return 1;
 }
 //---------------------------------------------------------------------------
 

@@ -50,7 +50,7 @@ const unsigned char RegColorsB[16]=
     0x00,
     0x00,
     0xFF,
-    0xC40
+    0xC4
 };
 const unsigned char RegColorsG[16]=
 {
@@ -154,6 +154,8 @@ Mat ShowRegion(Mat ImReg);
 
 Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB);
 Mat ShowSolidRegionOnImageInBlack(Mat ImReg, Mat ImRGB);
+
+int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel);
 /*
 
 void MakeWhiteBitmap(Graphics::TBitmap *Bitmap);

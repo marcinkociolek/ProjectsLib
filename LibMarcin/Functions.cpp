@@ -1,7 +1,7 @@
-#include "opencv2\core\core.hpp"
-#include "opencv2\highgui\highgui.hpp"
-#include "opencv2\imgproc\imgproc.hpp"
-#include "opencv2\contrib\contrib.hpp"
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/contrib/contrib.hpp"
 #include <math.h>
 #include <iostream>
 #include "Functions.h"
@@ -64,8 +64,8 @@ int ShowImageInColorMap(Mat Im, int style, double minIm, double maxIm, const str
 	double offset, scale;
 	switch (style)
 	{
-	case 1:  //min max style
-		minMaxIdx(Im, &minIm, &maxIm);
+    case 1:  //min max style
+        minMaxIdx(Im, &minIm, &maxIm);
 		break;
 	case 2:
 		break;
@@ -144,7 +144,7 @@ Mat ImageInPseudocolors(Mat Im, int style, double par1, double par2, double *min
 		maxIm = par2;
 		break;
 	case 3:  //min max style
-		minMaxIdx(Im, &minIm, &maxIm);
+        minMaxIdx(Im, &minIm, &maxIm);
 		maxIm = maxIm / par1;
 		break;
 	default:
@@ -655,7 +655,7 @@ Mat MeanEnergyImage(Mat ImIn, Mat Roi)
 	return EnIm;
 }
 //-----------------------------------------------------------------------------------------------------------------
-int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel)
+int MaskImageInPseudocolorsI(Mat ImIn, Mat Roi, unsigned char grayLevel)
 {
 	int maxX, maxY;
 	maxX = ImIn.cols;

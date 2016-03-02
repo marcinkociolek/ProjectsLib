@@ -360,7 +360,7 @@ unsigned short DivideSeparateRegions(Mat InReg, unsigned int minRegSize)
         wOutRegN4++;
     }
 
-    wInReg = wInReg = (unsigned short*)InReg.data;
+    wInReg = (unsigned short*)InReg.data;
     wOutReg = OutReg;
     for (int i = 0; i < maxXY; i++)
     {
@@ -385,7 +385,7 @@ unsigned short DivideSeparateRegions(Mat InReg, unsigned int minRegSize)
             newRegNR++;
         }
     }
-    wInReg = wInReg = (unsigned short*)InReg.data;
+    wInReg = (unsigned short*)InReg.data;
     //unsigned short oldRegNr;
     for (int i = 0; i < maxXY; i++)
     {
@@ -419,7 +419,7 @@ void DeleteRegTouchingBorder(Mat ImReg)
 {
     int maxX = ImReg.cols;
     int maxY = ImReg.rows;
-    int maxXY = maxX * maxY;
+    //int maxXY = maxX * maxY;
 
 //    int maxXa = maxX - 1;
 //    unsigned short *OutReg = new unsigned short[maxXY];
@@ -482,7 +482,7 @@ void DeleteRegTouchingBorder(Mat ImReg)
     {
         DeleteRegionFromImage(ImReg, RegToRemoveList[i]);
     }
-    unsigned short regCount = DivideSeparateRegions(ImReg, 0);
+    DivideSeparateRegions(ImReg, 0);
     return;
 }
 //---------------------------------------------------------------------------
