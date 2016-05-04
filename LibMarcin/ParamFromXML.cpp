@@ -1,6 +1,6 @@
 #include "ParamFromXML.h"
-#include <tinyxml.h>
-#include <tinystr.h>
+#include "..\..\..\ProjectsLib\tinyxml\tinyxml.h"
+#include "..\..\..\ProjectsLib\tinyxml\tinystr.h"
 #include <stdio.h>
 
 
