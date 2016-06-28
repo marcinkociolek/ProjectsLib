@@ -796,15 +796,19 @@ float MatFMeanRoi(Mat ImIn, Mat Roi,unsigned short roiNr)
 	unsigned char *wRoi = (unsigned char *)Roi.data;
 
 	double sum = 0;
+	int count = 0;
 	
 	for (int i = 0; i < maxXY; i++)
 	{
-		if(*wRoi == roiNr)
+		if (*wRoi == roiNr)
+		{
 			sum += double(*wImIn);
+			count++;
+		}
 		wImIn++;
 		wRoi++;
 	}
-	return (float)(sum / (double)maxXY);
+	return (float)(sum / (double)count);
 }
 // ----------------------------------------------------------------------------------------------------------
 float MatFMeanAndStd(Mat ImIn, float *mean, float *stdDev)

@@ -586,7 +586,7 @@ int ProcessOptions::LoadParams(string XmlFileName)
 			displayResult = 0;
 	}
 
-	pElem = hParameters.FirstChild("dispaySmallImage").Element();
+	pElem = hParameters.FirstChild("displaySmallImage").Element();
 	if (!pElem)
 	{
 		OutStr = +"No entry: display Small Image";
