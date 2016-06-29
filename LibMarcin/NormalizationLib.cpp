@@ -113,6 +113,7 @@ void NormParams1to99perc(Mat ImIn, float *maxNorm, float *minNorm)
 	}
 	*minNorm = perc1Local;
 	*maxNorm = perc99Local;
+	delete[] Hist;
 	return;
 }
 
@@ -267,5 +268,6 @@ void NormParams1to99perc(Mat ImIn, Mat Roi, unsigned short roiNr, float *maxNorm
 	}
 	*minNorm = perc1Local;
 	*maxNorm = perc99Local;
+	delete Hist;
 	return;
 }
