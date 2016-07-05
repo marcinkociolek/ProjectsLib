@@ -1,7 +1,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/contrib/contrib.hpp"
+//#include "opencv2/contrib/contrib.hpp"
 #include <math.h>
 #include <iostream>
 #include "Functions.h"
@@ -56,6 +56,7 @@ int PrintMatFeatures(Mat Im)
 
 }
 //-----------------------------------------------------------------------------------------------------------------
+/*
 int ShowImageInColorMap(Mat Im, int style, double minIm, double maxIm, const string &WinName)
 { 
 	// 0 default as is
@@ -203,6 +204,7 @@ Mat PrepareColorScale(double min, double max, int maxX)
 	
 	return ImShow;
 }
+*/
 //-----------------------------------------------------------------------------------------------------------------
 Mat KeepSize(Mat ImIn, int maxX, int maxY)
 {
