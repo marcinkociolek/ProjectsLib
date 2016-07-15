@@ -13,6 +13,10 @@ using namespace std;
 
 ProcessOptions::ProcessOptions()
 {
+	defaultOptions();
+}
+void ProcessOptions::defaultOptions(void)
+{
 	InFolderName1 = "";
 	FileNameBase1 = "";
 	InFileExtension1 = "";
@@ -60,7 +64,7 @@ ProcessOptions::ProcessOptions()
 	offsetTileX = 40;
 	offsetTileY = 40;
 
-	
+
 	showTiles = 1;
 	tileLineThickness = 1;
 
@@ -73,7 +77,7 @@ ProcessOptions::ProcessOptions()
 
 	textOut = 0;
 	normalisation = 0;
-	
+
 	binCount = 16;
 
 	minOfset = 2;
@@ -110,18 +114,21 @@ ProcessOptions::ProcessOptions()
 	imposedLineThickness = 1;
 	lineLengthPropToConfidence = 0;
 	lineHalfLength = 20;
-	
+
 	angleStep = 1;
 	interpolation = 0;
 
 	treshold1 = 0;
 	treshold2 = 0;
 }
+
+
 //-------------------------------------------------------------------------------------------------------------------
 int ProcessOptions::LoadParams(string XmlFileName)
 {
-	string OutStr = "";
-	
+	string OutStr = "\nXML file read issues:\n";
+	defaultOptions();
+
 	TiXmlDocument doc(XmlFileName.c_str());
 	doc.LoadFile();
 
@@ -198,12 +205,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input2").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: input2 directory";
+		OutStr += "No entry: input2 directory";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry:input2 directory";
+		OutStr +="Empty entry:input2 directory";
 		OutStr += "\n";
 	}
 	else
@@ -212,12 +219,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input2").FirstChild("filebase").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: input2 filename";
+		OutStr += "No entry: input2 filename";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input2 filename";
+		OutStr +="Empty entry: input2 filename";
 		OutStr += "\n";
 	}
 	else
@@ -226,12 +233,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input2").FirstChild("extension").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: input2 extension";
+		OutStr += "No entry: input2 extension";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input2 extension";
+		OutStr +="Empty entry: input2 extension";
 		OutStr += "\n";
 	}
 	else
@@ -255,12 +262,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input3").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input3 directory";
+		OutStr +="No entry: input3 directory";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry:input3 directory";
+		OutStr +="Empty entry:input3 directory";
 		OutStr += "\n";
 	}
 	else
@@ -269,12 +276,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input3").FirstChild("filebase").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input3 filename";
+		OutStr +="No entry: input3 filename";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input3 filename";
+		OutStr +="Empty entry: input3 filename";
 		OutStr += "\n";
 	}
 	else
@@ -283,12 +290,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input3").FirstChild("extension").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input3 extension";
+		OutStr +="No entry: input3 extension";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input3 extension";
+		OutStr +="Empty entry: input3 extension";
 		OutStr += "\n";
 	}
 	else
@@ -312,12 +319,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input4").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input4 directory";
+		OutStr +="No entry: input4 directory";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry:input4 directory";
+		OutStr +="Empty entry:input4 directory";
 		OutStr += "\n";
 	}
 	else
@@ -326,12 +333,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input4").FirstChild("filebase").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input4 filename";
+		OutStr +="No entry: input4 filename";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input4 filename";
+		OutStr +="Empty entry: input4 filename";
 		OutStr += "\n";
 	}
 	else
@@ -340,12 +347,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input4").FirstChild("extension").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input4 extension";
+		OutStr +="No entry: input4 extension";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input4 extension";
+		OutStr +="Empty entry: input4 extension";
 		OutStr += "\n";
 	}
 	else
@@ -369,12 +376,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input5").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input5 directory";
+		OutStr +="No entry: input5 directory";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry:input5 directory";
+		OutStr +="Empty entry:input5 directory";
 		OutStr += "\n";
 	}
 	else
@@ -383,12 +390,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input5").FirstChild("filebase").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input5 filename";
+		OutStr +="No entry: input5 filename";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input5 filename";
+		OutStr +="Empty entry: input5 filename";
 		OutStr += "\n";
 	}
 	else
@@ -397,12 +404,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input5").FirstChild("extension").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input5 extension";
+		OutStr +="No entry: input5 extension";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input5 extension";
+		OutStr +="Empty entry: input5 extension";
 		OutStr += "\n";
 	}
 	else
@@ -426,12 +433,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input6").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input6 directory";
+		OutStr +="No entry: input6 directory";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry:input6 directory";
+		OutStr +="Empty entry:input6 directory";
 		OutStr += "\n";
 	}
 	else
@@ -440,12 +447,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input6").FirstChild("filebase").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input6 filename";
+		OutStr +="No entry: input6 filename";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input6 filename";
+		OutStr +="Empty entry: input6 filename";
 		OutStr += "\n";
 	}
 	else
@@ -454,12 +461,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("input6").FirstChild("extension").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: input6 extension";
+		OutStr +="No entry: input6 extension";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: input6 extension";
+		OutStr +="Empty entry: input6 extension";
 		OutStr += "\n";
 	}
 	else
@@ -483,12 +490,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("output").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: output directory";
+		OutStr += "No entry: output directory";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: output directory";
+		OutStr +="Empty entry: output directory";
 		OutStr += "\n";
 	}
 	else
@@ -497,12 +504,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("output2").FirstChild("directory").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: output directory2";
+		OutStr += "No entry: output directory2";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: output directory2";
+		OutStr +="Empty entry: output directory2";
 		OutStr += "\n";
 	}
 	else
@@ -512,7 +519,7 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("preprocess").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: preprocess section";
+		OutStr +="No entry: preprocess section";
 		OutStr += "\n";
 	}
 	hPreprocess = TiXmlHandle(pElem);
@@ -522,12 +529,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hPreprocess.FirstChild("preprocessType").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: preprocessType";
+		OutStr +="No entry: preprocessType";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: preprocessType";
+		OutStr +="Empty entry: preprocessType";
 		OutStr += "\n";
 	}
 	else
@@ -539,12 +546,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hPreprocess.FirstChild("preprocessKernelSize").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: preprocessKernelSize";
+		OutStr +="No entry: preprocessKernelSize";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: preprocessKernelSize";
+		OutStr += "Empty entry: preprocessKernelSize";
 		OutStr += "\n";
 	}
 	else
@@ -558,7 +565,7 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hRoot.FirstChild("parameters").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: parameters section";
+		OutStr += "No entry: parameters section";
 		OutStr += "\n";
 	}
 	hParameters = TiXmlHandle(pElem);
@@ -567,12 +574,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayResult").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: display result";
+		OutStr += "No entry: display result";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: display result";
+		OutStr +="Empty entry: display result";
 		OutStr += "\n";
 	}
 	else
@@ -589,12 +596,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displaySmallImage").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: display Small Image";
+		OutStr +="No entry: display Small Image";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: display Small Image";
+		OutStr +="Empty entry: display Small Image";
 		OutStr += "\n";
 	}
 	else
@@ -611,12 +618,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("tileShape").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry:tileShape";
+		OutStr +="No entry:tileShape";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: tileShape";
+		OutStr +="Empty entry: tileShape";
 		OutStr += "\n";
 	}
 	else
@@ -628,12 +635,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("maxTileX").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: maxTileX";
+		OutStr +="No entry: maxTileX";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: maxTileX";
+		OutStr +="Empty entry: maxTileX";
 		OutStr += "\n";
 	}
 	else
@@ -645,12 +652,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("maxTileY").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: MaxTileY";
+		OutStr +="No entry: MaxTileY";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: MaxTileY";
+		OutStr +="Empty entry: MaxTileY";
 		OutStr += "\n";
 	}
 	else
@@ -662,12 +669,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("shiftTileX").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: shiftTileX";
+		OutStr +="No entry: shiftTileX";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: shiftTileX";
+		OutStr +="Empty entry: shiftTileX";
 		OutStr += "\n";
 	}
 	else
@@ -679,12 +686,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("shiftTileY").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: shiftTileY";
+		OutStr +="No entry: shiftTileY";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: shiftTileY";
+		OutStr +="Empty entry: shiftTileY";
 		OutStr += "\n";
 	}
 	else
@@ -696,12 +703,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("offsetTileX").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: offsetTileX";
+		OutStr +="No entry: offsetTileX";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: offsetTileX";
+		OutStr +="Empty entry: offsetTileX";
 		OutStr += "\n";
 	}
 	else
@@ -713,12 +720,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("offsetTileY").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: offsetTileY";
+		OutStr +="No entry: offsetTileY";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: offsetTileY";
+		OutStr +="Empty entry: offsetTileY";
 		OutStr += "\n";
 	}
 	else
@@ -732,12 +739,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("showTiles").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: showTiles";
+		OutStr += "No entry: showTiles";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"No entry: showTiles";
+		OutStr +="No entry: showTiles";
 		OutStr += "\n";
 	}
 	else
@@ -754,12 +761,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("tileLineThickness").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: tileLineThickness";
+		OutStr +="No entry: tileLineThickness";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: tileLineThickness";
+		OutStr +="Empty entry: tileLineThickness";
 		OutStr += "\n";
 	}
 	else
@@ -772,12 +779,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("goThru").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: goThrou";
+		OutStr += "No entry: goThrou";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: goThrou";
+		OutStr +="Empty entry: goThrou";
 		OutStr += "\n";
 	}
 	else
@@ -794,12 +801,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useSecondImage").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: use second image";
+		OutStr += "No entry: use second image";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: use second image";
+		OutStr +="Empty entry: use second image";
 		OutStr += "\n";
 	}
 	else
@@ -816,12 +823,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("textOut").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: textOut";
+		OutStr += "No entry: textOut";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: textOut";
+		OutStr +="Empty entry: textOut";
 		OutStr += "\n";
 	}
 	else
@@ -838,12 +845,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("normalisation").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: normalisation";
+		OutStr += "No entry: normalisation";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: normalisation";
+		OutStr +="Empty entry: normalisation";
 		OutStr += "\n";
 	}
 	else
@@ -855,12 +862,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("binCount").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: binCount";
+		OutStr += "No entry: binCount";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: binCount";
+		OutStr +="Empty entry: binCount";
 		OutStr += "\n";
 	}
 	else
@@ -872,12 +879,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("minOfset").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: minOfset";
+		OutStr += "No entry: minOfset";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: minOfset";
+		OutStr +="Empty entry: minOfset";
 		OutStr += "\n";
 	}
 	else
@@ -889,12 +896,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("maxOfset").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: maxOfset";
+		OutStr += "No entry: maxOfset";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: maxOfset";
+		OutStr +="Empty entry: maxOfset";
 		OutStr += "\n";
 	}
 	else
@@ -906,12 +913,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useContrast").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: useContrast";
+		OutStr += "No entry: useContrast";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: useContrast";
+		OutStr +="Empty entry: useContrast";
 		OutStr += "\n";
 	}
 	else
@@ -928,12 +935,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useEnergy").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: useEnergy";
+		OutStr += "No entry: useEnergy";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: useEnergy";
+		OutStr +="Empty entry: useEnergy";
 		OutStr += "\n";
 	}
 	else
@@ -950,12 +957,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useHomogeneity").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: useHomogeneity";
+		OutStr += "No entry: useHomogeneity";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: useHomogeneity";
+		OutStr +="Empty entry: useHomogeneity";
 		OutStr += "\n";
 	}
 	else
@@ -972,12 +979,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useCorrelation").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: useCorrelation";
+		OutStr += "No entry: useCorrelation";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: useCorrelation";
+		OutStr +="Empty entry: useCorrelation";
 		OutStr += "\n";
 	}
 	else
@@ -994,12 +1001,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("minHit").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: minHit";
+		OutStr += "No entry: minHit";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: minHit";
+		OutStr +="Empty entry: minHit";
 		OutStr += "\n";
 	}
 	else
@@ -1011,12 +1018,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useMinMean").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: useMinMean";
+		OutStr += "No entry: useMinMean";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: useMinMean";
+		OutStr +="Empty entry: useMinMean";
 		OutStr += "\n";
 	}
 	else
@@ -1033,12 +1040,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("minMean").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: minMean";
+		OutStr += "No entry: minMean";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: minMean";
+		OutStr +="Empty entry: minMean";
 		OutStr += "\n";
 	}
 	else
@@ -1050,12 +1057,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("minNorm").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: minNorm";
+		OutStr += "No entry: minNorm";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: minNorm";
+		OutStr +="Empty entry: minNorm";
 		OutStr += "\n";
 	}
 	else
@@ -1067,12 +1074,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("maxNorm").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: maxNorm";
+		OutStr += "No entry: maxNorm";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: maxNorm";
+		OutStr +="Empty entry: maxNorm";
 		OutStr += "\n";
 	}
 	else
@@ -1084,12 +1091,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("minNormGlobal").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: minNormGlobal";
+		OutStr += "No entry: minNormGlobal";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: minNormGlobal";
+		OutStr +="Empty entry: minNormGlobal";
 		OutStr += "\n";
 	}
 	else
@@ -1101,12 +1108,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("maxNormGlobal").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: maxNormGlobal";
+		OutStr += "No entry: maxNormGlobal";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: maxNormGlobal";
+		OutStr +="Empty entry: maxNormGlobal";
 		OutStr += "\n";
 	}
 	else
@@ -1118,12 +1125,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("useFixtDispNorm").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: useFixtDispNorm";
+		OutStr += "No entry: useFixtDispNorm";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: useFixtDispNorm";
+		OutStr +="Empty entry: useFixtDispNorm";
 		OutStr += "\n";
 	}
 	else
@@ -1140,12 +1147,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMax").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: displayMax";
+		OutStr += "No entry: displayMax";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMax";
+		OutStr +="Empty entry: displayMax";
 		OutStr += "\n";
 	}
 	else
@@ -1157,12 +1164,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMin").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: displayMin";
+		OutStr += "No entry: displayMin";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMin";
+		OutStr +="Empty entry: displayMin";
 		OutStr += "\n";
 	}
 	else
@@ -1174,12 +1181,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMax2").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: displayMax2";
+		OutStr += "No entry: displayMax2";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMax2";
+		OutStr +="Empty entry: displayMax2";
 		OutStr += "\n";
 	}
 	else
@@ -1191,12 +1198,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMin2").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: displayMin2";
+		OutStr += "No entry: displayMin2";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMin2";
+		OutStr +="Empty entry: displayMin2";
 		OutStr += "\n";
 	}
 	else
@@ -1208,12 +1215,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMax3").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: displayMax3";
+		OutStr +="No entry: displayMax3";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMax3";
+		OutStr +="Empty entry: displayMax3";
 		OutStr += "\n";
 	}
 	else
@@ -1225,12 +1232,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMin3").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: displayMin3";
+		OutStr +="No entry: displayMin3";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMin3";
+		OutStr +="Empty entry: displayMin3";
 		OutStr += "\n";
 	}
 	else
@@ -1243,12 +1250,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMax4").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: displayMax4";
+		OutStr +="No entry: displayMax4";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMax4";
+		OutStr +="Empty entry: displayMax4";
 		OutStr += "\n";
 	}
 	else
@@ -1260,12 +1267,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("displayMin4").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: displayMin4";
+		OutStr +="No entry: displayMin4";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: displayMin4";
+		OutStr +="Empty entry: displayMin4";
 		OutStr += "\n";
 	}
 	else
@@ -1279,12 +1286,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("imposedLineThickness").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: iposedLineThickness";
+		OutStr += "No entry: iposedLineThickness";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr =+ "Empty entry: iposedLineThickness";
+		OutStr += "Empty entry: iposedLineThickness";
 		OutStr += "\n";
 	}
 	else
@@ -1296,12 +1303,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("lineLengthPropToConfidence").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: lineLength Prop To Confidence";
+		OutStr +="No entry: lineLength Prop To Confidence";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: line LengthProp To Confidence";
+		OutStr +="Empty entry: line LengthProp To Confidence";
 		OutStr += "\n";
 	}
 	else
@@ -1319,12 +1326,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("lineHalfLength").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: lineHalfLength";
+		OutStr += "No entry: lineHalfLength";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: lineHalfLength";
+		OutStr +="Empty entry: lineHalfLength";
 		OutStr += "\n";
 	}
 	else
@@ -1336,12 +1343,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("angleStep").Element();
 	if (!pElem)
 	{
-		OutStr =+ "No entry: angleStep";
+		OutStr += "No entry: angleStep";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: angleStep";
+		OutStr +="Empty entry: angleStep";
 		OutStr += "\n";
 	}
 	else
@@ -1353,12 +1360,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("treshold1").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: treshold1";
+		OutStr +="No entry: treshold1";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: treshold1";
+		OutStr +="Empty entry: treshold1";
 		OutStr += "\n";
 	}
 	else
@@ -1370,12 +1377,12 @@ int ProcessOptions::LoadParams(string XmlFileName)
 	pElem = hParameters.FirstChild("treshold2").Element();
 	if (!pElem)
 	{
-		OutStr = +"No entry: treshold2";
+		OutStr +="No entry: treshold2";
 		OutStr += "\n";
 	}
 	else if (!pElem->GetText())
 	{
-		OutStr = +"Empty entry: treshold2";
+		OutStr +="Empty entry: treshold2";
 		OutStr += "\n";
 	}
 	else
@@ -1384,6 +1391,7 @@ int ProcessOptions::LoadParams(string XmlFileName)
 		treshold2 = stof(ValStr);
 	}
 
+	OutStr += "\n";
 	cout << OutStr;
 	return 1;
 }

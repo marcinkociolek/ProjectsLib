@@ -113,6 +113,7 @@ public:
 	// functions
 	//void szaiba(void);
 	ProcessOptions();
+	void defaultOptions(void);
 	int LoadParams(string XmlFileName);
 	string ShowParams(void);
 
