@@ -66,6 +66,7 @@ public:
 	bool useSecondImage;
 
 	bool textOut;
+	bool imgOut;
 	int normalisation;
 
 	int binCount;

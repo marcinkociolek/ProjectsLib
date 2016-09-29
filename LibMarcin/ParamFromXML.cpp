@@ -76,6 +76,8 @@ void ProcessOptions::defaultOptions(void)
 	preprocessKernelSize = 3;
 
 	textOut = 0;
+	imgOut = 0;
+
 	normalisation = 0;
 
 	binCount = 16;
@@ -842,6 +844,28 @@ int ProcessOptions::LoadParams(string XmlFileName)
 			textOut = 0;
 	}
 
+	pElem = hParameters.FirstChild("imgOut").Element();
+	if (!pElem)
+	{
+		OutStr += "No entry: imgtOut";
+		OutStr += "\n";
+	}
+	else if (!pElem->GetText())
+	{
+		OutStr += "Empty entry: imgOut";
+		OutStr += "\n";
+	}
+	else
+	{
+		ValStr = pElem->GetText();
+		if (ValStr == "Y")
+		{
+			imgOut = 1;
+		}
+		else
+			imgOut = 0;
+	}
+
 	pElem = hParameters.FirstChild("normalisation").Element();
 	if (!pElem)
 	{
@@ -1536,6 +1560,13 @@ string ProcessOptions::ShowParams(void)
 
 	OutString += "Text out:\t";
 	if (textOut)
+		OutString += "Y";
+	else
+		OutString += "N";
+	OutString += "\n";
+
+	OutString += "Img out:\t";
+	if (imgOut)
 		OutString += "Y";
 	else
 		OutString += "N";
