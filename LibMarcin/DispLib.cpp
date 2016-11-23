@@ -41,7 +41,7 @@ Mat ShowImage16PseudoColor(Mat Im16, float minVal, float maxVal)
 			value = 255;
 		if (value < 0)
 			value = 0;
-		index = floor(value);
+        index = (char)floor(value);
 
 		*wImOut = colormapB[index];
 		wImOut++;
@@ -86,7 +86,7 @@ Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal)
 			value = 255;
 		if (value < 0)
 			value = 0;
-		index = floor(value);
+        index = (char)floor(value);
 
 		*wImOut = colormapB[index];
 		wImOut++;
