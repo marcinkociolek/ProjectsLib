@@ -528,8 +528,8 @@ Mat COMCardone4(Mat ImInFloat, int ofset, float angle, int binCount, float maxNo
 	wOriginImInF = (float*)ImInFloat.data;
 	wEndImInF = (float*)ImInFloat.data + maxXY;
 	//Second point coordinates
-	spX = (float)(ofset)*sin((angle)* PI / 180.0);
-	spY = (float)(ofset)*cos((angle)* PI / 180.0);
+	spX = (float)(ofset)*(float)sin((angle)* PI / 180.0);
+	spY = (float)(ofset)*(float)cos((angle)* PI / 180.0);
 	
 	spX0 = floor(spX);
 	spX1 = ceil(spX);

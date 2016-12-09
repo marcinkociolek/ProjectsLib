@@ -832,7 +832,7 @@ float MatFMeanAndStd(Mat ImIn, float *mean, float *stdDev)
 		sumDifSq += (*wImIn - meanD) * (*wImIn - meanD);
 		wImIn++;
 	}
-	float stdD = sqrt(sumDifSq / maxTileXY);
+	float stdD = (float)sqrt(sumDifSq / (double)maxTileXY);
 
 	*mean = (float)meanD;
 	*stdDev = (float)stdD;
@@ -884,7 +884,7 @@ int* MatFMeanAndStd(Mat ImIn, float *mean, float *stdDev, int *min, int *max)
 		sumDifSq += (*wImIn - meanD) * (*wImIn - meanD);
 		wImIn++;
 	}
-	float stdD = sqrt(sumDifSq / maxXY);
+	float stdD = (float)sqrt(sumDifSq / (double)maxXY);
 
 	*mean = (float)meanD;
 	*stdDev = (float)stdD;
