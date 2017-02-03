@@ -117,13 +117,19 @@ Mat ShowRegion(Mat ImReg)
 
     for (int i = 0; i < maxXY; i++)
     {
-        if(*wImReg)
+		int y = i / maxX;
+		int x = i % maxX;
+
+		if (y == 100 && x == 300)
+			int r = 5;
+
+		if(*wImReg)
         {
-            *wImOut = RegColorsB[(*wImReg%16)-1];
+            *wImOut = RegColorsB[(*wImReg-1)%16];
             wImOut++;
-            *wImOut = RegColorsG[(*wImReg%16)-1];
+            *wImOut = RegColorsG[(*wImReg-1)%16];
             wImOut++;
-            *wImOut = RegColorsR[(*wImReg%16)-1];
+            *wImOut = RegColorsR[(*wImReg-1)%16];
             wImOut++;
         }
         else
