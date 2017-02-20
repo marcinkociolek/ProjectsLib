@@ -30,4 +30,8 @@ int FindBestAngleMax(float *Feature, int size);
 float BestAngleQualityScoreMin(float *Feature, int size, int bestAngleIndex);
 float BestAngleQualityScoreMax(float *Feature, int size, int bestAngleIndex);
 float BestAngleQualityScore(float *Feature, int size, int bestAngleIndex);
+
+//---------------------------------------------------------------------------------------------
+Mat COMStd(Mat ImIn, Mat ROI, int ofset, int angleNr, unsigned short roiNr, bool symetricCom, int binCount, float maxNorm, float minNorm);
+
 #endif

@@ -1588,3 +1588,105 @@ float BestAngleQualityScore(float *Feature, int size, int bestAngleIndex)
 	return abs(bestAngleQuality / abs(max - min));
 }
 //-------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+Mat COMStd(Mat ImIn, Mat ROI, int ofset, int angleNr, unsigned short roiNr,bool symetricCom, int binCount, float maxNorm, float minNorm)
+{
+	int maxX = ImIn.cols;
+	int maxY = ImIn.rows;
+	int maxXY = maxX*maxY;
+
+	//int laticeX = (int)round((double)(ofset)*sin((double)(angle)* PI / 180.0));
+	//int laticeY = (int)round((double)(ofset)*cos((double)(angle)* PI / 180.0));
+
+	unsigned short *wImIn;
+	unsigned short *wRoi;
+	unsigned short *wOriginImIn;
+	unsigned short *wEndImIn;
+
+	unsigned short *wSP;
+	unsigned short *wSPRoi;
+
+
+	float gainCoef = (binCount - 1) / (maxNorm - minNorm);
+	float offsetCoef = gainCoef * minNorm;
+
+	Mat COM = Mat::zeros(binCount, binCount, CV_32S);
+
+	wImIn = (unsigned short*)ImIn.data;
+	wRoi = (unsigned short*)ROI.data;
+	wOriginImIn = (unsigned short*)ImIn.data;
+	wEndImIn = (unsigned short*)ImIn.data + maxXY;
+
+	switch (angleNr)
+	{
+	case 1:
+		wSP = wImIn - ofset * maxX + ofset;
+		wSPRoi = wRoi - ofset * maxX + ofset;
+		break;
+	case 2:
+		wSP = wImIn + ofset;
+		wSPRoi = wRoi + ofset;
+		break;
+	case 3:
+		wSP = wImIn + ofset * maxX + ofset;
+		wSPRoi = wRoi + ofset * maxX + ofset;
+		break;
+	default:
+		wSP = wImIn - ofset * maxX;
+		wSPRoi = wRoi - ofset * maxX;
+		break;
+	}//wSP = wImInF + laticeY  * maxX + laticeX;
+
+	for (int i = 0; i < maxXY; i++)
+	{
+		int x = i % maxX;
+		int y = i / maxX;
+
+		bool pointersInRange = 1;
+		if (angleNr <= 1 || y<ofset)
+			pointersInRange = 0;
+		if (angleNr > 0 || x + ofset >= maxX)
+			pointersInRange = 0;
+		if (angleNr > 2 || y + ofset >= maxY)
+			pointersInRange = 0;
+
+		if (*wRoi != roiNr)
+			pointersInRange = 0;
+		if (*wSPRoi != roiNr)
+			pointersInRange = 0;
+		
+		if (wSP < wOriginImIn)
+			pointersInRange = 0;
+		if (wSP > wEndImIn)
+			pointersInRange = 0;
+
+		if (pointersInRange)
+		{
+
+			double valFP = (double)*wImIn;
+			int comX = (int)(round(valFP * gainCoef - offsetCoef));
+			if (comX >= binCount)
+				comX = binCount - 1;
+			if (comX < 0)
+				comX = 0;
+			double valSP = *wSP;
+			int comY = (int)(round(valSP * gainCoef - offsetCoef));
+			if (comY >= binCount)
+				comY = binCount - 1;
+			if (comY < 0)
+				comY = 0;
+
+			COM.at<int>(comY, comX) += 1;
+			if (symetricCom)
+				COM.at<int>(comX, comY) += 1;
+		}
+		wSP++;
+		wImIn++;
+		wSPRoi++;
+		wRoi++;
+	}
+
+	return COM;
+}
