@@ -1645,11 +1645,11 @@ Mat COMStd(Mat ImIn, Mat ROI, int ofset, int angleNr, unsigned short roiNr,bool 
 		int y = i / maxX;
 
 		bool pointersInRange = 1;
-		if (angleNr <= 1 || y<ofset)
+		if (angleNr <= 1 && y<ofset)
 			pointersInRange = 0;
-		if (angleNr > 0 || x + ofset >= maxX)
+		if (angleNr > 0 && x + ofset >= maxX)
 			pointersInRange = 0;
-		if (angleNr > 2 || y + ofset >= maxY)
+		if (angleNr > 2 && y + ofset >= maxY)
 			pointersInRange = 0;
 
 		if (*wRoi != roiNr)
