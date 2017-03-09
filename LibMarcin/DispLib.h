@@ -162,7 +162,7 @@ void ShowImageCombination(bool show, std::string WinName, cv::Mat Im1, cv::Mat I
 void ShowImageRegionCombination(bool show, bool showContour, std::string WinName, cv::Mat Im1, cv::Mat Im2, cv::Mat Mask1, cv::Mat Mask2);
 void ShowHLinesOnImage(bool show, std::string WinName, cv::Mat Im1, cv::Mat Im2, int lineU, int lineCU, int lineCL, int lineL);
 cv::Mat GetContour5(cv::Mat ImR);
-void GetContour9(cv::Mat ImR);
+//void GetContour9(cv::Mat ImR);
 
 
 

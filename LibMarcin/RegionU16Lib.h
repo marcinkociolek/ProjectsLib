@@ -26,7 +26,7 @@ void RegionErosion5(Mat ImR);
 void RegionErosion9(Mat ImR);
 void RegionErosion13(Mat ImR);
 
-Mat GetContour5(Mat ImR);
+//Mat GetContour5(Mat ImR);
 
 
 //-----------------------------------------------------------------------------

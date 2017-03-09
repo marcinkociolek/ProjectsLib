@@ -1164,6 +1164,7 @@ void RegionErosionHorisontal13(Mat ImR)
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+/*
 Mat GetContour5(Mat ImR)
 {
     //modyfied version works on whole image
@@ -1285,6 +1286,7 @@ void GetContour9(Mat ImR)
     }
     delete[] ImRTemp;
 }
+*/
 //---------------------------------------------------------------------------
 int CenterOfMas(Mat ImReg, int *centerX, int *centerY)
 {
