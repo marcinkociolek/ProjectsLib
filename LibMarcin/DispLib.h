@@ -4,9 +4,10 @@
 #define DispLibH
 
 #include <opencv2/core/core.hpp>
+#include <string>
 
 
-using namespace cv;
+//using namespace cv;
 
 //---------------------------------------------------------------------------
 //const unsigned char outOfImageRed = 128;
@@ -146,16 +147,25 @@ const unsigned char colormapB[256] =
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 //---------------------------------------------------------------------------
-Mat ShowImage16PseudoColor(Mat Im16, float minVal, float maxVal);
-Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal);
+cv::Mat ShowImage16PseudoColor(cv::Mat Im16, float minVal, float maxVal);
+cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, float minVal, float maxVal);
 
 
-Mat ShowRegion(Mat ImReg);
+cv::Mat ShowRegion(cv::Mat ImReg);
 
-Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB);
-Mat ShowSolidRegionOnImageInBlack(Mat ImReg, Mat ImRGB);
+cv::Mat ShowSolidRegionOnImage(cv::Mat ImReg, cv::Mat ImRGB);
+cv::Mat ShowSolidRegionOnImageInBlack(cv::Mat ImReg, cv::Mat ImRGB);
 
-int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel);
+int MaskImageInPseudocolors(cv::Mat ImIn, cv::Mat Roi, unsigned char grayLevel);
+
+void ShowImageCombination(bool show, std::string WinName, cv::Mat Im1, cv::Mat Im2);
+void ShowImageRegionCombination(bool show, bool showContour, std::string WinName, cv::Mat Im1, cv::Mat Im2, cv::Mat Mask1, cv::Mat Mask2);
+void ShowHLinesOnImage(bool show, std::string WinName, cv::Mat Im1, cv::Mat Im2, int lineU, int lineCU, int lineCL, int lineL);
+cv::Mat GetContour5(cv::Mat ImR);
+void GetContour9(cv::Mat ImR);
+
+
+
 /*
 
 void MakeWhiteBitmap(Graphics::TBitmap *Bitmap);

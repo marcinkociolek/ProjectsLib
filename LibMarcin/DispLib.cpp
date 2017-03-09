@@ -2,6 +2,12 @@
 //#include <math.h>
 #include "DispLib.h"
 
+//#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/imgproc/imgproc.hpp>
+//#include <string>
+
+using namespace cv;
 //---------------------------------------------------------------------------
 
 //#pragma package(smart_init)
@@ -258,6 +264,202 @@ int MaskImageInPseudocolors(Mat ImIn, Mat Roi, unsigned char grayLevel)
     return 1;
 }
 //---------------------------------------------------------------------------
+void ShowImageCombination(bool show, string WinName, Mat Im1, Mat Im2)
+{
+    if(!show)
+        return;
+    int imMaxX, imMaxY;
+    imMaxX = Im1.cols;
+    if (imMaxX < Im2.cols)
+        imMaxX = Im2.cols;
+    imMaxY = Im1.rows;
+    if (imMaxY < Im2.rows)
+        imMaxY = Im2.rows;
+    Mat Im = Mat::zeros(Size(imMaxX *2,imMaxY) ,Im1.type());
+    Im1.copyTo(Im(Rect(0, 0, Im1.cols , Im1.rows)));
+    Im2.copyTo(Im(Rect(imMaxX, 0, Im2.cols , Im2.rows)));
+    imshow(WinName.c_str(), Im);
+    Im.release();
+
+}
+//--------------------------------------------------------------------------------------------------
+void ShowImageRegionCombination(bool show, bool showContour, string WinName, Mat Im1, Mat Im2, Mat Mask1, Mat Mask2)
+{
+    if(!show)
+        return;
+    int imMaxX, imMaxY;
+    imMaxX = Im1.cols;
+    if (imMaxX < Im2.cols)
+        imMaxX = Im2.cols;
+    imMaxY = Im1.rows;
+    if (imMaxY < Im2.rows)
+        imMaxY = Im2.rows;
+    Mat Im = Mat::zeros(Size(imMaxX *2,imMaxY) ,Im1.type());
+    Im1.copyTo(Im(Rect(0, 0, Im1.cols , Im1.rows)));
+    Im2.copyTo(Im(Rect(imMaxX, 0, Im2.cols , Im2.rows)));
+
+    Mat Mask = Mat::zeros(Size(imMaxX *2,imMaxY) ,Mask1.type());
+    Mask1.copyTo(Mask(Rect(0, 0, Im1.cols , Im1.rows)));
+    Mask2.copyTo(Mask(Rect(imMaxX, 0, Im2.cols , Im2.rows)));
+
+    if(showContour)
+    {
+        Mask = GetContour5(Mask);
+    }
+    imshow(WinName.c_str(), ShowSolidRegionOnImage(Mask,Im));
+    Mask.release();
+    Im.release();
+}
+
+//--------------------------------------------------------------------------------------------------
+void ShowHLinesOnImage(bool show, string WinName, Mat Im1, Mat Im2, int lineU, int lineCU, int lineCL, int lineL)
+{
+    if(!show)
+        return;
+    int imMaxX = Im1.cols;
+    if(imMaxX < Im2.cols)
+        imMaxX = Im2.cols;
+    int imMaxY = Im1.rows;
+    if(imMaxY < Im2.rows)
+        imMaxY = Im2.rows;
+
+    Mat ImShow = Mat::zeros(Size(imMaxX *2,imMaxY) ,Im1.type());
+    Im1.copyTo(ImShow(Rect(0, 0, Im1.cols, Im1.rows)));
+    Im2.copyTo(ImShow(Rect(imMaxX, 0, Im2.cols, Im2.rows)));
+
+    //Mat ImShow;
+    //Im.copyTo(ImShow);
+    line(ImShow,Point(0,lineU),Point(ImShow.cols,lineU),CV_RGB(255,0,0),1);
+    line(ImShow,Point(0,lineCU),Point(ImShow.cols,lineCU),CV_RGB(255,0,0),1);
+    line(ImShow,Point(0,lineCL),Point(ImShow.cols,lineCL),CV_RGB(0,255,0),1);
+    line(ImShow,Point(0,lineL),Point(ImShow.cols,lineL),CV_RGB(0,255,0),1);
+
+
+    imshow(WinName.c_str(), ImShow);
+    ImShow.release();
+}
+//------------------------------------------------------------------------------
+Mat GetContour5(Mat ImR)
+{
+    //modyfied version works on whole image
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+
+    int maxXa = maxX - 1;
+    int maxYa = maxY - 1;
+
+    Mat ImOut = Mat::zeros(maxY,maxX, CV_16U);
+
+    unsigned short *wImOut = (unsigned short*)ImOut.data;
+
+
+
+    unsigned short *wImR0 = (unsigned short*)ImR.data;
+    unsigned short *wImR1 = wImR0 - maxX;
+    unsigned short *wImR2 = wImR0 - 1;
+    unsigned short *wImR3 = wImR0 + 1;
+    unsigned short *wImR4 = wImR0 + maxX;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        unsigned int product = 1;
+        if (y > 0 && *wImR0 != *wImR1)
+        {
+            product *= 0;
+        }
+        if (x > 0 && *wImR0 != *wImR2)
+        {
+            product *= 0;
+        }
+        if (x < maxXa && *wImR0 != *wImR3)
+        {
+            product *= 0;
+        }
+        if (y < maxYa && *wImR0 != *wImR4)
+        {
+            product *= 0;
+        }
+        if(!product && *wImR0)
+            *wImOut = *wImR0;
+        else
+            *wImOut = 0;
+
+        wImOut++;
+
+        wImR0++;
+        wImR1++;
+        wImR2++;
+        wImR3++;
+        wImR4++;
+    }
+    return ImOut;
+}
+//------------------------------------------------------------------------------
+void GetContour9(Mat ImR)
+{
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+
+    int maxXa = maxX - 1;
+    int maxYa = maxY - 1;
+
+    unsigned short *ImRTemp = new unsigned short[maxXY];
+
+    unsigned short *wImRTemp = ImRTemp;
+
+    unsigned short *wImR0 = (unsigned short*)ImR.data;
+    unsigned short *wImR1 = wImR0 - maxX - 1;
+    unsigned short *wImR2 = wImR0 - maxX;
+    unsigned short *wImR3 = wImR0 - maxX + 1;
+    unsigned short *wImR4 = wImR0 - 1;
+    unsigned short *wImR5 = wImR0 + 1;
+    unsigned short *wImR6 = wImR0 + maxX - 1;
+    unsigned short *wImR7 = wImR0 + maxX;
+    unsigned short *wImR8 = wImR0 + maxX + 1;
+
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+        if (x > 0 && x < maxXa && y > 0 && y < maxYa)
+        {
+            if(*wImR0 && !(*wImR1 *  *wImR2 * *wImR3  * *wImR4
+                      * *wImR5 *  *wImR6 * *wImR7  * *wImR8))
+                *wImRTemp = *wImR0;
+            else
+                *wImRTemp = 0;
+        }
+        else
+            *wImRTemp = 0;
+
+        wImRTemp++;
+
+        wImR0++;
+        wImR1++;
+        wImR2++;
+        wImR3++;
+        wImR4++;
+        wImR5++;
+        wImR6++;
+        wImR7++;
+        wImR8++;
+    }
+    wImRTemp = ImRTemp;
+    wImR0 = (unsigned short*)ImR.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+        *wImR0 = *wImRTemp;
+        wImRTemp++;
+        wImR0++;
+    }
+    delete[] ImRTemp;
+}
 
 /*
 //---------------------------------------------------------------------------
