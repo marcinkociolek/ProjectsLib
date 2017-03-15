@@ -1379,6 +1379,7 @@ void RegionErosionHorisontal13(Mat ImR)
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+/*
 Mat GetContour5(Mat ImR)
 {
     //modyfied version works on whole image
@@ -1502,3 +1503,4 @@ void GetContour9(Mat ImR)
 }
 
 
+*/
