@@ -2,14 +2,15 @@
 #define TILEPARAMS_H
 
 #include <iostream>
-
+#include <vector>
 class TileParams
 {
 public:
     int tileY;
     int tileX;
     int paramsCount;
-    float *Params;
+    //double *Params;
+    std::vector<double> Params;
     TileParams();
     void FromString(std::string);
 };
