@@ -1257,9 +1257,11 @@ void RegionErosion13(Mat ImR)
     delete[] ImRTemp;
 }
 //------------------------------------------------------------------------------//---------------------------------------------------------------------------
+/*
 void RegionErosionHorisontal13(Mat ImR)
 {
-// renewed version erodes whole imaga
+
+    // renewed version erodes whole imaga
     int maxX = ImR.cols;
     int maxY = ImR.rows;
     int maxXY = maxX * maxY;
@@ -1377,6 +1379,252 @@ void RegionErosionHorisontal13(Mat ImR)
     }
     delete[] ImRTemp;
 }
+
+//------------------------------------------------------------------------------
+*/
+void RegionDilationH13(Mat ImR)
+{
+// renewed version dilates whole imaga
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+    int maxX1 = maxX - 1;
+    int maxX2 = maxX - 2;
+    int maxX3 = maxX - 3;
+    int maxX4 = maxX - 4;
+    int maxX5 = maxX - 5;
+    int maxX6 = maxX - 6;
+
+
+    unsigned short *ImRTemp = new unsigned short[maxXY];
+
+    unsigned short *wImRTemp = ImRTemp;
+
+    unsigned short *wImR0  = (unsigned short*)ImR.data;
+    unsigned short *wImR1  = wImR0 - 6;
+    unsigned short *wImR2  = wImR0 - 5;
+    unsigned short *wImR3  = wImR0 - 4;
+    unsigned short *wImR4  = wImR0 - 3;
+    unsigned short *wImR5  = wImR0 - 2;
+    unsigned short *wImR6  = wImR0 - 1;
+    unsigned short *wImR7  = wImR0 + 1;
+    unsigned short *wImR8  = wImR0 + 2;
+    unsigned short *wImR9  = wImR0 + 3;
+    unsigned short *wImR10 = wImR0 + 4;
+    unsigned short *wImR11 = wImR0 + 5;
+    unsigned short *wImR12 = wImR0 + 6;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        //int y = i / maxX;
+
+        unsigned int sum = (unsigned int)*wImR0;
+
+        if (x > 5)
+        {
+            sum += (unsigned int)*wImR1;
+        }
+        if (x > 4)
+        {
+            sum += (unsigned int)*wImR2;
+        }
+        if (x > 3)
+        {
+            sum += (unsigned int)*wImR3;
+        }
+        if (x > 2)
+        {
+            sum += (unsigned int)*wImR4;
+        }
+        if (x > 1)
+        {
+            sum += (unsigned int)*wImR5;
+        }
+        if (x > 0)
+        {
+            sum += (unsigned int)*wImR6;
+        }
+
+        if (x < maxX1)
+        {
+            sum += (unsigned int)*wImR7;
+        }
+        if (x < maxX2)
+        {
+            sum += (unsigned int)*wImR8;
+        }
+        if (x < maxX3)
+        {
+            sum += (unsigned int)*wImR9;
+        }
+        if (x < maxX4)
+        {
+            sum += (unsigned int)*wImR10;
+        }
+        if (x < maxX5)
+        {
+            sum += (unsigned int)*wImR11;
+        }
+        if (x < maxX6)
+        {
+            sum += (unsigned int)*wImR12;
+        }
+
+        if(sum)
+            *wImRTemp = 1;
+        else
+            *wImRTemp = 0;
+
+
+        wImRTemp++;
+
+        wImR0++;
+        wImR1++;
+        wImR2++;
+        wImR3++;
+        wImR4++;
+        wImR5++;
+        wImR6++;
+        wImR7++;
+        wImR8++;
+        wImR9++;
+        wImR10++;
+        wImR11++;
+        wImR12++;
+    }
+    wImRTemp = ImRTemp;
+    wImR0 = (unsigned short*)ImR.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+        *wImR0 = *wImRTemp;
+        wImRTemp++;
+        wImR0++;
+    }
+    delete[] ImRTemp;
+}
+//------------------------------------------------------------------------------
+void RegionErosionH13(Mat ImR)
+{
+// renewed version dilates whole imaga
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+    int maxX1 = maxX - 1;
+    int maxX2 = maxX - 2;
+    int maxX3 = maxX - 3;
+    int maxX4 = maxX - 4;
+    int maxX5 = maxX - 5;
+    int maxX6 = maxX - 6;
+
+
+    unsigned short *ImRTemp = new unsigned short[maxXY];
+
+    unsigned short *wImRTemp = ImRTemp;
+
+    unsigned short *wImR0  = (unsigned short*)ImR.data;
+    unsigned short *wImR1  = wImR0 - 6;
+    unsigned short *wImR2  = wImR0 - 5;
+    unsigned short *wImR3  = wImR0 - 4;
+    unsigned short *wImR4  = wImR0 - 3;
+    unsigned short *wImR5  = wImR0 - 2;
+    unsigned short *wImR6  = wImR0 - 1;
+    unsigned short *wImR7  = wImR0 + 1;
+    unsigned short *wImR8  = wImR0 + 2;
+    unsigned short *wImR9  = wImR0 + 3;
+    unsigned short *wImR10 = wImR0 + 4;
+    unsigned short *wImR11 = wImR0 + 5;
+    unsigned short *wImR12 = wImR0 + 6;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        //int y = i / maxX;
+
+        unsigned int product = (unsigned int)*wImR0;
+        if (x > 5)
+        {
+            product *= (unsigned int)*wImR1;
+        }
+        if (x > 4)
+        {
+            product *= (unsigned int)*wImR2;
+        }
+        if (x > 3)
+        {
+            product *= (unsigned int)*wImR3;
+        }
+        if (x > 2)
+        {
+            product *= (unsigned int)*wImR4;
+        }
+        if (x > 1)
+        {
+            product *= (unsigned int)*wImR5;
+        }
+        if (x > 0)
+        {
+            product *= (unsigned int)*wImR6;
+        }
+
+        if (x < maxX1)
+        {
+            product *= (unsigned int)*wImR7;
+        }
+        if (x < maxX2)
+        {
+            product *= (unsigned int)*wImR8;
+        }
+        if (x < maxX3)
+        {
+            product *= (unsigned int)*wImR9;
+        }
+        if (x < maxX4)
+        {
+            product *= (unsigned int)*wImR10;
+        }
+        if (x < maxX5)
+        {
+            product *= (unsigned int)*wImR11;
+        }
+        if (x < maxX6)
+        {
+            product *= (unsigned int)*wImR12;
+        }
+
+        if(product)
+            *wImRTemp = 1;
+        else
+            *wImRTemp = 0;
+
+
+        wImRTemp++;
+
+        wImR0++;
+        wImR1++;
+        wImR2++;
+        wImR3++;
+        wImR4++;
+        wImR5++;
+        wImR6++;
+        wImR7++;
+        wImR8++;
+        wImR9++;
+        wImR10++;
+        wImR11++;
+        wImR12++;
+    }
+    wImRTemp = ImRTemp;
+    wImR0 = (unsigned short*)ImR.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+        *wImR0 = *wImRTemp;
+        wImRTemp++;
+        wImR0++;
+    }
+    delete[] ImRTemp;
+}
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 /*
