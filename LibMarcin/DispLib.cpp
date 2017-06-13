@@ -339,6 +339,91 @@ void ShowHLinesOnImage(bool show, string WinName, Mat Im1, Mat Im2, int lineU, i
     ImShow.release();
 }
 //------------------------------------------------------------------------------
+void ShowRegBetweenHLinesOnImage(bool show, string WinName, Mat Im1, Mat Im2, Mat Mask1, Mat Mask2, int lines)
+{
+    if(!show)
+        return;
+    int imMaxX = Im1.cols;
+    if(imMaxX < Im2.cols)
+        imMaxX = Im2.cols;
+    int imMaxY = Im1.rows;
+    if(imMaxY < Im2.rows)
+        imMaxY = Im2.rows;
+
+    Mat ImShow = Mat::zeros(Size(imMaxX *2,imMaxY) ,Im1.type());
+    Im1.copyTo(ImShow(Rect(0, 0, Im1.cols, Im1.rows)));
+    Im2.copyTo(ImShow(Rect(imMaxX, 0, Im2.cols, Im2.rows)));
+
+    Mat Mask1Temp;
+    Mask1.copyTo(Mask1Temp);
+    unsigned short * wMask = (unsigned short *)Mask1Temp.data;
+    for (int y = 0; y < Mask1Temp.rows; y++)
+        for (int x = 0; x < Mask1Temp.cols; x++)
+        {
+            if (*wMask)
+            {
+                if(y < lines)
+                {
+                    *wMask = 1;
+                }
+                else if (y >= (Mask1Temp.rows - lines))
+                {
+                    *wMask = 2;
+                }
+                else
+                    *wMask = 0;
+            }
+            wMask++;
+        }
+
+    Mat Mask2Temp;
+    Mask2.copyTo(Mask2Temp);
+    wMask = (unsigned short *)Mask2Temp.data;
+    for (int y = 0; y < Mask2Temp.rows; y++)
+        for (int x = 0; x < Mask2Temp.cols; x++)
+        {
+            if (*wMask)
+            {
+                if(y < lines)
+                {
+                    *wMask = 1;
+                }
+                else if (y >= (Mask2Temp.rows - lines))
+                {
+                    *wMask = 2;
+                }
+                else
+                    *wMask = 0;
+            }
+
+            wMask++;
+        }
+
+
+
+    //Mat ImShow;
+    //Im.copyTo(ImShow);
+//    line(ImShow,Point(0,lineU),Point(ImShow.cols,lineU),CV_RGB(255,0,0),1);
+//    line(ImShow,Point(0,lineCU),Point(ImShow.cols,lineCU),CV_RGB(255,0,0),1);
+//    line(ImShow,Point(0,lineCL),Point(ImShow.cols,lineCL),CV_RGB(0,255,0),1);
+//    line(ImShow,Point(0,lineL),Point(ImShow.cols,lineL),CV_RGB(0,255,0),1);
+
+    Mat Mask = Mat::zeros(Size(imMaxX *2,imMaxY) ,Mask1.type());
+    Mask1Temp.copyTo(Mask(Rect(0, 0, Im1.cols , Im1.rows)));
+    Mask2Temp.copyTo(Mask(Rect(imMaxX, 0, Im2.cols , Im2.rows)));
+
+    bool showContour = false;
+    if(showContour)
+    {
+        Mask = GetContour5(Mask);
+    }
+    imshow(WinName.c_str(), ShowRegion(Mask));
+    Mask1Temp.release();
+    Mask2Temp.release();
+    Mask.release();
+    ImShow.release();
+}
+//--------------------------------------------------------------------------------------------------
 Mat GetContour5(Mat ImR)
 {
     //modyfied version works on whole image
