@@ -1210,6 +1210,96 @@ Mat COMHorizontalRoi(Mat ImInFloat, Mat Roi, int ofset, int binCount, float maxN
 	return COM;
 }
 //-------------------------------------------------------------------------------------------------------------
+Mat COMVerticalRoi(Mat ImInFloat, Mat Roi, int ofset, int binCount, float maxNorm, float minNorm, unsigned short roiNr)
+{
+	int maxX = ImInFloat.cols;
+	int maxY = ImInFloat.rows;
+	int maxXY = maxX*maxY;
+
+	if (!maxXY)
+		return Mat::ones(1, 1, CV_32S)*(-1);
+	if (ImInFloat.cols != Roi.cols || ImInFloat.rows != Roi.rows)
+		return Mat::ones(1, 1, CV_32S)*(-2);;
+	if (ImInFloat.depth() != CV_32F)
+		return Mat::ones(1, 1, CV_32S)*(-3);;
+	if (Roi.depth() != CV_16U)
+		Roi.convertTo(Roi, CV_16U);
+
+
+	float gainCoef = (binCount - 1) / (maxNorm - minNorm);
+	float offsetCoef = gainCoef * minNorm;
+
+
+
+	float *wImInF;							//first piont pointer
+	float *wImInFSP;						//second piont pointer
+
+	unsigned short *wRoi;					//first point Roi pointer
+	unsigned short *wRoiSP;					//second point Roi pointer
+
+	float *wOriginImInF;
+	float *wEndImInF;
+
+	wImInF = (float*)ImInFloat.data;
+	wImInFSP = wImInF + maxX * ofset;
+
+	wRoi = (unsigned short*)Roi.data;
+	wRoiSP = wRoi + maxX * ofset;
+
+	//wOriginImInF = (float*)ImInFloat.data;
+	wEndImInF = (float*)ImInFloat.data + maxXY;
+
+
+	Mat COM = Mat::zeros(binCount, binCount, CV_32S);
+
+	for (int i = 0; i < maxXY; i++)
+	{
+		int x = i % maxX;
+		int y = i / maxX;
+
+		bool pointersInRange = 1;
+
+		if (wImInFSP > wEndImInF)
+			pointersInRange = 0;
+
+		if (pointersInRange)
+		{
+			if (*wRoi != roiNr)
+				pointersInRange = 0;
+			if (*wRoiSP != roiNr)
+				pointersInRange = 0;
+		}
+
+		if (pointersInRange)
+		{
+			//float valSP = *wImInFSP;
+			//float valFP = *wImInF;
+
+			int comX = (int)(round(*wImInF * gainCoef - offsetCoef));
+			if (comX >= binCount)
+				comX = binCount - 1;
+			if (comX < 0)
+				comX = 0;
+			int comY = (int)(round(*wImInFSP * gainCoef - offsetCoef));
+			if (comY >= binCount)
+				comY = binCount - 1;
+			if (comY < 0)
+				comY = 0;
+
+			COM.at<int>(comY, comX)++;
+			COM.at<int>(comX, comY)++;
+		}
+
+		wImInFSP++;
+		wImInF++;
+
+		wRoi++;
+		wRoiSP++;
+	}
+
+	return COM;
+}
+//-------------------------------------------------------------------------------------------------------------
 Mat COMLatice4(Mat ImInFloat, int ofset, float angle, int binCount, float maxNorm, float minNorm, int interpolation)
 {
 	int maxX = ImInFloat.cols;
@@ -1326,6 +1416,7 @@ Mat COMLatice4(Mat ImInFloat, int ofset, float angle, int binCount, float maxNor
 
 	return COM;
 }
+
 //-------------------------------------------------------------------------------------------------------------
 void COMParams(Mat COM, float *contrastOut, float *energyOut, float *homogenityOut, float *correlationOut)
 {
