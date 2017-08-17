@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <boost/filesystem.hpp>
+
 class TileParams
 {
 public:
@@ -13,6 +15,26 @@ public:
     std::vector<double> Params;
     TileParams();
     void FromString(std::string);
+};
+
+
+class FileParams
+{
+public:
+    boost::filesystem::path ImFileName;
+    int tileShape;
+    int maxTileX;
+    int maxTileY;
+    int shiftTileX;
+    int shiftTileY;
+    int offsetTileX;
+    int offsetTileY;
+    int ValueCount;
+    std::vector<std::string> NamesVector;
+    std::vector<TileParams> ParamsVect;
+
+    FileParams();
+
 };
 
 #endif // TILEPARAMS_H

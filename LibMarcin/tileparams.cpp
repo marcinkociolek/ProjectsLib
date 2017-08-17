@@ -42,3 +42,22 @@ void TileParams::FromString(std::string InStr)
 
 
 }
+
+
+ FileParams::FileParams()
+ {
+     ImFileName = "";
+     tileShape = -1;
+     maxTileX = -1;
+     maxTileY = -1;
+     shiftTileX = -1;
+     shiftTileY = -1;
+     offsetTileX = -1;
+     offsetTileY = -1;
+     ValueCount = 0;
+     NamesVector.empty();
+     ParamsVect.empty();
+
+
+
+ }
