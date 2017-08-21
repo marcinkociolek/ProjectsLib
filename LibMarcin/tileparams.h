@@ -11,9 +11,10 @@ public:
     int tileY;
     int tileX;
     int paramsCount;
-    //double *Params;
-    std::vector<double> Params;
+    std::vector<float>Params;
+
     TileParams();
+    ~TileParams();
     void FromString(std::string);
 };
 
@@ -34,6 +35,7 @@ public:
     std::vector<TileParams> ParamsVect;
 
     FileParams();
+    ~FileParams();
 
 };
 
