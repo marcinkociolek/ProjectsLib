@@ -7,6 +7,7 @@
 using namespace std;
 
 string ItoStrLZ(int nr, int leadZerosCount);
+string ItoStrLZPlusSign(int nr, int leadZerosCount);
 string ItoStrLS(int nr, int leadSpaceCount);
 
 #endif
