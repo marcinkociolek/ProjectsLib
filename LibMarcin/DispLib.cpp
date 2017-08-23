@@ -14,6 +14,52 @@ using namespace cv;
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
+Mat ShowImage8PseudoColor(Mat Im8, float minVal, float maxVal)
+{
+    int maxX = Im8.cols;
+    int maxY = Im8.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+
+    if(!maxXY)
+        return ImOut;
+
+    ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
+
+    float difference = maxVal - minVal;
+    if(difference == 0)
+        difference = 1;
+    float gain = 255/difference;
+    float offset = gain * minVal;
+
+    float value;
+    unsigned char index;
+
+    unsigned char *wIm8 = (unsigned char *)Im8.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+
+        value = (float)(*wIm8) * gain - offset;
+        if (value > 255)
+            value = 255;
+        if (value < 0)
+            value = 0;
+        index = (char)floor(value);
+
+        *wImOut = colormapB[index];
+        wImOut++;
+        *wImOut = colormapG[index];
+        wImOut++;
+        *wImOut = colormapR[index];
+        wImOut++;
+        wIm8++;
+    }
+    return ImOut;
+}
+//---------------------------------------------------------------------------
 Mat ShowImage16PseudoColor(Mat Im16, float minVal, float maxVal)
 {
     int maxX = Im16.cols;
@@ -278,6 +324,19 @@ void ShowImageCombination(bool show, string WinName, Mat Im1, Mat Im2)
     Mat Im = Mat::zeros(Size(imMaxX *2,imMaxY) ,Im1.type());
     Im1.copyTo(Im(Rect(0, 0, Im1.cols , Im1.rows)));
     Im2.copyTo(Im(Rect(imMaxX, 0, Im2.cols , Im2.rows)));
+    imshow(WinName.c_str(), Im);
+    Im.release();
+
+}
+//---------------------------------------------------------------------------
+void DispImage8PC(bool show, string WinName, Mat Im1)
+{
+    if(!show)
+        return;
+    int imMaxX, imMaxY;
+    imMaxX = Im1.cols;
+    Mat Im;
+    Im1.copyTo(Im);
     imshow(WinName.c_str(), Im);
     Im.release();
 

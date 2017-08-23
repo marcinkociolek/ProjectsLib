@@ -147,6 +147,7 @@ const unsigned char colormapB[256] =
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 //---------------------------------------------------------------------------
+cv::Mat ShowImage8PseudoColor(cv::Mat Im8, float minVal, float maxVal);
 cv::Mat ShowImage16PseudoColor(cv::Mat Im16, float minVal, float maxVal);
 cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, float minVal, float maxVal);
 
@@ -159,6 +160,7 @@ cv::Mat ShowSolidRegionOnImageInBlack(cv::Mat ImReg, cv::Mat ImRGB);
 int MaskImageInPseudocolors(cv::Mat ImIn, cv::Mat Roi, unsigned char grayLevel);
 
 void ShowImageCombination(bool show, std::string WinName, cv::Mat Im1, cv::Mat Im2);
+void DispImage8PC(bool show, std::string WinName, cv::Mat Im1);
 void ShowImageRegionCombination(bool show, bool showContour, std::string WinName, cv::Mat Im1, cv::Mat Im2, cv::Mat Mask1, cv::Mat Mask2);
 void ShowHLinesOnImage(bool show, std::string WinName, cv::Mat Im1, cv::Mat Im2, int lineU, int lineCU, int lineCL, int lineL);
 void ShowRegBetweenHLinesOnImage(bool show, std::string WinName, cv::Mat Im1, cv::Mat Im2, cv::Mat Mask1, cv::Mat Mask2, int lines);
