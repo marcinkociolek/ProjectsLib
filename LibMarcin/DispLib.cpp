@@ -265,6 +265,43 @@ Mat ShowSolidRegionOnImageInBlack(Mat ImReg, Mat ImRGB)
 	}
 	return ImOut;
 }
+//---------------------------------------------------------------------------
+cv::Mat ShowSolidRegionOnImageInGray(cv::Mat ImReg, cv::Mat ImRGB, unsigned char grayLevel)
+{
+    int maxX = ImReg.cols;
+    int maxY = ImReg.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+    ImRGB.copyTo(ImOut);
+
+    if(ImRGB.type() != CV_8UC3)
+        return ImOut;
+
+    unsigned short * wImReg = (unsigned short *)ImReg.data;
+    char *wImOut = (char *)ImOut.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+        if (*wImReg)
+        {
+            *wImOut = grayLevel;
+            wImOut++;
+            *wImOut = grayLevel;
+            wImOut++;
+            *wImOut = grayLevel;
+            wImOut++;
+        }
+        else
+        {
+            wImOut++;
+            wImOut++;
+            wImOut++;
+        }
+
+        wImReg++;
+    }
+    return ImOut;
+}
 
 
 //-----------------------------------------------------------------------------------------------------------------

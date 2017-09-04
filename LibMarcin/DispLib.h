@@ -156,6 +156,7 @@ cv::Mat ShowRegion(cv::Mat ImReg);
 
 cv::Mat ShowSolidRegionOnImage(cv::Mat ImReg, cv::Mat ImRGB);
 cv::Mat ShowSolidRegionOnImageInBlack(cv::Mat ImReg, cv::Mat ImRGB);
+cv::Mat ShowSolidRegionOnImageInGray(cv::Mat ImReg, cv::Mat ImRGB, unsigned char grayLevel);
 
 int MaskImageInPseudocolors(cv::Mat ImIn, cv::Mat Roi, unsigned char grayLevel);
 
