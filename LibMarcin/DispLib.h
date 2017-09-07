@@ -149,6 +149,7 @@ const unsigned char colormapB[256] =
 //---------------------------------------------------------------------------
 cv::Mat ShowImage8PseudoColor(cv::Mat Im8, float minVal, float maxVal);
 cv::Mat ShowImage16PseudoColor(cv::Mat Im16, float minVal, float maxVal);
+cv::Mat ShowImage16Gray(cv::Mat Im16, float minVal, float maxVal);
 cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, float minVal, float maxVal);
 
 

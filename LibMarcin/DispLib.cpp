@@ -106,6 +106,52 @@ Mat ShowImage16PseudoColor(Mat Im16, float minVal, float maxVal)
     return ImOut;
 }
 //---------------------------------------------------------------------------
+Mat ShowImage16Gray(Mat Im16, float minVal, float maxVal)
+{
+    int maxX = Im16.cols;
+    int maxY = Im16.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+
+    if(!maxXY)
+        return ImOut;
+
+    ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
+
+    float difference = maxVal - minVal;
+    if(difference == 0)
+        difference = 1;
+    float gain = 255/difference;
+    float offset = gain * minVal;
+
+    float value;
+    unsigned char index;
+
+    unsigned short *wIm16 = (unsigned short *)Im16.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+
+        value = (float)(*wIm16) * gain - offset;
+        if (value > 255)
+            value = 255;
+        if (value < 0)
+            value = 0;
+        index = (char)floor(value);
+
+        *wImOut = index;
+        wImOut++;
+        *wImOut = index;
+        wImOut++;
+        *wImOut = index;
+        wImOut++;
+        wIm16++;
+    }
+    return ImOut;
+}
+//---------------------------------------------------------------------------
 Mat ShowImageF32PseudoColor(Mat ImF, float minVal, float maxVal)
 {
     int maxX = ImF.cols;
