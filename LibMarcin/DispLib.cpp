@@ -257,12 +257,64 @@ Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB)
     {
             if(*wImReg)
             {
-                *wImOut = RegColorsB[(*wImReg%16)-1];
+                int index = (int(*wImReg)-1)%16;
+                *wImOut = RegColorsB[index];
                 wImOut++;
-                *wImOut = RegColorsG[(*wImReg%16)-1];
+                *wImOut = RegColorsG[index];
                 wImOut++;
-                *wImOut = RegColorsR[(*wImReg%16)-1];
+                *wImOut = RegColorsR[index];
                 wImOut++;
+            }
+            else
+            {
+                wImOut++;
+                wImOut++;
+                wImOut++;
+            }
+
+            wImReg++;
+    }
+    return ImOut;
+}
+//---------------------------------------------------------------------------
+Mat ShowTransparentRegionOnImage(Mat ImReg, Mat ImRGB)
+{
+    int maxX = ImReg.cols;
+    int maxY = ImReg.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+    ImRGB.copyTo(ImOut);
+
+
+    unsigned short * wImReg = (unsigned short *)ImReg.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+            if(*wImReg)
+            {
+                int index = (int(*wImReg)-1)%16;
+                int temp;
+
+                temp = (int)*wImOut + RegColorsB[index]/2;
+                if(temp > 255)
+                    temp = 255;
+                *wImOut = (unsigned char)temp;
+                wImOut++;
+
+                temp = (int)*wImOut + RegColorsG[index]/2;
+                if(temp > 255)
+                    temp = 255;
+                *wImOut = (unsigned char)temp;
+                wImOut++;
+
+
+                temp = (int)*wImOut + RegColorsR[index]/2;
+                if(temp > 255)
+                    temp = 255;
+                *wImOut = (unsigned char)temp;
+                wImOut++;
+
             }
             else
             {

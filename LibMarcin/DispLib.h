@@ -156,6 +156,8 @@ cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, float minVal, float maxVal);
 cv::Mat ShowRegion(cv::Mat ImReg);
 
 cv::Mat ShowSolidRegionOnImage(cv::Mat ImReg, cv::Mat ImRGB);
+cv::Mat ShowTransparentRegionOnImage(cv::Mat ImReg, cv::Mat ImRGB);
+
 cv::Mat ShowSolidRegionOnImageInBlack(cv::Mat ImReg, cv::Mat ImRGB);
 cv::Mat ShowSolidRegionOnImageInGray(cv::Mat ImReg, cv::Mat ImRGB, unsigned char grayLevel);
 
