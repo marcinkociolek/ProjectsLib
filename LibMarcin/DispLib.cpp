@@ -277,7 +277,7 @@ Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB)
     return ImOut;
 }
 //---------------------------------------------------------------------------
-Mat ShowTransparentRegionOnImage(Mat ImReg, Mat ImRGB)
+Mat ShowTransparentRegionOnImage(Mat ImReg, Mat ImRGB, int transparency)
 {
     int maxX = ImReg.cols;
     int maxY = ImReg.rows;
@@ -296,20 +296,20 @@ Mat ShowTransparentRegionOnImage(Mat ImReg, Mat ImRGB)
                 int index = (int(*wImReg)-1)%16;
                 int temp;
 
-                temp = (int)*wImOut + RegColorsB[index]/2;
+                temp = (int)*wImOut + RegColorsB[index]*transparency/100;
                 if(temp > 255)
                     temp = 255;
                 *wImOut = (unsigned char)temp;
                 wImOut++;
 
-                temp = (int)*wImOut + RegColorsG[index]/2;
+                temp = (int)*wImOut + RegColorsG[index]*transparency/100;
                 if(temp > 255)
                     temp = 255;
                 *wImOut = (unsigned char)temp;
                 wImOut++;
 
 
-                temp = (int)*wImOut + RegColorsR[index]/2;
+                temp = (int)*wImOut + RegColorsR[index]*transparency/100;
                 if(temp > 255)
                     temp = 255;
                 *wImOut = (unsigned char)temp;
