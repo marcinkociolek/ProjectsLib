@@ -108,15 +108,26 @@ void TileParams::FromString(std::string InStr)
  //-----------------------------------------------------------------------------------------------------------
  void IntensityStatistics::FromFile(string FileNameExt)
 {
+   Init();
    Mat Image;
    Image = imread(FileNameExt,CV_LOAD_IMAGE_ANYDEPTH);
+   if(Image.empty())
+       return;
    FileName = FileNameExt;
-   int pixelCount;
-   int *Hist;
-   int minVal;
-   int maxVal;
-   int modeVal;
-   double meanVal;
-   double stdVal;
-   FileName;
+   int maxX = Image.cols;
+   int maxY = Image.rows;
+   int maxXY = maxX*maxY;
+   unsigned short *wImage = (unsigned short *)Image.data;
+   for(int i = 0; i < maxXY; i++)
+   {
+       unsigned short localVal = *wImage;
+       int histIndex = localVal/32;
+       Hist[histIndex]++;
+       if(maxVal < localVal)
+           maxVal = localVal;
+       if(minVal < localVal)
+           maxVal = localVal;
+       wImage++;
+
+   }
 }
