@@ -1424,3 +1424,74 @@ int PartOfRegionAtTheAngle(Mat ImReg, Mat ImRegOut,  int centerX, int centerY,
     return 1;
 }
 //---------------------------------------------------------------------------
+
+cv::Mat CreateRoi16(int Shape, int maxX, int maxY)
+{
+    Mat Roi;
+    int roiMaxX, roiMaxY; // Bounding box sizes for ROI
+    switch (Shape) // Different tile shapes
+    {
+    case 1: // Rectangle
+        roiMaxX = maxX;
+        roiMaxY = maxY;
+        Roi = Mat::ones(roiMaxY, roiMaxX, CV_16U);
+        break;
+    case 2: // Ellipse
+        roiMaxX = maxX;
+        roiMaxY = maxY;
+        Roi = Mat::zeros(roiMaxY, roiMaxX, CV_16U);
+        ellipse(Roi, Point(roiMaxX / 2, roiMaxY / 2),
+            Size(roiMaxX / 2, roiMaxY / 2), 0.0, 0.0, 360.0,
+            1, -1);
+        break;
+    case 3: // Hexagon
+        {
+            int edgeLength = maxX;
+            roiMaxX = edgeLength * 2;
+            roiMaxY = (int)((float)edgeLength * 0.8660254 * 2.0);
+            Roi = Mat::zeros(roiMaxY, roiMaxX, CV_16U);
+
+            Point vertice0(edgeLength / 2, 0);
+            Point vertice1(edgeLength / 2 + edgeLength - 1, 0);
+            Point vertice2(roiMaxX - 1, roiMaxY / 2);
+            Point vertice3(edgeLength / 2 + edgeLength - 1, roiMaxY - 1);
+            Point vertice4(edgeLength / 2, roiMaxY - 1);
+            Point vertice5(0, roiMaxY / 2);
+
+            line(Roi, vertice0, vertice1, 1, 1);
+            line(Roi, vertice1, vertice2, 1, 1);
+            line(Roi, vertice2, vertice3, 1, 1);
+            line(Roi, vertice3, vertice4, 1, 1);
+            line(Roi, vertice4, vertice5, 1, 1);
+            line(Roi, vertice5, vertice0, 1, 1);
+            unsigned short *wRoi;
+
+            for (int y = 1; y < roiMaxY - 1; y++)
+            {
+                wRoi = (unsigned short *)Roi.data + roiMaxX * y;
+                int x = 0;
+                for (x; x < roiMaxX; x++)
+                {
+                    if (*wRoi)
+                        break;
+                    wRoi++;
+                }
+                x++;
+                wRoi++;
+                for (x; x < roiMaxX; x++)
+                {
+                    if (*wRoi)
+                        break;
+                    *wRoi = 1;
+                    wRoi++;
+                }
+            }
+
+        }
+        break;
+    default:
+        break;
+    }
+    return Roi;
+}
+//---------------------------------------------------------------------------

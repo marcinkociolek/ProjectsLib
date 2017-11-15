@@ -221,6 +221,7 @@ Mat GradientThresh(Mat ImIn,float threshold)
     return ImOut;
 }
 //------------------------------------------------------------------------------
+/*
 Mat RemovingTinyReg9(Mat ImR)
 {
 // renewed version sweeps whole image
@@ -1381,7 +1382,7 @@ void RegionErosionHorisontal13(Mat ImR)
 }
 
 //------------------------------------------------------------------------------
-*/
+
 void RegionDilationH13(Mat ImR)
 {
 // renewed version dilates whole imaga

@@ -39,5 +39,7 @@ int PartOfRegionAtTheAngle(Mat ImReg, Mat ImRegOut,  int centerX, int centerY,
 
 //void ShowRegionOnImage16(Mat ImReg, Mat ImRGB);
 
+cv::Mat CreateRoi16(int Shape, int maxX, int maxY);
+
 #endif // GRADIENT
 

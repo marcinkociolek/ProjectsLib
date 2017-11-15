@@ -11,6 +11,7 @@ cv::Mat HorizontalGradientDown(cv::Mat ImIn);
 cv::Mat HorizontalAbsGradient(cv::Mat ImIn);
 
 cv::Mat GradientThresh(cv::Mat ImIn,float threshold);
+/*
 cv::Mat RemovingTinyReg9(cv::Mat ImReg);
 void FillBorderWithValue(cv::Mat ImReg, float value);
 void OneRegionFill5Fast1(cv::Mat ImR,  unsigned short fillReg);
@@ -32,7 +33,7 @@ void RegionErosion13(cv::Mat ImR);
 
 void RegionErosionH13(cv::Mat ImR);
 void RegionDilationH13(cv::Mat ImR);
-
+*/
 //Mat GetContour5(Mat ImR);
 
 //void ShowRegionOnImage16(Mat ImReg, Mat ImRGB);
