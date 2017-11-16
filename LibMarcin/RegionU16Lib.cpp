@@ -1495,3 +1495,56 @@ cv::Mat CreateRoi16(int Shape, int maxX, int maxY)
     return Roi;
 }
 //---------------------------------------------------------------------------
+cv::Mat Threshold16(cv::Mat ImIn, unsigned short threshold)
+{
+    if(ImIn.empty())
+        return Mat::zeros(1,1,CV_16U);
+    int maxX = ImIn.cols;
+    int maxY = ImIn.rows;
+    int maxXY = maxX * maxY;
+
+    unsigned short *wImIn = (unsigned short*)ImIn.data;
+
+    Mat Mask = Mat::zeros(maxY, maxX, CV_16U);
+    unsigned short *wMask = (unsigned short*)Mask.data;
+
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wImIn > threshold)
+            *wMask = 1;
+        wImIn++;
+        wMask++;
+    }
+    return Mask;
+}
+//---------------------------------------------------------------------------
+void Threshold16(cv::Mat ImIn, cv::Mat Mask, unsigned short threshold)
+{
+    if(ImIn.empty())
+        return;
+    if(Mask.empty())
+        return;
+    int maxX = ImIn.cols;
+    int maxY = ImIn.rows;
+    int maxXY = maxX * maxY;
+
+    if(Mask.cols != maxX || Mask.rows != maxY )
+        return;
+
+
+
+    unsigned short *wImIn = (unsigned short*)ImIn.data;
+
+    unsigned short *wMask = (unsigned short*)Mask.data;
+
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wImIn > threshold)
+            *wMask = 1;
+        wImIn++;
+        wMask++;
+    }
+
+
+}
+//---------------------------------------------------------------------------

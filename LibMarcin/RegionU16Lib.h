@@ -41,5 +41,8 @@ int PartOfRegionAtTheAngle(Mat ImReg, Mat ImRegOut,  int centerX, int centerY,
 
 cv::Mat CreateRoi16(int Shape, int maxX, int maxY);
 
+cv::Mat Threshold16(cv::Mat ImIn, unsigned short threshold);
+void Threshold16(cv::Mat ImIn, cv::Mat Mask, unsigned short threshold);
+
 #endif // GRADIENT
 

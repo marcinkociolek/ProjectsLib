@@ -1,6 +1,7 @@
 #include "gradient.h"
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace cv;
 //---------------------------------------------------------------------------
@@ -221,6 +222,49 @@ Mat GradientThresh(Mat ImIn,float threshold)
     return ImOut;
 }
 //------------------------------------------------------------------------------
+cv::Mat GradientMorph(cv::Mat ImIn, int shapeNr)
+{
+    Mat Kernel;
+
+    switch(shapeNr)
+    {
+    case 4:
+        Kernel = (cv::Mat_<uchar>(5,5) << 0,1,1,1,0,
+                                          1,1,1,1,1,
+                                          1,1,1,1,1,
+                                          1,1,1,1,1,
+                                          0,1,1,1,0);
+        break;
+    case 3:
+        Kernel = (cv::Mat_<uchar>(5,5) << 0,0,1,0,0,
+                                          0,1,1,1,0,
+                                          1,1,1,1,1,
+                                          0,1,1,1,0,
+                                          0,0,1,0,0);
+        break;
+    case 2:
+        Kernel = (cv::Mat_<uchar>(3,3) << 1,1,1,
+                                          1,1,1,
+                                          1,1,1);
+        break;
+    default:
+        Kernel = (cv::Mat_<uchar>(3,3) << 0,1,0,
+                                          1,1,1,
+                                          0,1,0);
+        break;
+    }
+    //namedWindow("kernel", WINDOW_NORMAL);
+    //imshow("kernel",Kernel*100);
+    Mat MaskMin,MaskMax,MaskGrad;
+    MaskMin = Mat::zeros(ImIn.rows,ImIn.cols, CV_16U);
+    MaskMax = Mat::zeros(ImIn.rows,ImIn.cols, CV_16U);
+    erode(ImIn,MaskMin,Kernel);
+    dilate(ImIn,MaskMax,Kernel);
+    return MaskMax - MaskMin;
+
+}
+
+
 /*
 Mat RemovingTinyReg9(Mat ImR)
 {
