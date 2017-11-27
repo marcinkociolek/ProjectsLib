@@ -1,7 +1,7 @@
 #include "RegionU16Lib.h"
 
 #include <opencv2/core/core.hpp>
-
+#include <opencv2/imgproc/imgproc.hpp>
 using namespace cv;
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -1548,3 +1548,101 @@ void Threshold16(cv::Mat ImIn, cv::Mat Mask, unsigned short threshold)
 
 }
 //---------------------------------------------------------------------------
+cv::Mat BuildKernel(int shape)
+{
+    Mat Kernel;
+
+    switch(shape)
+    {
+    case 9:
+        Kernel = (cv::Mat_<uchar>(9,9) << 0,0,1,1,1,1,1,0,0,
+                                          0,1,1,1,1,1,1,1,0,
+                                          1,1,1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,1,1,
+                                          0,1,1,1,1,1,1,1,0,
+                                          0,0,1,1,1,1,1,0,0);
+    case 8:
+        Kernel = (cv::Mat_<uchar>(9,9) << 0,0,0,1,1,1,0,0,0,
+                                          0,0,1,1,1,1,1,0,0,
+                                          0,1,1,1,1,1,1,1,0,
+                                          1,1,1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,1,1,
+                                          0,1,1,1,1,1,1,1,0,
+                                          0,0,1,1,1,1,1,0,0,
+                                          0,0,0,1,1,1,0,0,0);
+    case 7:
+        Kernel = (cv::Mat_<uchar>(9,9) << 0,0,0,0,1,0,0,0,0,
+                                          0,0,0,1,1,1,0,0,0,
+                                          0,0,1,1,1,1,1,0,0,
+                                          0,1,1,1,1,1,1,1,0,
+                                          1,1,1,1,1,1,1,1,1,
+                                          0,1,1,1,1,1,1,1,0,
+                                          0,0,1,1,1,1,1,0,0,
+                                          0,0,0,1,1,1,0,0,0,
+                                          0,0,0,0,1,0,0,0,0);
+    case 6:
+        Kernel = (cv::Mat_<uchar>(7,7) << 0,0,1,1,1,0,0,
+                                          0,1,1,1,1,1,0,
+                                          1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,
+                                          1,1,1,1,1,1,1,
+                                          0,1,1,1,1,1,0,
+                                          0,0,1,1,1,0,0);
+    case 5:
+        Kernel = (cv::Mat_<uchar>(7,7) << 0,0,0,1,0,0,0,
+                                          0,0,1,1,1,0,0,
+                                          0,1,1,1,1,1,0,
+                                          1,1,1,1,1,1,1,
+                                          0,1,1,1,1,1,0,
+                                          0,0,1,1,1,0,0,
+                                          0,0,0,1,0,0,0);
+    case 4:
+        Kernel = (cv::Mat_<uchar>(5,5) << 0,1,1,1,0,
+                                          1,1,1,1,1,
+                                          1,1,1,1,1,
+                                          1,1,1,1,1,
+                                          0,1,1,1,0);
+        break;
+    case 3:
+        Kernel = (cv::Mat_<uchar>(5,5) << 0,0,1,0,0,
+                                          0,1,1,1,0,
+                                          1,1,1,1,1,
+                                          0,1,1,1,0,
+                                          0,0,1,0,0);
+        break;
+    case 2:
+        Kernel = (cv::Mat_<uchar>(3,3) << 1,1,1,
+                                          1,1,1,
+                                          1,1,1);
+        break;
+    default:
+        Kernel = (cv::Mat_<uchar>(3,3) << 0,1,0,
+                                          1,1,1,
+                                          0,1,0);
+        break;
+    }
+    return Kernel;
+}
+
+void DilationCV(cv::Mat Mask, int shape)
+{
+    Mat Kernel =  BuildKernel(shape);
+    //namedWindow("kernel", WINDOW_NORMAL);
+    //imshow("kernel",Kernel*100);
+    dilate(Mask,Mask,Kernel);
+
+    return ;
+}
+void ErosionCV(cv::Mat Mask, int shape)
+{
+    Mat Kernel =  BuildKernel(shape);
+    //namedWindow("kernel", WINDOW_NORMAL);
+    //imshow("kernel",Kernel*100);
+    erode(Mask,Mask,Kernel);
+
+    return ;
+}

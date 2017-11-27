@@ -44,5 +44,10 @@ cv::Mat CreateRoi16(int Shape, int maxX, int maxY);
 cv::Mat Threshold16(cv::Mat ImIn, unsigned short threshold);
 void Threshold16(cv::Mat ImIn, cv::Mat Mask, unsigned short threshold);
 
+cv::Mat BuildKernel(int shape);
+void DilationCV(cv::Mat Mask, int shape);
+void ErosionCV(cv::Mat Mask, int shape);
+
+
 #endif // GRADIENT
 
