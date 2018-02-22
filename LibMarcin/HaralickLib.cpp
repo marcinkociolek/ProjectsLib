@@ -1120,6 +1120,633 @@ Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, 
 }
 
 //-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+Mat COMCardone5(Mat ImInFloat, int ofset, float angle, int binCount, float maxNorm, float minNorm)
+{
+    int maxX = ImInFloat.cols;
+    int maxY = ImInFloat.rows;
+    int maxXY = maxX*maxY;
+
+    float *wImInF;
+    float *wOriginImInF;
+    float *wEndImInF;
+    //int maxKernelX, maxKernelY, maxKernelXY, centerKernelX, centerKernelY;
+
+    float gainCoef = (binCount - 1) / (maxNorm - minNorm);
+    float offsetCoef = gainCoef * minNorm;
+
+
+    float spX, spY;
+    float spX0, spX1, spY0, spY1;
+    float coef00, coef01, coef10, coef11;
+
+    int maxOffsetX, minOffsetX, maxOffsetY, minOffsetY;
+    float *wSP00;
+    float *wSP01;
+    float *wSP10;
+    float *wSP11;
+
+    Mat COM = Mat::zeros(binCount, binCount, CV_32S);
+
+
+
+    wImInF = (float*)ImInFloat.data;
+    wOriginImInF = (float*)ImInFloat.data;
+    wEndImInF = (float*)ImInFloat.data + maxXY;
+    //Second point coordinates
+    spX = (float)(ofset)*(float)sin((angle)* PI / 180.0);
+    spY = (float)(ofset)*(float)cos((angle)* PI / 180.0);
+
+    spX0 = floor(spX);
+    spX1 = ceil(spX);
+    if (spX1 == spX0)
+        spX1 = spX0 + 1;
+
+    spY0 = floor(spY);
+    spY1 = ceil(spY);
+    if (spY1 == spY0)
+        spY1 = spY0 + 1;
+
+    //Second Point coeficients
+    coef00 = (spY1 - spY)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef01 = (spY1 - spY)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+    coef10 = (spY - spY0)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef11 = (spY - spY0)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+
+
+
+    // second point pointer
+    //float wtSP[20];
+    //float *wSP[20];
+    //int countSP;
+
+
+    // second point pointers
+    wSP00 = wImInF + (int)spY0 * maxX + (int)spX0;
+    wSP01 = wImInF + (int)spY0 * maxX + (int)spX1;
+    wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
+    wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
+
+
+    minOffsetX = 0;
+    if (minOffsetX > spX0)
+        minOffsetX = spX0;
+    if (minOffsetX > spX1)
+        minOffsetX = spX1;
+
+    minOffsetY = 0;
+    if (minOffsetY > spY0)
+        minOffsetY = spY0;
+    if (minOffsetY > spY1)
+        minOffsetY = spY1;
+
+
+    maxOffsetX = 0;
+    if (maxOffsetX < spX0)
+        maxOffsetX = spX0;
+    if (maxOffsetX < spX1)
+        maxOffsetX = spX1;
+
+    maxOffsetY = 0;
+    if (maxOffsetY < spY0)
+        maxOffsetY = spY0;
+    if (maxOffsetY < spY1)
+        maxOffsetY = spY1;
+
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        bool pointersInRange = 1;
+
+        if (wSP00 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP01 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP10 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP11 < wOriginImInF)
+            pointersInRange = 0;
+
+        if (wSP00 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP01 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP10 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP11 > wEndImInF)
+            pointersInRange = 0;
+
+        if ((x + minOffsetX) < 0)
+            pointersInRange = 0;
+        if ((x + maxOffsetX) >= maxX)
+            pointersInRange = 0;
+        if ((y + minOffsetY) < 0)
+            pointersInRange = 0;
+        if ((y + maxOffsetY) >= maxY)
+            pointersInRange = 0;
+
+        if (pointersInRange)
+        {
+            float valSP = *wSP00 * coef00 + *wSP01 * coef01 + *wSP10 * coef10 + *wSP11 * coef11;
+            float valFP = *wImInF;
+
+            int comX = (int)(round(valFP * gainCoef - offsetCoef));
+            if (comX >= binCount)
+                comX = binCount - 1;
+            if (comX < 0)
+                comX = 0;
+            int comY = (int)(round(valSP * gainCoef - offsetCoef));
+            if (comY >= binCount)
+                comY = binCount - 1;
+            if (comY < 0)
+                comY = 0;
+
+            COM.at<int>(comY, comX)++;
+            COM.at<int>(comX, comY)++;
+        }
+        wSP00++;
+        wSP01++;
+        wSP10++;
+        wSP11++;
+        wImInF++;
+    }
+
+    // oposit direction
+    wImInF = (float*)ImInFloat.data;
+
+    //Second point coordinates
+    spX = (float)(ofset)*sin((angle + 180)* PI / 180.0);
+    spY = (float)(ofset)*cos((angle + 180)* PI / 180.0);
+
+    spX0 = floor(spX);
+    spX1 = ceil(spX);
+    if (spX1 == spX0)
+        spX1 = spX0 + 1;
+
+    spY0 = floor(spY);
+    spY1 = ceil(spY);
+    if (spY1 == spY0)
+        spY1 = spY0 + 1;
+
+    //Second Point coeficients
+    coef00 = (spY1 - spY)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef01 = (spY1 - spY)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+    coef10 = (spY - spY0)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef11 = (spY - spY0)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+
+
+
+    // second point pointer
+    //float wtSP[20];
+    //float *wSP[20];
+    //int countSP;
+
+
+    // second point pointers
+    wSP00 = wImInF + (int)spY0 * maxX + (int)spX0;
+    wSP01 = wImInF + (int)spY0 * maxX + (int)spX1;
+    wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
+    wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
+
+
+    minOffsetX = 0;
+    if (minOffsetX > spX0)
+        minOffsetX = spX0;
+    if (minOffsetX > spX1)
+        minOffsetX = spX1;
+
+    minOffsetY = 0;
+    if (minOffsetY > spY0)
+        minOffsetY = spY0;
+    if (minOffsetY > spY1)
+        minOffsetY = spY1;
+
+
+    maxOffsetX = 0;
+    if (maxOffsetX < spX0)
+        maxOffsetX = spX0;
+    if (maxOffsetX < spX1)
+        maxOffsetX = spX1;
+
+    maxOffsetY = 0;
+    if (maxOffsetY < spY0)
+        maxOffsetY = spY0;
+    if (maxOffsetY < spY1)
+        maxOffsetY = spY1;
+
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        bool pointersInRange = 1;
+
+        if (wSP00 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP01 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP10 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP11 < wOriginImInF)
+            pointersInRange = 0;
+
+        if (wSP00 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP01 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP10 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP11 > wEndImInF)
+            pointersInRange = 0;
+
+        if ((x + minOffsetX) < 0)
+            pointersInRange = 0;
+        if ((x + maxOffsetX) >= maxX)
+            pointersInRange = 0;
+        if ((y + minOffsetY) < 0)
+            pointersInRange = 0;
+        if ((y + maxOffsetY) >= maxY)
+            pointersInRange = 0;
+
+        if (pointersInRange)
+        {
+            float valSP = *wSP00 * coef00 + *wSP01 * coef01 + *wSP10 * coef10 + *wSP11 * coef11;
+            float valFP = *wImInF;
+
+            int comX = (int)(round(valFP * gainCoef - offsetCoef));
+            if (comX >= binCount)
+                comX = binCount - 1;
+            if (comX < 0)
+                comX = 0;
+            int comY = (int)(round(valSP * gainCoef - offsetCoef));
+            if (comY >= binCount)
+                comY = binCount - 1;
+            if (comY < 0)
+                comY = 0;
+
+            COM.at<int>(comY, comX)++;
+            COM.at<int>(comX, comY)++;
+        }
+        wSP00++;
+        wSP01++;
+        wSP10++;
+        wSP11++;
+        wImInF++;
+    }
+
+
+
+
+
+    return COM;
+}
+//-------------------------------------------------------------------------------------------------------------
+Mat COMCardoneRoi5(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, float maxNorm, float minNorm, unsigned short roiNr)
+{
+    int maxX = ImInFloat.cols;
+    int maxY = ImInFloat.rows;
+    int maxXY = maxX*maxY;
+
+    if (!maxXY)
+        return Mat::ones(1,1,CV_32S)*(-1);
+    if (ImInFloat.cols != Roi.cols || ImInFloat.rows != Roi.rows)
+        return Mat::ones(1, 1, CV_32S)*(-2);;
+    if (ImInFloat.depth() != CV_32F)
+        return Mat::ones(1, 1, CV_32S)*(-3);;
+    if (Roi.depth() != CV_8U)
+        Roi.convertTo(Roi, CV_8U);
+
+
+    float gainCoef = (binCount - 1) / (maxNorm - minNorm);
+    float offsetCoef = gainCoef * minNorm;
+
+
+    float spX, spY;							//second point coordinates
+    float spX0, spX1, spY0, spY1;			//second point walues
+    float coef00, coef01, coef10, coef11;	//second point coefficients
+
+    int maxOffsetX, minOffsetX, maxOffsetY, minOffsetY;
+
+    float *wImInF;							//first piont pointer
+    float *wSP00;							//interpolated piont pointers
+    float *wSP01;
+    float *wSP10;
+    float *wSP11;
+
+    unsigned char *wRoi;					//first point Roi pointer
+    unsigned char *wRoi00;					//interpolated point Roi pointer
+    unsigned char *wRoi01;
+    unsigned char *wRoi10;
+    unsigned char *wRoi11;
+
+
+    float *wOriginImInF;
+    float *wEndImInF;
+
+    //Second point coordinates
+    spX = (float)(ofset)*sin((angle)* PI / 180.0);
+    spY = (float)(ofset)*cos((angle)* PI / 180.0);
+
+    spX0 = floor(spX);
+    spX1 = ceil(spX);
+    if (spX1 == spX0)
+        spX1 = spX0 + 1;
+
+    spY0 = floor(spY);
+    spY1 = ceil(spY);
+    if (spY1 == spY0)
+        spY1 = spY0 + 1;
+
+    //Second Point coefficients
+    coef00 = (spY1 - spY)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef01 = (spY1 - spY)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+    coef10 = (spY - spY0)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef11 = (spY - spY0)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+
+
+    wImInF = (float*)ImInFloat.data;
+    // second point pointers
+    wSP00 = wImInF + (int)spY0 * maxX + (int)spX0;
+    wSP01 = wImInF + (int)spY0 * maxX + (int)spX1;
+    wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
+    wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
+
+    wRoi = (unsigned char*)Roi.data;
+    // second point Roi pointers
+    wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
+    wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;
+    wRoi10 = wRoi + (int)spY1 * maxX + (int)spX0;
+    wRoi11 = wRoi + (int)spY1 * maxX + (int)spX1;
+
+    wOriginImInF = (float*)ImInFloat.data;
+    wEndImInF = (float*)ImInFloat.data + maxXY;
+
+    minOffsetX = 0;
+    if (minOffsetX > spX0)
+        minOffsetX = spX0;
+    if (minOffsetX > spX1)
+        minOffsetX = spX1;
+
+    minOffsetY = 0;
+    if (minOffsetY > spY0)
+        minOffsetY = spY0;
+    if (minOffsetY > spY1)
+        minOffsetY = spY1;
+
+
+    maxOffsetX = 0;
+    if (maxOffsetX < spX0)
+        maxOffsetX = spX0;
+    if (maxOffsetX < spX1)
+        maxOffsetX = spX1;
+
+    maxOffsetY = 0;
+    if (maxOffsetY < spY0)
+        maxOffsetY = spY0;
+    if (maxOffsetY < spY1)
+        maxOffsetY = spY1;
+
+    Mat COM = Mat::zeros(binCount, binCount, CV_32S);
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        bool pointersInRange = 1;
+
+        if (wSP00 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP01 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP10 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP11 < wOriginImInF)
+            pointersInRange = 0;
+
+        if (wSP00 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP01 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP10 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP11 > wEndImInF)
+            pointersInRange = 0;
+
+        if ((x + minOffsetX) < 0)
+            pointersInRange = 0;
+        if ((x + maxOffsetX) >= maxX)
+            pointersInRange = 0;
+        if ((y + minOffsetY) < 0)
+            pointersInRange = 0;
+        if ((y + maxOffsetY) >= maxY)
+            pointersInRange = 0;
+
+        if (pointersInRange)
+        {
+            if (*wRoi != roiNr)
+                pointersInRange = 0;
+            if (*wRoi00 != roiNr)
+                pointersInRange = 0;
+            if (*wRoi01 != roiNr)
+                pointersInRange = 0;
+            if (*wRoi10 != roiNr)
+                pointersInRange = 0;
+            if (*wRoi11 != roiNr)
+                pointersInRange = 0;
+        }
+
+        if (pointersInRange)
+        {
+            float valSP = *wSP00 * coef00 + *wSP01 * coef01 + *wSP10 * coef10 + *wSP11 * coef11;
+            float valFP = *wImInF;
+
+            int comX = (int)(round(valFP * gainCoef - offsetCoef));
+            if (comX >= binCount)
+                comX = binCount - 1;
+            if (comX < 0)
+                comX = 0;
+            int comY = (int)(round(valSP * gainCoef - offsetCoef));
+            if (comY >= binCount)
+                comY = binCount - 1;
+            if (comY < 0)
+                comY = 0;
+
+            COM.at<int>(comY, comX)++;
+            COM.at<int>(comX, comY)++;
+        }
+        wSP00++;
+        wSP01++;
+        wSP10++;
+        wSP11++;
+        wImInF++;
+
+        wRoi++;
+        wRoi00++;
+        wRoi01++;
+        wRoi10++;
+        wRoi11++;
+    }
+
+    // oposit direction
+    wImInF = (float*)ImInFloat.data;
+
+    //Second point coordinates
+    spX = (float)(ofset)*sin((angle + 180)* PI / 180.0);
+    spY = (float)(ofset)*cos((angle + 180)* PI / 180.0);
+
+    spX0 = floor(spX);
+    spX1 = ceil(spX);
+    if (spX1 == spX0)
+        spX1 = spX0 + 1;
+
+    spY0 = floor(spY);
+    spY1 = ceil(spY);
+    if (spY1 == spY0)
+        spY1 = spY0 + 1;
+
+    //Second Point coeficients
+    coef00 = (spY1 - spY)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef01 = (spY1 - spY)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+    coef10 = (spY - spY0)*(spX1 - spX) / ((spX1 - spX0)*(spY1 - spY0));
+    coef11 = (spY - spY0)*(spX - spX0) / ((spX1 - spX0)*(spY1 - spY0));
+
+
+
+    // second point pointer
+    //float wtSP[20];
+    //float *wSP[20];
+    //int countSP;
+
+
+    // second point pointers
+    wSP00 = wImInF + (int)spY0 * maxX + (int)spX0;
+    wSP01 = wImInF + (int)spY0 * maxX + (int)spX1;
+    wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
+    wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
+
+    wRoi = (unsigned short*)Roi.data;
+    // second point pointers
+    wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
+    wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;
+    wRoi10 = wRoi + (int)spY1 * maxX + (int)spX0;
+    wRoi11 = wRoi + (int)spY1 * maxX + (int)spX1;
+
+    minOffsetX = 0;
+    if (minOffsetX > spX0)
+        minOffsetX = spX0;
+    if (minOffsetX > spX1)
+        minOffsetX = spX1;
+
+    minOffsetY = 0;
+    if (minOffsetY > spY0)
+        minOffsetY = spY0;
+    if (minOffsetY > spY1)
+        minOffsetY = spY1;
+
+
+    maxOffsetX = 0;
+    if (maxOffsetX < spX0)
+        maxOffsetX = spX0;
+    if (maxOffsetX < spX1)
+        maxOffsetX = spX1;
+
+    maxOffsetY = 0;
+    if (maxOffsetY < spY0)
+        maxOffsetY = spY0;
+    if (maxOffsetY < spY1)
+        maxOffsetY = spY1;
+
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        bool pointersInRange = 1;
+
+        if (wSP00 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP01 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP10 < wOriginImInF)
+            pointersInRange = 0;
+        if (wSP11 < wOriginImInF)
+            pointersInRange = 0;
+
+        if (wSP00 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP01 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP10 > wEndImInF)
+            pointersInRange = 0;
+        if (wSP11 > wEndImInF)
+            pointersInRange = 0;
+
+        if ((x + minOffsetX) < 0)
+            pointersInRange = 0;
+        if ((x + maxOffsetX) >= maxX)
+            pointersInRange = 0;
+        if ((y + minOffsetY) < 0)
+            pointersInRange = 0;
+        if ((y + maxOffsetY) >= maxY)
+            pointersInRange = 0;
+
+        if (pointersInRange)
+        {
+            if (*wRoi != roiNr)
+                pointersInRange = 0;
+            if (*wRoi00 != roiNr)
+                pointersInRange = 0;
+            if (*wRoi01 != roiNr)
+                pointersInRange = 0;
+            if (*wRoi10 != roiNr)
+                pointersInRange = 0;
+            if (*wRoi11 != roiNr)
+                pointersInRange = 0;
+        }
+
+        if (pointersInRange)
+        {
+            float valSP = *wSP00 * coef00 + *wSP01 * coef01 + *wSP10 * coef10 + *wSP11 * coef11;
+            float valFP = *wImInF;
+
+            int comX = (int)(round(valFP * gainCoef - offsetCoef));
+            if (comX >= binCount)
+                comX = binCount - 1;
+            if (comX < 0)
+                comX = 0;
+            int comY = (int)(round(valSP * gainCoef - offsetCoef));
+            if (comY >= binCount)
+                comY = binCount - 1;
+            if (comY < 0)
+                comY = 0;
+
+            COM.at<int>(comY, comX)++;
+            COM.at<int>(comX, comY)++;
+        }
+        wSP00++;
+        wSP01++;
+        wSP10++;
+        wSP11++;
+        wImInF++;
+
+        wRoi++;
+        wRoi00++;
+        wRoi01++;
+        wRoi10++;
+        wRoi11++;
+    }
+
+    return COM;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
 Mat COMHorizontalRoi(Mat ImInFloat, Mat Roi, int ofset, int binCount, float maxNorm, float minNorm, unsigned short roiNr)
 {
 	int maxX = ImInFloat.cols;
@@ -1482,7 +2109,62 @@ void COMParams(Mat COM, float *contrastOut, float *energyOut, float *homogenityO
 	*homogenityOut = homogenity;
 	*correlationOut = corelation;
 }
+//-------------------------------------------------------------------------------------------------------------
+float COMCorrelation(Mat COM)
+{
+    int maxX = COM.cols;
+    int maxY = COM.rows;
+    int maxXY = maxX * maxY;
 
+    int *wCOM;
+
+    int sum = 0;
+    wCOM = (int*)COM.data;
+    for (int i = 0; i < maxXY; i++)
+    {
+        sum += *wCOM;
+        wCOM++;
+    }
+    float sumF = (float)sum;
+
+    float muX = 0;
+    float muY = 0;
+    wCOM = (int*)COM.data;
+    for (int y = 0; y < maxY; y++)
+    {
+        for (int x = 0; x < maxX; x++)
+        {
+            float normValCOM = (float)(*wCOM) / sumF;
+            muX += (float)(x + 1) * normValCOM;
+            muY += (float)(y + 1) * normValCOM;
+            wCOM++;
+        }
+    }
+
+    float sigmaX = 0;
+    float sigmaY = 0;
+    float corelation = 0;
+    wCOM = (int*)COM.data;
+    for (int y = 0; y < maxY; y++)
+    {
+        for (int x = 0; x < maxX; x++)
+        {
+            float normValCOM = (float)(*wCOM) / sumF;
+            sigmaX += ((float)(x + 1) - muX) * ((float)(x + 1) - muX) * normValCOM;
+            sigmaY += ((float)(y + 1) - muY) * ((float)(y + 1) - muY) * normValCOM;
+
+            corelation += ((float)(x + 1) - muX) * ((float)(y + 1) - muY) * normValCOM;
+            wCOM++;
+        }
+    }
+
+    sigmaX = sqrt(sigmaX);
+    sigmaY = sqrt(sigmaY);
+
+    corelation = corelation / (sigmaX*sigmaY);
+
+    return corelation;
+}
 //-------------------------------------------------------------------------------------------------------------
 Mat COMStandard(Mat ImInFloat, int ofsetY, int ofsetX, int binCount, float maxNorm, float minNorm)
 {

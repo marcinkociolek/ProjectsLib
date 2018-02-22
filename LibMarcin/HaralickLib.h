@@ -14,12 +14,17 @@ Mat COMCardone4(Mat ImInFloat, int ofset, float angle, int binCount, float maxNo
 
 Mat COMCardoneRoi(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, float maxNorm, float minNorm, int interpolation, unsigned short roiNr);
 
+Mat COMCardone5(Mat ImInFloat, int ofset, float angle, int binCount, float maxNorm, float minNorm);
+Mat COMCardoneRoi5(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount, float maxNorm, float minNorm, unsigned short roiNr);
+
+
 Mat COMHorizontalRoi(Mat ImInFloat, Mat Roi, int ofset, int binCount, float maxNorm, float minNorm, unsigned short roiNr);
 
 Mat COMLatice4(Mat ImInFloat, int ofset, float angle, int binCount, float maxNorm, float minNorm, int interpolation);
 
 void COMParams(Mat COM, float *contrastOut, float *energyOut, float *homogenityOut, float *correlationOut);
 
+float COMCorrelation(Mat COM);
 //--------------------------------------------------------------------------------------------
 
 Mat COMCardoneLatice(Mat ImInFloat, int ofset, float angle, int binCount, float maxNorm, float minNorm);
