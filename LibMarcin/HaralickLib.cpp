@@ -1629,7 +1629,7 @@ Mat COMCardoneRoi5(Mat ImInFloat, Mat Roi, int ofset, float angle, int binCount,
     wSP10 = wImInF + (int)spY1 * maxX + (int)spX0;
     wSP11 = wImInF + (int)spY1 * maxX + (int)spX1;
 
-    wRoi = (unsigned short*)Roi.data;
+    wRoi = (unsigned char*)Roi.data;
     // second point pointers
     wRoi00 = wRoi + (int)spY0 * maxX + (int)spX0;
     wRoi01 = wRoi + (int)spY0 * maxX + (int)spX1;
