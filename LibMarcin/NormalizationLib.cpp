@@ -121,7 +121,7 @@ void NormParams1to99perc(Mat ImIn, float *maxNorm, float *minNorm)
 void NormParamsMinMax(Mat Im, Mat Roi , unsigned short roiNr, float *maxNorm, float *minNorm)
 {
 	Mat ImF;
-	Im.convertTo(ImF, CV_32F);
+    Im.convertTo(ImF, CV_32F);
 	int maxX, maxY, maxXY;
 	maxX = Im.cols;
 	maxY = Im.rows;
