@@ -26,13 +26,9 @@ class FileParams
 {
 public:
     boost::filesystem::path ImFileName;
+    boost::filesystem::path ImFolderName;
     int tileShape;
-    int maxTileX;
-    int maxTileY;
-    int shiftTileX;
-    int shiftTileY;
-    int offsetTileX;
-    int offsetTileY;
+    int tileSize;
     int ValueCount;
     std::vector<std::string> NamesVector;
     std::vector<TileParams> ParamsVect;
