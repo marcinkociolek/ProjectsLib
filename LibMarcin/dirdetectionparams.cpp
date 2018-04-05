@@ -7,39 +7,46 @@ DirDetectionParams::DirDetectionParams()
     DefaultParams();
 }
 
+DirDetectionParams::~DirDetectionParams()
+{
+    InFolderName.empty();
+    InFilePattern.empty();
+
+    OutFolderName.empty();
+}
+
 void DirDetectionParams::DefaultParams(void)
 {
     InFolderName = "";
     InFilePattern = ".+";
 
-    OutFolderName1 = "";
-    OutFolderName2 = "";
+    OutFolderName = "";
 
     preprocessType = 0;
     preprocessKernelSize = 3;
 
     showInputGray = false;
-    showInputPC = true;
-    showRoi = true;
-    showSmallImage = true;
+    displayGrayMax = 40000;
+    displayGrayMin = 0;
 
-    tileShape = 2;
+    showInputPC = false;
+    displayPCMax = 65535;
+    displayPCMin = 0;
 
+    tileShape = 1;
     tileSize = 61;
-    //tileWidth = 61;
-    //tileHeight = 61;
     tileShift = 45;
-    //tileShiftY = 45;
     tileOffsetX = 31;
     tileOffsetY = 31;
 
-    showTiles = true;
+    showTileRoiImage = false;
+
+    showTilesOnImage = true;
     tileLineWidth = 1;
 
-    textOut = true;
-    imgOut = false;
-
-    normalisation = 0;
+    normalisation = 3;
+    fixMinNorm =0;
+    fixMaxNorm = 65535.0;
 
     binCount = 16;
 
@@ -49,37 +56,32 @@ void DirDetectionParams::DefaultParams(void)
     offsetCount = 4;
     offsetStep = 1;
 
-    fixMinNorm;
-    fixMaxNorm ;
-
-    displayGrayMax = 40000;
-    displayGrayMin = 0;
-
-    displayPCMax = 65535;
-    displayPCMin = 0;
-
-    showDirection = true;
+    showOutputImage = false;
     directionLineWidth = 2;
     directionLineLength = 23;
 
+    showTileOutputImage = false;
+
     showOutputText = true;
-    calculateDirectionality = false;
+
+    textOut = true;
+    imgOut = false;
+
 }
 
 std::string DirDetectionParams::ShowParams()
 {
     string OutString = "";
 
-    OutString += "Input Directory 1:\t"		+ InFolderName		+ "\n";
-    OutString += "Input File Name Base 1:\t"	+ InFilePattern	+ "\n";
+    OutString += "Input Directory :\t"		+ InFolderName		+ "\n";
+    OutString += "Input File Name Pattern :\t"	+ InFilePattern	+ "\n";
 
+    OutString += "Output Directory:\t" + OutFolderName + "\n";
 
-    OutString += "Output Directory:\t" + OutFolderName1 + "\n";
-    OutString += "Output Directory 2:\t" + OutFolderName2 + "\n";
-
+   // analisis parameters
     OutString += "Preprocess Type:\t";
     OutString += to_string(preprocessType);
-    OutString += " - ";
+    OutString += "\t - ";
     switch (preprocessType)
     {
     case 1:
@@ -98,44 +100,19 @@ std::string DirDetectionParams::ShowParams()
     OutString += to_string(preprocessKernelSize);
     OutString += "\n";
 
-    OutString += "Display result in gray:\t";
-    if (showInputGray)
-        OutString += "Y";
-    else
-        OutString += "N";
-    OutString += "\n";
-
-    OutString += "Display result in pseudocolor:\t";
-    if (showInputPC)
-        OutString += "Y";
-    else
-        OutString += "N";
-    OutString += "\n";
-
-
-    OutString += "Display small image:\t";
-    if (showSmallImage)
-        OutString += "Y";
-    else
-        OutString += "N";
-    OutString += "\n";
-
     OutString += "Tile Shape:\t";
     OutString += to_string(tileShape);
-    OutString += " - ";
+    OutString += "\t - ";
     switch (tileShape)
     {
     case 1:
-        OutString += "Rectangular";
+        OutString += "Circular";
         break;
     case 2:
-        OutString += "Elyptical";
-        break;
-    case 3:
         OutString += "Hexagonal";
         break;
     default:
-        OutString += "none";
+        OutString += "Squared";
         break;
     }
     OutString += "\n";
@@ -148,10 +125,6 @@ std::string DirDetectionParams::ShowParams()
     OutString += to_string(tileShift);
     OutString += "\n";
 
-    //OutString += "Tile shift y:\t";
-    //OutString += to_string(tileShiftY);
-    //OutString += "\n";
-
     OutString += "Tile offset x:\t";
     OutString += to_string(tileOffsetX);
     OutString += "\n";
@@ -160,35 +133,9 @@ std::string DirDetectionParams::ShowParams()
     OutString += to_string(tileOffsetY);
     OutString += "\n";
 
-
-    OutString += "Show tiles:\t";
-    if (showTiles)
-        OutString += "Y";
-    else
-        OutString += "N";
-    OutString += "\n";
-
-    OutString += "Tile Line Width>:\t";
-    OutString += to_string(tileLineWidth);
-    OutString += "\n";
-
-    OutString += "Text out:\t";
-    if (textOut)
-        OutString += "Y";
-    else
-        OutString += "N";
-    OutString += "\n";
-
-    OutString += "Image out:\t";
-    if (imgOut)
-        OutString += "Y";
-    else
-        OutString += "N";
-    OutString += "\n";
-
     OutString += "Normalisation:\t";
     OutString += to_string(normalisation);
-    OutString += " - ";
+    OutString += "\t - ";
     switch (normalisation)
     {
     case 1:
@@ -215,6 +162,15 @@ std::string DirDetectionParams::ShowParams()
     }
     OutString += "\n";
 
+    OutString += "Fixed Min Norm:\t";
+    OutString += to_string(fixMinNorm);
+    OutString += "\n";
+
+    OutString += "Fixed Max Norm:\t";
+    OutString += to_string(fixMaxNorm);
+    OutString += "\n";
+
+
     OutString += "Bin count:\t";
     OutString += to_string(binCount);
     OutString += "\n";
@@ -231,33 +187,66 @@ std::string DirDetectionParams::ShowParams()
     OutString += to_string(offsetStep);
     OutString += "\n";
 
-
-    OutString += "Fixed Min Norm:\t";
-    OutString += to_string(fixMinNorm);
+    OutString += "Angle Step:\t";
+    OutString += to_string(angleStep);
     OutString += "\n";
 
-    OutString += "Fixed Max Norm:\t";
-    OutString += to_string(fixMaxNorm);
+// display options
+    OutString += "Display Input Image in gray:\t";
+    if (showInputGray)
+        OutString += "Y";
+    else
+        OutString += "N";
     OutString += "\n";
 
-    OutString += "Display Max Gray:\t";
+    OutString += "Display range Max Gray:\t";
     OutString += to_string(displayGrayMax);
     OutString += "\n";
 
-    OutString += "Display Min Gray:\t";
+    OutString += "Display range Min Gray:\t";
     OutString += to_string(displayGrayMin);
     OutString += "\n";
 
-    OutString += "Display Max pseudocolor:\t";
+
+    OutString += "Display Input Image in pseudocolor:\t";
+    if (showInputPC)
+        OutString += "Y";
+    else
+        OutString += "N";
+    OutString += "\n";
+
+    OutString += "Display range Max pseudocolor image:\t";
     OutString += to_string(displayPCMax);
     OutString += "\n";
 
-    OutString += "Display Min pseudocolor:\t";
+    OutString += "Display range Min pseudocolor image:\t";
     OutString += to_string(displayPCMin);
     OutString += "\n";
 
-    OutString += "Show Direction on image:\t";
-    if (showDirection)
+
+    OutString += "Display Roi Shape Image:\t";
+    if (showTileRoiImage)
+        OutString += "Y";
+    else
+        OutString += "N";
+    OutString += "\n";
+
+    OutString += "Show tiles:\t";
+    if (showTilesOnImage)
+        OutString += "Y";
+    else
+        OutString += "N";
+    OutString += "\n";
+
+    OutString += "Tile Line Width>:\t";
+    OutString += to_string(tileLineWidth);
+    OutString += "\n";
+
+
+
+
+    OutString += "Show output image:\t";
+    if (showOutputImage)
         OutString += "Y";
     else
         OutString += "N";
@@ -267,15 +256,41 @@ std::string DirDetectionParams::ShowParams()
     OutString += to_string(directionLineWidth);
     OutString += "\n";
 
-    OutString += "Durection Line Length:\t";
+    OutString += "Direction Line Length:\t";
     OutString += to_string(directionLineLength);
     OutString += "\n";
 
-    OutString += "Angle Step:\t";
-    OutString += to_string(angleStep);
+    OutString += "Display small image:\t";
+    if (showTileOutputImage)
+        OutString += "Y";
+    else
+        OutString += "N";
     OutString += "\n";
 
+    OutString += "Show out text:\t";
+    if (showOutputText)
+        OutString += "Y";
+    else
+        OutString += "N";
     OutString += "\n";
 
+
+    OutString += "Text out:\t";
+    if (textOut)
+        OutString += "Y";
+    else
+        OutString += "N";
+    OutString += "\n";
+
+    OutString += "Image out:\t";
+    if (imgOut)
+        OutString += "Y";
+    else
+        OutString += "N";
+    OutString += "\n";
+
+    OutString += "File Name:\t"	+ FileName	+ "\n";;
+
+    OutString += "\n";
     return OutString;
 }

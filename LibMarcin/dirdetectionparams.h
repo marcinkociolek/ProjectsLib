@@ -7,39 +7,27 @@
 class DirDetectionParams
 {
 public:
-
+    // folders and file options
     std::string InFolderName;
     std::string InFilePattern;
 
-    std::string OutFolderName1;
-    std::string OutFolderName2;
+    std::string OutFolderName;
 
     std::string FileName; //this is only for passing the finamame to the procedude not to store in xmlfile
 
+    // analisis parameters
     int preprocessType;
     int preprocessKernelSize;
 
-    bool showInputGray;
-    bool showInputPC;
-    bool showRoi;
-    bool showSmallImage;
-
     int tileShape;
-
     int tileSize;
-    //int tileHeight;
     int tileShift;
-    //int tileShiftY;
     int tileOffsetX;
     int tileOffsetY;
 
-    bool showTiles;
-    int tileLineWidth;
-
-    bool textOut;
-    bool imgOut;
-
     int normalisation;
+    float fixMinNorm;
+    float fixMaxNorm ;
 
     int binCount;
 
@@ -47,26 +35,38 @@ public:
     int offsetCount;
     int offsetStep;
 
-    float fixMinNorm;
-    float fixMaxNorm ;
-
     double angleStep;
 
+    // display options
+
+    bool showInputGray;
     float displayGrayMax;
     float displayGrayMin;
 
+    bool showInputPC;
     float displayPCMax;
     float displayPCMin;
 
-    bool showDirection;
+    bool showTileRoiImage;
+
+    bool showTilesOnImage;
+    int tileLineWidth;
+
+    bool showOutputImage;
     int directionLineWidth;
     int directionLineLength;
 
+    bool showTileOutputImage;
+
     bool showOutputText;
-    bool calculateDirectionality;
+
+    // output options
+    bool textOut;
+    bool imgOut;
 
     // functions
     DirDetectionParams();
+    ~DirDetectionParams();
     void DefaultParams(void);
     //int LoadParams(string XmlFileName);
     //int SaveParams(string XmlFileName);
