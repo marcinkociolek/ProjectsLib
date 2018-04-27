@@ -6,22 +6,22 @@
 
 class MyQTImageWidget : public QWidget
 {
+    Q_OBJECT
 public:
     int x;
     int y;
     cv::Mat Im;
-    MyQTImageWidget();
     explicit MyQTImageWidget(QWidget *parent = 0);
     void paintEvent(QPaintEvent *event);
     void paintBitmap(cv::Mat Im);
 
-    void mousePressEvent(QMouseEvent *event);
+    //void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    void keyPressEvent(QKeyEvent * event);
+    //void keyPressEvent(QKeyEvent * event);
 signals:
-    void on_mousePressed(QPoint point, int butPressed);
+    //void on_mousePressed(QPoint point, int butPressed);
     void on_mouseMove(QPoint point, int butPressed);
-    void on_KeyPressed(int key);
+    //void on_KeyPressed(int key);
 public slots:
 
 };
