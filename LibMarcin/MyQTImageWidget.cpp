@@ -24,32 +24,30 @@ void MyQTImageWidget::paintEvent(QPaintEvent *event)
 {
    QPainter painter(this);
 
-   QImage QIm((unsigned char*)Im.data, Im.cols, Im.rows, QImage::Format_RGB888);
+   QImage QIm((unsigned char*)Im.data, Im.cols, Im.rows,Im.step, QImage::Format_RGB888);
 
    QRect rectangleToPaint = geometry();
    rectangleToPaint.setX(0);
    rectangleToPaint.setY(0);
-   //rectangleToPaint.setWidth(width());
-   //rectangleToPaint.setHeight(height());
-   rectangleToPaint.setWidth(Im.cols);
-   rectangleToPaint.setHeight(Im.rows);
+   rectangleToPaint.setWidth(width());
+   rectangleToPaint.setHeight(height());
+   //rectangleToPaint.setWidth(Im.cols);
+   //rectangleToPaint.setHeight(Im.rows);
    painter.drawImage(rectangleToPaint, QIm);
    //painter.drawImage(QIm.rect(), QIm);
    event->accept();
 }
-/*
 void MyQTImageWidget::mousePressEvent(QMouseEvent *event)
 {
     const QPoint point = event->pos();
     const int butPressed = event->buttons();
     emit on_mousePressed(point,butPressed);
 }
-*/
+
 void MyQTImageWidget::mouseMoveEvent(QMouseEvent *event)
 {
     const QPoint point = event->pos();
     const int butPressed = event->buttons();
-
     emit on_mouseMove(point, butPressed);
 }
 /*
