@@ -1716,3 +1716,33 @@ int MaskOutside(cv::Mat Im, cv::Mat Mask)
     return 1;
 
 }
+
+
+int MaskInside(cv::Mat Im, cv::Mat Mask)
+{
+    if(Im.empty())
+        return -1;
+    if(Mask.empty())
+        return -2;
+    if(Im.type() != CV_16U)
+        return -3;
+    if(Mask.type() != CV_16U)
+        return -4;
+    if(Im.cols != Mask.cols)
+        return -5;
+    if(Im.rows != Mask.rows)
+        return -6;
+
+    int maxXY = Im.cols *Im.rows;
+
+    unsigned short *wIm = (unsigned short *)Im.data;
+    unsigned short *wMask = (unsigned short *)Mask.data;
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(!*wMask)
+            *wIm = 0;
+        wMask++;
+        wIm++;
+    }
+    return 1;
+}
