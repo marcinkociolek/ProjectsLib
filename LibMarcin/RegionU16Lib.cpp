@@ -1646,3 +1646,73 @@ void ErosionCV(cv::Mat Mask, int shape)
 
     return ;
 }
+
+cv::Mat MaskOutsideMatOut(cv::Mat Im, cv::Mat Mask)
+{
+    if(Im.empty())
+        return Mat::zeros(0,0,CV_16U);
+    if(Mask.empty())
+        return Mat::zeros(0,0,CV_16U);
+    if(Im.type() != CV_16U)
+        return Mat::zeros(0,0,CV_16U);
+    if(Mask.type() != CV_16U)
+        return Mat::zeros(0,0,CV_16U);
+    if(Im.cols != Mask.cols)
+        return Mat::zeros(0,0,CV_16U);
+    if(Im.rows != Mask.rows)
+        return Mat::zeros(0,0,CV_16U);
+
+    int maxXY = Im.cols *Im.rows;
+
+    Mat Out = Mat::zeros(Im.rows,Im.cols,CV_16U);
+
+    unsigned short *wIm = (unsigned short *)Im.data;
+    unsigned short *wMask = (unsigned short *)Mask.data;
+    unsigned short *wOut = (unsigned short *)Out.data;
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(!*wMask)
+            *wOut = *wIm;
+
+        wMask++;
+        wIm++;
+        wOut++;
+    }
+
+    return Out;
+
+}
+
+int MaskOutside(cv::Mat Im, cv::Mat Mask)
+{
+    if(Im.empty())
+        return -1;
+    if(Mask.empty())
+        return -2;
+    if(Im.type() != CV_16U)
+        return -3;
+    if(Mask.type() != CV_16U)
+        return -4;
+    if(Im.cols != Mask.cols)
+        return -5;
+    if(Im.rows != Mask.rows)
+        return -6;
+
+    int maxXY = Im.cols *Im.rows;
+
+
+    unsigned short *wIm = (unsigned short *)Im.data;
+    unsigned short *wMask = (unsigned short *)Mask.data;
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wMask)
+            *wIm = 0;
+
+        wMask++;
+        wIm++;
+
+    }
+
+    return 1;
+
+}

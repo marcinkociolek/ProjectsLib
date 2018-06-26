@@ -48,6 +48,8 @@ cv::Mat BuildKernel(int shape);
 void DilationCV(cv::Mat Mask, int shape);
 void ErosionCV(cv::Mat Mask, int shape);
 
+cv::Mat MaskOutsideMatOut(cv::Mat Im, cv::Mat Mask);
+int MaskOutside(cv::Mat Im, cv::Mat Mask);
 
 #endif // GRADIENT
 
