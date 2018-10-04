@@ -52,6 +52,8 @@ public:
     bool showTilesOnImage;
     int tileLineWidth;
 
+    double imagesScale;
+
     bool showOutputImage;
     int directionLineWidth;
     int directionLineLength;

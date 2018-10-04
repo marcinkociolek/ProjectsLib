@@ -44,6 +44,8 @@ void DirDetectionParams::DefaultParams(void)
     showTilesOnImage = true;
     tileLineWidth = 1;
 
+    imagesScale = 1.0;
+
     normalisation = 3;
     fixMinNorm =0;
     fixMaxNorm = 65535.0;

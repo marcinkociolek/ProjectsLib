@@ -96,13 +96,17 @@ void DrawTilesOnImage(cv::Mat ImIn, bool showTilesOnImage, int tileShape, int ti
 
 }
 //-----------------------------------------------------------------------------------------------
-void ShowDirection(Mat ImToShow, int y, int x, float direction, int lineWidth, int lineLength)
+void ShowDirection(Mat ImToShow, int y, int x, float direction, int lineWidth, int lineLength, double scale)
 {
     int lineOffsetX = (int)round(lineLength * 0.5 *  sin((double)direction* PI / 180.0));
     int lineOffsetY = (int)round(lineLength * 0.5 * cos((double)direction* PI / 180.0));
 
     line(ImToShow, Point(x - lineOffsetX, y - lineOffsetY), Point(x + lineOffsetX, y + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), lineWidth);
-
-    imshow("ImOut", ImToShow);
+    Mat ImToShowTemp;
+    if (scale !=1.0)
+        cv::resize(ImToShow,ImToShowTemp,Size(),scale,scale,INTER_NEAREST);
+    else
+        ImToShowTemp = ImToShow;
+    imshow("ImOut", ImToShowTemp);
 }
 //-----------------------------------------------------------------------------------------------
