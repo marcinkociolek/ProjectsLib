@@ -65,6 +65,12 @@ public:
     // output options
     bool textOut;
     bool imgOut;
+    // granularity options
+    bool granularityCalc;
+    int granularityFirstOfset;
+    int granularityOffsetCount;
+    int granularityOffsetStep;
+    bool maZdaStyleOut;
 
     // functions
     DirDetectionParams();

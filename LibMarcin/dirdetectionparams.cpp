@@ -69,6 +69,12 @@ void DirDetectionParams::DefaultParams(void)
     textOut = true;
     imgOut = false;
 
+    granularityCalc = true;
+    granularityFirstOfset = 1;
+    granularityOffsetCount = 10;
+    granularityOffsetStep = 1;
+    maZdaStyleOut = false;
+
 }
 
 std::string DirDetectionParams::ShowParams()
