@@ -75,21 +75,24 @@ void DirDetectionParams::DefaultParams(void)
     granularityOffsetStep = 1;
     maZdaStyleOut = false;
 
+    className.clear();
+    dataSeparator = "\t";
+
 }
 
 std::string DirDetectionParams::ShowParams()
 {
     string OutString = "";
 
-    OutString += "Input Directory :\t"		+ InFolderName		+ "\n";
-    OutString += "Input File Name Pattern :\t"	+ InFilePattern	+ "\n";
+    OutString += "Input Directory :" + dataSeparator + InFolderName	 + dataSeparator + "\n";
+    OutString += "Input File Name Pattern :"  + dataSeparator + InFilePattern  + dataSeparator + "\n";
 
-    OutString += "Output Directory:\t" + OutFolderName + "\n";
+    OutString += "Output Directory:" + dataSeparator + OutFolderName + dataSeparator + "\n";
 
    // analisis parameters
-    OutString += "Preprocess Type:\t";
+    OutString += "Preprocess Type:" + dataSeparator ;
     OutString += to_string(preprocessType);
-    OutString += "\t - ";
+    OutString += dataSeparator + " - ";
     switch (preprocessType)
     {
     case 1:
@@ -102,15 +105,20 @@ std::string DirDetectionParams::ShowParams()
         OutString += "none";
         break;
     }
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Preprocess kernel size:\t";
+    OutString += "Preprocess kernel size:";
+    OutString += dataSeparator;
     OutString += to_string(preprocessKernelSize);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Tile Shape:\t";
+    OutString += "Tile Shape:";
+    OutString += dataSeparator;
     OutString += to_string(tileShape);
-    OutString += "\t - ";
+    OutString += dataSeparator;
+    OutString += " - ";
     switch (tileShape)
     {
     case 1:
@@ -123,27 +131,38 @@ std::string DirDetectionParams::ShowParams()
         OutString += "Squared";
         break;
     }
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Tile width x:\t";
+    OutString += "Tile width x:";
+    OutString += dataSeparator;
     OutString += to_string(tileSize);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Tile shift:\t";
+    OutString += "Tile shift:";
+    OutString += dataSeparator;
     OutString += to_string(tileShift);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Tile offset x:\t";
+    OutString += "Tile offset x:";
+    OutString += dataSeparator;
     OutString += to_string(tileOffsetX);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Tile offset y:\t";
+    OutString += "Tile offset y:";
+    OutString += dataSeparator;
     OutString += to_string(tileOffsetY);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Normalisation:\t";
+    OutString += "Normalisation:";
+    OutString += dataSeparator;
     OutString += to_string(normalisation);
-    OutString += "\t - ";
+    OutString += dataSeparator;
+    OutString += " - ";
     switch (normalisation)
     {
     case 1:
@@ -168,136 +187,187 @@ std::string DirDetectionParams::ShowParams()
         OutString += "none";
         break;
     }
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Fixed Min Norm:\t";
+    OutString += "Fixed Min Norm:";
+    OutString += dataSeparator;
     OutString += to_string(fixMinNorm);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Fixed Max Norm:\t";
+    OutString += "Fixed Max Norm:";
+    OutString += dataSeparator;
     OutString += to_string(fixMaxNorm);
+    OutString += dataSeparator;
     OutString += "\n";
 
 
-    OutString += "Bin count:\t";
+    OutString += "Bin count:";
+    OutString += dataSeparator;
     OutString += to_string(binCount);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Min Offset:\t";
+    OutString += "Min Offset:";
+    OutString += dataSeparator;
     OutString += to_string(minOffset);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Offset count:\t";
+    OutString += "Offset count:";
+    OutString += dataSeparator;
     OutString += to_string(offsetCount);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Offset step:\t";
+    OutString += "Offset step:";
+    OutString += dataSeparator;
     OutString += to_string(offsetStep);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Angle Step:\t";
+    OutString += "Angle Step:";
+    OutString += dataSeparator;
     OutString += to_string(angleStep);
+    OutString += dataSeparator;
     OutString += "\n";
 
 // display options
-    OutString += "Display Input Image in gray:\t";
+    OutString += "Display Input Image in gray:";
+    OutString += dataSeparator;
     if (showInputGray)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Display range Max Gray:\t";
+    OutString += "Display range Max Gray:";
+    OutString += dataSeparator;
     OutString += to_string(displayGrayMax);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Display range Min Gray:\t";
+    OutString += "Display range Min Gray:";
+    OutString += dataSeparator;
     OutString += to_string(displayGrayMin);
+    OutString += dataSeparator;
     OutString += "\n";
 
 
-    OutString += "Display Input Image in pseudocolor:\t";
+    OutString += "Display Input Image in pseudocolor:";
+    OutString += dataSeparator;
     if (showInputPC)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Display range Max pseudocolor image:\t";
+    OutString += "Display range Max pseudocolor image:";
+    OutString += dataSeparator;
     OutString += to_string(displayPCMax);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Display range Min pseudocolor image:\t";
+    OutString += "Display range Min pseudocolor image:";
+    OutString += dataSeparator;
     OutString += to_string(displayPCMin);
+    OutString += dataSeparator;
     OutString += "\n";
 
 
-    OutString += "Display Roi Shape Image:\t";
+    OutString += "Display Roi Shape Image:";
+    OutString += dataSeparator;
     if (showTileRoiImage)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Show tiles:\t";
+    OutString += "Show tiles:";
+    OutString += dataSeparator;
     if (showTilesOnImage)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Tile Line Width>:\t";
+    OutString += "Tile Line Width>:";
+    OutString += dataSeparator;
     OutString += to_string(tileLineWidth);
+    OutString += dataSeparator;
     OutString += "\n";
 
 
 
 
-    OutString += "Show output image:\t";
+    OutString += "Show output image:";
+    OutString += dataSeparator;
     if (showOutputImage)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Direction Line Width>:\t";
+    OutString += "Direction Line Width>:";
+    OutString += dataSeparator;
     OutString += to_string(directionLineWidth);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Direction Line Length:\t";
+    OutString += "Direction Line Length:";
+    OutString += dataSeparator;
     OutString += to_string(directionLineLength);
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Display small image:\t";
+    OutString += "Display small image:";
+    OutString += dataSeparator;
     if (showTileOutputImage)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Show out text:\t";
+    OutString += "Show out text:";
+    OutString += dataSeparator;
     if (showOutputText)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
 
-    OutString += "Text out:\t";
+    OutString += "Text out:";
+    OutString += dataSeparator;
     if (textOut)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "Image out:\t";
+    OutString += "Image out:";
+    OutString += dataSeparator;
     if (imgOut)
         OutString += "Y";
     else
         OutString += "N";
+    OutString += dataSeparator;
     OutString += "\n";
 
-    OutString += "File Name:\t"	+ FileName	+ "\n";;
+    OutString += "File Name:";
+    OutString += dataSeparator;
+    OutString += FileName;
+    OutString += dataSeparator;
+    OutString += "\n";
 
     OutString += "\n";
     return OutString;

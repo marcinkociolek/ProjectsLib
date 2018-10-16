@@ -72,6 +72,10 @@ public:
     int granularityOffsetStep;
     bool maZdaStyleOut;
 
+    //additional
+    std::string className;
+    std::string dataSeparator;
+
     // functions
     DirDetectionParams();
     ~DirDetectionParams();
