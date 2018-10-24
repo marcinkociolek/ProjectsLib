@@ -82,4 +82,67 @@ public:
     void FromFile(std::string FileNameIn);
 };
 
+class FeatureHistogram
+{
+public:
+    std::string featureName;
+    int numberOfBins;
+    int numberOfElements;
+
+    int *Histogram;
+
+    double minValue;
+    double maxValue;
+    double binRange;
+
+    int maxHistVal;
+    int maxHistPosition;
+
+    FeatureHistogram(FileParams Params, int featureNr, int numberOfBinsIn = 20)
+    {
+        if(Params.ParamsVect.empty())
+        {
+            numberOfBins = 0;
+            return;
+        }
+        if(Params.ParamsVect[0].Params.empty())
+        {
+            numberOfBins = 0;
+            return;
+        }
+        if(Params.ParamsVect[0].paramsCount < (featureNr + 1))
+        {
+            numberOfBins = 0;
+            return;
+        }
+
+        numberOfBins = numberOfBinsIn;
+        Histogram = new int[numberOfBins];
+        for(int i = 0; i < numberOfBins; i++)
+        {
+            Histogram[i] = 0;
+        }
+
+        minValue = Params.ParamsVect[0].Params[featureNr];
+        maxValue = Params.ParamsVect[0].Params[featureNr];
+        for(int i = 1; i < Params.ValueCount; i++)
+        {
+            if(minValue > Params.ParamsVect[i].Params[featureNr])
+                minValue = Params.ParamsVect[i].Params[featureNr];
+            if(maxValue < Params.ParamsVect[i].Params[featureNr])
+                maxValue = Params.ParamsVect[i].Params[featureNr];
+        }
+        binRange = (maxValue - minValue)/(double)numberOfBins;
+
+    }
+
+    ~FeatureHistogram()
+    {
+        featureName.clear();
+        numberOfBins = 0;
+        delete[] Histogram;
+        Histogram = 0;
+    }
+};
+
 #endif // TILEPARAMS_H
