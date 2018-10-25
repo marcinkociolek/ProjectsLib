@@ -2,8 +2,10 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
+#include <opencv2/core/core.hpp>
+//#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
@@ -123,3 +125,76 @@ void TileParams::FromString(std::string InStr)
 
    }
 }
+ //-----------------------------------------------------------------------------------------------------------
+
+ void FeatureHistogram::PlotDirHistPlanar(int yScale, int scaleCoef, int barWidth)
+ {
+     const int topOffset = 30;
+     const int bottomOffset = 30;
+     const int scaleBarLenht = 5;
+     const int leftOffset = 60;
+     const int rightOffset = 20;
+     const int digitWidth = 13;
+     const int digitHeight = 10;
+
+     int binCount = numberOfBins;
+
+     int yScaleHeight = 100 * yScale;
+
+     int plotYSize = yScaleHeight + topOffset + bottomOffset;
+     int plotXSize = leftOffset + rightOffset + binCount *(1+barWidth);
+     cv::Mat ImToShow = Mat(plotYSize,plotXSize,CV_8UC3,cv::Scalar(255,255,255));
+
+     int nrOfCharacters = (int)featureName.size() ;
+     putText(ImToShow,featureName,Point(plotXSize / 2 - nrOfCharacters * digitWidth / 2 ,
+                                 topOffset / 2), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+
+     line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),cv::Point(leftOffset - 2,topOffset),cv::Scalar(255.0,0.0,0.0,0.0));
+     line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),Point(leftOffset+binCount*(1+barWidth),yScaleHeight + topOffset),Scalar(255.0,0.0,0.0,0.0));
+
+     for(int y = 0; y <= yScaleHeight; y+= 100/2)
+     {
+         line(ImToShow,Point(leftOffset - scaleBarLenht,yScaleHeight + topOffset - y),Point(leftOffset-2 ,yScaleHeight + topOffset - y),Scalar(255.0,0.0,0.0,0.0));
+     }
+     for(int y = 0; y <= yScale; y++)
+     {
+         string text = to_string((int)round((double)y * pow(10.0,scaleCoef)));
+         int nrOfdigits = (int)(text.size());
+         putText(ImToShow,text,Point(leftOffset - scaleBarLenht -2 - nrOfdigits * digitWidth, yScaleHeight - y*100 + topOffset + digitHeight / 2), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+     }
+     for(int x = 0; x <= binCount; x+= 40)
+     {
+         line(ImToShow,Point(leftOffset + x * (1 + barWidth) + barWidth /2, yScaleHeight + topOffset),
+                       Point(leftOffset + x * (1 + barWidth) + barWidth /2,yScaleHeight + topOffset + scaleBarLenht),
+                       Scalar(255.0,0.0,0.0,0.0));
+
+         //std::ostringstream ss;
+         //ss << std::fixed << std::setprecision(2) << (minValue + x * binRange);
+         //std::string text = ss.str();
+         string text = to_string(minValue + x * binRange);
+         int nrOfdigits = (int)(text.size());
+         putText(ImToShow,text,Point(leftOffset + x * (1 + barWidth)  - nrOfdigits * digitWidth / 2 ,
+                                     yScaleHeight + topOffset + digitHeight * 2 + scaleBarLenht), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+     }
+
+     Point orygin = Point(leftOffset, yScaleHeight + topOffset);
+     for(int bin = 0; bin < binCount; bin++)
+     {
+         int barLenght = (int)round((double)Histogram[bin] * pow(10.0,scaleCoef * (-1))*100);
+
+         Point start = orygin + Point(bin*(1 + barWidth), 0);
+         if (barLenght > yScaleHeight)
+         {
+             barLenght = yScaleHeight;
+             Point stop  = start + Point(barWidth - 1,0 - barLenght);
+             rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),CV_FILLED);
+         }
+         else
+         {
+             Point stop  = start + Point(barWidth - 1,0 - barLenght);
+             rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),CV_FILLED);
+         }
+     }
+     imshow("Feature Hist",ImToShow);
+ }
+

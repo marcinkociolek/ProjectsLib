@@ -98,8 +98,14 @@ public:
     int maxHistVal;
     int maxHistPosition;
 
-    FeatureHistogram(FileParams Params, int featureNr, int numberOfBinsIn = 20)
+    void GetHitogram(FileParams Params, int featureNr, int numberOfBinsIn = 40)
     {
+        featureName.clear();
+        numberOfBins = 0;
+        delete[] Histogram;
+        Histogram = 0;
+
+        featureName = Params.NamesVector[featureNr+2];
         if(Params.ParamsVect.empty())
         {
             numberOfBins = 0;
@@ -140,18 +146,20 @@ public:
 
         numberOfElements = 0;
 
-        for(int i = 1; i < Params.ValueCount; i++)
+        for(int i = 0; i < Params.ValueCount; i++)
         {
             if(Params.ParamsVect[0].paramsCount < (featureNr + 1))
                 continue;
 
-            int binVal = (int)floor(Params.ParamsVect[i].Params[featureNr] - minValue/histogramRange);
-            if(binVal <= numberOfBins)
+            int binVal = (int)floor((Params.ParamsVect[i].Params[featureNr] - minValue)/histogramRange*numberOfBins);
+            if(binVal >= numberOfBins)
                 continue;
             numberOfElements++;
             Histogram[binVal]++;
         }
      }
+
+    void PlotDirHistPlanar(int yScale, int scaleCoef, int barWidth = 3);
 
     FeatureHistogram()
     {
