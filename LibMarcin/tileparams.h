@@ -127,13 +127,38 @@ public:
         maxValue = Params.ParamsVect[0].Params[featureNr];
         for(int i = 1; i < Params.ValueCount; i++)
         {
+            if(Params.ParamsVect[0].paramsCount < (featureNr + 1))
+                continue;
             if(minValue > Params.ParamsVect[i].Params[featureNr])
                 minValue = Params.ParamsVect[i].Params[featureNr];
             if(maxValue < Params.ParamsVect[i].Params[featureNr])
                 maxValue = Params.ParamsVect[i].Params[featureNr];
         }
-        binRange = (maxValue - minValue)/(double)numberOfBins;
 
+        double histogramRange = maxValue - minValue;
+        binRange = (histogramRange)/(double)numberOfBins;
+
+        numberOfElements = 0;
+
+        for(int i = 1; i < Params.ValueCount; i++)
+        {
+            if(Params.ParamsVect[0].paramsCount < (featureNr + 1))
+                continue;
+
+            int binVal = (int)floor(Params.ParamsVect[i].Params[featureNr] - minValue/histogramRange);
+            if(binVal <= numberOfBins)
+                continue;
+            numberOfElements++;
+            Histogram[binVal]++;
+        }
+     }
+
+    FeatureHistogram()
+    {
+        featureName.clear();
+        numberOfBins = 0;
+        delete[] Histogram;
+        Histogram = 0;
     }
 
     ~FeatureHistogram()
