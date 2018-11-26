@@ -1,21 +1,24 @@
 #include "opencv2\core\core.hpp"
 #include <math.h>
 #include "NormalizationLib.h"
+
+using namespace cv;
+using namespace std;
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
-void NormParamsMinMax(Mat Im, float *maxNorm, float *minNorm)
+void NormParamsMinMax(Mat Im, double *maxNorm, double *minNorm)
 {
 	Mat ImF;
-	Im.convertTo(ImF, CV_32F);
+    Im.convertTo(ImF, CV_64F);
 	int maxX, maxY, maxXY;
 	maxX = Im.cols;
 	maxY = Im.rows;
 	maxXY = maxX * maxY;
 
-	float max = (float)(-100000.0);
-	float min = (float)(100000.0);
+    double max = (double)(-100000.0);
+    double min = (double)(100000.0);
 
-	float *wImF = (float *)(ImF.data);
+    double *wImF = (double *)(ImF.data);
 	for (int i = 0; i < maxXY; i++)
 	{
 		if (max < *wImF)
@@ -28,10 +31,10 @@ void NormParamsMinMax(Mat Im, float *maxNorm, float *minNorm)
 	*minNorm = min;
 }
 //-------------------------------------------------------------------------------------------------------------
-void NormParamsMeanP3Std(Mat Im, float *maxNorm, float *minNorm)
+void NormParamsMeanP3Std(Mat Im, double *maxNorm, double *minNorm)
 {
 	Mat ImF;
-	Im.convertTo(ImF, CV_32F);
+    Im.convertTo(ImF, CV_64F);
 	int maxX, maxY, maxXY;
 	maxX = Im.cols;
 	maxY = Im.rows;
@@ -41,32 +44,32 @@ void NormParamsMeanP3Std(Mat Im, float *maxNorm, float *minNorm)
 	//float min = (float)(100000.0);
 	double sum = 0;
 	int count = 0;
-	float *wImF = (float *)(ImF.data);
+    double *wImF = (double *)(ImF.data);
 	for (int i = 0; i < maxXY; i++)
 	{
 		sum += (double)*wImF;
 		count++;
 		wImF++;
 	}
-	float mean = (float)(sum / ((double)(count)));
+    double mean = (sum / ((double)(count)));
 	double deviationSum = 0;
-	wImF = (float *)(ImF.data);
+    wImF = (double *)(ImF.data);
 	for (int i = 0; i < maxXY; i++)
 	{
-		float diff = *wImF - mean;
-		deviationSum += (double)(diff * diff);
+        double diff = *wImF - mean;
+        deviationSum += (diff * diff);
 		wImF++;
 	}
-	float stdDev = sqrt((deviationSum) / ((double)(count - 1)));
+    double stdDev = sqrt((deviationSum) / ((double)(count - 1)));
 
 	*maxNorm = mean + 3 * stdDev;
 	*minNorm = mean - 3 * stdDev;
 }
 
 //-------------------------------------------------------------------------------------------------------------
-void NormParams1to99perc(Mat ImIn, float *maxNorm, float *minNorm)
+void NormParams1to99perc(Mat Im,  double *maxNorm, double *minNorm)
 {
-	int maxXY = ImIn.cols  * ImIn.rows;
+    int maxXY = Im.cols  * Im.rows;
 
 	int *Hist = new int[65536];
 	int *wHist = Hist;
@@ -76,11 +79,14 @@ void NormParams1to99perc(Mat ImIn, float *maxNorm, float *minNorm)
 		wHist++;
 	}
 
-	float *wImIn;
-	wImIn = (float*)ImIn.data;
+    Mat ImF;
+    Im.convertTo(ImF, CV_64F);
+
+    double *wImIn;
+    wImIn = (double*)ImF.data;
 	for (int i = 0; i < maxXY; i++)
 	{
-		float histPos = *wImIn;
+        double histPos = *wImIn;
 		if (histPos < 0)
 			histPos = 0;
 		if (histPos > 65535)
