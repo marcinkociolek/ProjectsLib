@@ -68,19 +68,19 @@ void TileParams::FromString(std::string InStr)
      tileShape = -1;
      tileSize = -1;
      ValueCount = 0;
-     NamesVector.empty();
-     ParamsVect.empty();
+     NamesVector.clear();
+     ParamsVect.clear();
  }
 
  FileParams::~FileParams()
  {
-     ImFileName.empty();
-     ImFolderName.empty();
+     ImFileName.clear();
+     ImFolderName.clear();
      tileShape = -1;
      tileSize = -1;
      ValueCount = 0;
-     NamesVector.empty();
-     ParamsVect.empty();
+     NamesVector.clear();
+     ParamsVect.clear();
  }
  //-----------------------------------------------------------------------------------------------------------
  void IntensityStatistics::SaveToFile(string Filename)
