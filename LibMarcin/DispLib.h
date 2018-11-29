@@ -147,10 +147,10 @@ const unsigned char colormapB[256] =
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 //---------------------------------------------------------------------------
-cv::Mat ShowImage8PseudoColor(cv::Mat Im8, float minVal, float maxVal);
-cv::Mat ShowImage16PseudoColor(cv::Mat Im16, float minVal, float maxVal);
-cv::Mat ShowImage16Gray(cv::Mat Im16, float minVal, float maxVal);
-cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, float minVal, float maxVal);
+cv::Mat ShowImage8PseudoColor(cv::Mat Im8, double minVal, double maxVal);
+cv::Mat ShowImage16PseudoColor(cv::Mat Im16, double minVal, double maxVal);
+cv::Mat ShowImage16Gray(cv::Mat Im16, double minVal, double maxVal);
+cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, double minVal, double maxVal);
 cv::Mat ShowImageF64PseudoColor(cv::Mat ImF, double minVal, double maxVal);
 
 
