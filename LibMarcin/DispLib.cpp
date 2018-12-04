@@ -15,7 +15,7 @@ using namespace std;
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-Mat ShowImage8PseudoColor(Mat Im8, float minVal, float maxVal)
+Mat ShowImage8PseudoColor(Mat Im8, double minVal, double maxVal)
 {
     int maxX = Im8.cols;
     int maxY = Im8.rows;
@@ -28,13 +28,13 @@ Mat ShowImage8PseudoColor(Mat Im8, float minVal, float maxVal)
 
     ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
 
-    float difference = maxVal - minVal;
+    double difference = maxVal - minVal;
     if(difference == 0)
         difference = 1;
-    float gain = 255/difference;
-    float offset = gain * minVal;
+    double gain = 255/difference;
+    double offset = gain * minVal;
 
-    float value;
+    double value;
     unsigned char index;
 
     unsigned char *wIm8 = (unsigned char *)Im8.data;
@@ -43,7 +43,7 @@ Mat ShowImage8PseudoColor(Mat Im8, float minVal, float maxVal)
     for (int i = 0; i < maxXY; i++)
     {
 
-        value = (float)(*wIm8) * gain - offset;
+        value = (double)(*wIm8) * gain - offset;
         if (value > 255)
             value = 255;
         if (value < 0)
