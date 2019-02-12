@@ -3,44 +3,55 @@
 
 using namespace cv;
 using namespace std;
-
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 HistogramInteger::HistogramInteger()
 {
     histMin = 0;
     histSize = 0;
+    histMean = 0;
     Histogram = 0;
 }
+//----------------------------------------------------------------------------------------------------------------
 HistogramInteger::~HistogramInteger()
 {
     Release();
 }
+//----------------------------------------------------------------------------------------------------------------
 void HistogramInteger::Release()
 {
-    histMin = 65535;
+    histMin = 0;
     histMax = 0;
     histSize = 0;
+    histMean = 0;
     delete[] Histogram;
     Histogram = 0;
 }
-
-int HistogramInteger::FromMat(Mat Im)
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::FromMat16U(Mat Im)
 {
     Release();
 
     if(Im.empty())
         return 0;
     if(Im.channels() != 1)
-        return 0;
+        return -1;
     if(Im.type() != CV_16U)
-        return 0;
+        return -2;
 
 
     int maxX = Im.cols;
     int maxY = Im.rows;
     int maxXY = maxX*maxY;
 
+    if(maxXY == 0)
+        return -3;
+
     uint16_t *wIm;
     wIm = (uint16_t*)Im.data;
+
+    int sum = 0;
 
     for(int i = 0; i< maxXY; i++)
     {
@@ -48,9 +59,12 @@ int HistogramInteger::FromMat(Mat Im)
             histMax = *wIm;
         if (histMin > *wIm)
             histMin = *wIm;
+
+        sum += *wIm;
         wIm++;
     }
     histSize = histMax - histMin + 1;
+    histMean = sum/maxXY;
 
     Histogram = new int[histSize];
     for(int k = 0; k < histSize; k++)
@@ -72,8 +86,64 @@ int HistogramInteger::FromMat(Mat Im)
     return 1;
 
 }
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::FromMat32S(Mat Im)
+{
+    Release();
 
-string HistogramInteger::GerString()
+    if(Im.empty())
+        return 0;
+    if(Im.channels() != 1)
+        return 0;
+    if(Im.type() != CV_32S)
+        return 0;
+
+
+    int maxX = Im.cols;
+    int maxY = Im.rows;
+    int maxXY = maxX*maxY;
+
+    int32_t *wIm;
+    wIm = (int32_t*)Im.data;
+
+    histMax = *wIm;
+    histMin = *wIm;
+
+    for(int i = 0; i< maxXY; i++)
+    {
+        if (histMax < *wIm)
+            histMax = *wIm;
+        if (histMin > *wIm)
+            histMin = *wIm;
+        wIm++;
+    }
+    histSize = histMax - histMin + 1;
+
+    if(histSize < 65536)
+    {
+        Histogram = new int[histSize];
+        for(int k = 0; k < histSize; k++)
+        {
+            Histogram[k] = 0;
+        }
+
+        wIm = (int32_t*)Im.data;
+        for(int i = 0; i< maxXY; i++)
+        {
+            int val = *wIm - histMin;
+            if(val < 0)
+                val = 0;
+            if(val >= histSize)
+                val = histSize - 1;
+            Histogram[val]++;
+            wIm++;
+        }
+    }
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+string HistogramInteger::GetString()
 {
     if (histSize == 0)
         return "Empty \n";
@@ -81,6 +151,7 @@ string HistogramInteger::GerString()
     string Out = "";
     Out += " min = \t" + to_string(histMin) + "\n";
     Out += " max = \t" + to_string(histMax) + "\n";
+    Out += " mean = \t" + to_string(histMean) + "\n";
     Out += " size = \t" + to_string(histSize) + "\n";
     Out += "\n";
     Out += "val \t hist\n";
@@ -160,3 +231,9 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
     }
     return ImToShow;
 }
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
