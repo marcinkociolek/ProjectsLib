@@ -52,7 +52,8 @@ int HistogramInteger::FromMat16U(Mat Im)
     wIm = (uint16_t*)Im.data;
 
     int sum = 0;
-
+    histMax = *wIm;
+    histMin = *wIm;
     for(int i = 0; i< maxXY; i++)
     {
         if (histMax < *wIm)
@@ -178,13 +179,18 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
 
     int yScaleHeight = 100 * yScale;
 
+    int histSizeLocal = histSize;
+    if (histSizeLocal < 10)
+        histSizeLocal = 10;
+
+
     int plotYSize = yScaleHeight + topOffset + bottomOffset;
-    int plotXSize = leftOffset + rightOffset + histSize * ( 1 + barWidth);
+    int plotXSize = leftOffset + rightOffset + histSizeLocal * ( 1 + barWidth);
     cv::Mat ImToShow = Mat(plotYSize,plotXSize,CV_8UC3,cv::Scalar(255,255,255));
 
 
     line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),cv::Point(leftOffset - 2,topOffset),cv::Scalar(255.0,0.0,0.0,0.0));
-    line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),Point(leftOffset + histSize *(1+barWidth),yScaleHeight + topOffset),Scalar(255.0,0.0,0.0,0.0));
+    line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),Point(leftOffset + histSizeLocal *(1+barWidth),yScaleHeight + topOffset),Scalar(255.0,0.0,0.0,0.0));
 
     for(int y = 0; y <= yScaleHeight; y+= 100/2)
     {
@@ -196,7 +202,7 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
         int nrOfdigits = (int)(text.size());
         putText(ImToShow,text,Point(leftOffset - scaleBarLenht -2 - nrOfdigits * digitWidth, yScaleHeight - y*100 + topOffset + digitHeight / 2), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
     }
-    for(int x = 0; x <= histSize; x+= 40)
+    for(int x = 0; x <= histSizeLocal; x+= 40)
     {
         line(ImToShow,Point(leftOffset + x * (1 + barWidth) + barWidth /2, yScaleHeight + topOffset),
                       Point(leftOffset + x * (1 + barWidth) + barWidth /2,yScaleHeight + topOffset + scaleBarLenht),
