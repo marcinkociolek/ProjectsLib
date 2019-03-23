@@ -148,9 +148,9 @@ void NormParamsMinMax(Mat Im, Mat Roi , unsigned short roiNr, double *maxNorm, d
 
 	for (int i = 0; i < maxXY; i++)
 	{
-        if (max < *wImD || *wRoi == roiNr)
+        if (max < *wImD && *wRoi == roiNr)
             max = *wImD;
-        if (min > *wImD || *wRoi == roiNr)
+        if (min > *wImD && *wRoi == roiNr)
             min = *wImD;
         wImD++;
 		wRoi++;
