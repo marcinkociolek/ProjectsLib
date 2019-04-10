@@ -17,6 +17,7 @@ public:
     void Release();
     int FromMat16U(cv::Mat);
     int FromMat16U(cv::Mat Im, cv::Mat Mask, int roiNr);
+    int FromMat16ULimit(cv::Mat Im, cv::Mat Mask, int roiNr, int min, int max);
     int FromMat32S(cv::Mat);
     std::string GetString();
     cv::Mat Plot(int yScale, int scaleCoef, int barWidth);

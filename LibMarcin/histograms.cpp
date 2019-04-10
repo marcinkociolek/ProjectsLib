@@ -122,8 +122,8 @@ int HistogramInteger::FromMat16U(Mat Im, Mat Mask, int roiNr)
     wIm = (uint16_t*)Im.data;
     wMask = (uint16_t*)Mask.data;
     int sum = 0;
-    histMax = *wIm;
-    histMin = *wIm;
+    histMax = 0;
+    histMin = 65535;
     for(int i = 0; i< maxXY; i++)
     {
         if(*wMask == roiNr || roiNr == 0)
@@ -137,6 +137,77 @@ int HistogramInteger::FromMat16U(Mat Im, Mat Mask, int roiNr)
         wMask++;
         wIm++;
     }
+    histSize = histMax - histMin + 1;
+    histMean = sum/maxXY;
+
+    Histogram = new int[histSize];
+    for(int k = 0; k < histSize; k++)
+    {
+        Histogram[k] = 0;
+    }
+
+    wIm = (uint16_t*)Im.data;
+    wMask = (uint16_t*)Mask.data;
+    for(int i = 0; i< maxXY; i++)
+    {
+        if(*wMask == roiNr || roiNr == 0)
+        {
+            int val = *wIm - histMin;
+            if(val < 0)
+                val = 0;
+            if(val >= histSize)
+                val = histSize - 1;
+            Histogram[val]++;
+        }
+        wMask++;
+        wIm++;
+    }
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::FromMat16ULimit(Mat Im, Mat Mask, int roiNr, int min, int max)
+{
+    Release();
+
+    if(Im.empty())
+        return 0;
+    if(Im.channels() != 1)
+        return -1;
+    if(Im.type() != CV_16U)
+        return -2;
+    if(Mask.empty())
+        return -3;
+    if(Mask.channels() != 1)
+        return -4;
+    if(Mask.type() != CV_16U)
+        return -5;
+
+    if(Mask.cols != Im.cols)
+        return -6;
+    if(Mask.rows != Im.rows)
+        return -7;
+
+
+    int maxX = Im.cols;
+    int maxY = Im.rows;
+    int maxXY = maxX*maxY;
+
+    if(maxXY == 0)
+        return -3;
+
+    uint16_t *wIm, *wMask;
+    wIm = (uint16_t*)Im.data;
+    wMask = (uint16_t*)Mask.data;
+    int sum = 0;
+    histMax = max;
+    histMin = min;
+
+    if(histMax > 65535)
+        histMax = 65535;
+    if(histMin < 0)
+        histMin = 0;
+
     histSize = histMax - histMin + 1;
     histMean = sum/maxXY;
 
