@@ -10,7 +10,9 @@ public:
     int histSize;
     int histMin;
     int histMax;
-    int histMean;
+    int mean;
+    int min;
+    int max;
     int *Histogram;
     HistogramInteger();
     ~HistogramInteger();
