@@ -221,6 +221,8 @@ int HistogramInteger::FromMat16ULimit(Mat Im, Mat Mask, int roiNr, int fixedMin,
 
     histSize = (histMax - histMin) + 1;
 
+    if(histSize < 1)
+        histSize = 1;
     Histogram = new int[histSize];
     for(int k = 0; k < histSize; k++)
     {
