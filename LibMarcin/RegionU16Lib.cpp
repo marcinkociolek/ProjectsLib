@@ -1489,6 +1489,30 @@ cv::Mat CreateRoi16(int Shape, int maxX, int maxY)
 
         }
         break;
+    case 4: // klepsydra
+        {
+            roiMaxX = maxX;
+            roiMaxY = maxY;
+            Roi = Mat::zeros(roiMaxY, roiMaxX, CV_16U);
+
+            Point vertice0(0, 0);
+            Point vertice1(roiMaxX - 1, roiMaxY - 1);
+            Point vertice2(0, roiMaxY - 1);
+            Point vertice3(roiMaxX - 1, 0);
+
+            Point ShapePoints[1][5];
+            ShapePoints[0][0] = Point(0,0);
+            ShapePoints[0][1] = Point(0,roiMaxY-1);
+            ShapePoints[0][2] = Point(roiMaxX-1,0);
+            ShapePoints[0][3] = Point(roiMaxX-1,roiMaxY-1);
+            ShapePoints[0][4] = Point(0,0);
+
+            const Point* wShapePoints[1] = { ShapePoints[0] };
+            int nrOfVertices[] = {5};
+            fillPoly(Roi, wShapePoints, nrOfVertices,1,1,1);
+
+        }
+        break;
     default:
         break;
     }

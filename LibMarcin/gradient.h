@@ -7,6 +7,7 @@
 
 
 cv::Mat GradientDown(cv::Mat ImIn);
+cv::Mat GradientUp(cv::Mat ImIn);
 cv::Mat HorizontalGradientDown(cv::Mat ImIn);
 cv::Mat HorizontalAbsGradient(cv::Mat ImIn);
 

@@ -1,6 +1,7 @@
 #include "StringFcLib.h"
 #include <iostream>
-//----------------------------------------------------------------------------------------------------------------------------------
+
+using namespace std;
 string ItoStrLZ(int nr, int leadZerosCount)
 {
 	if (leadZerosCount > 10)

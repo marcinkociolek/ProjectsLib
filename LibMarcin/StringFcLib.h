@@ -4,10 +4,10 @@
 //#include <stdio.h>
 #include <iostream>
 
-using namespace std;
+//using namespace std;
 
-string ItoStrLZ(int nr, int leadZerosCount);
-string ItoStrLZPlusSign(int nr, int leadZerosCount);
-string ItoStrLS(int nr, int leadSpaceCount);
+std::string ItoStrLZ(int nr, int leadZerosCount);
+std::string ItoStrLZPlusSign(int nr, int leadZerosCount);
+std::string ItoStrLS(int nr, int leadSpaceCount);
 
 #endif
