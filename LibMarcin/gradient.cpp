@@ -99,6 +99,99 @@ Mat GradientDown(Mat ImIn)
     return ImOut;
 }
 //---------------------------------------------------------------------------
+Mat GradientUP(Mat ImIn)
+{
+    Mat ImF, ImOut;
+    ImIn.convertTo(ImF,CV_32F);
+
+
+
+    int maxX = ImIn.cols;
+    int maxY = ImIn.rows;
+    int maxXY = maxX * maxY;
+    int maxXa = maxX - 1;
+    int maxYa = maxY - 1;
+
+    ImOut = Mat::zeros(maxY,maxX,CV_32F);
+
+    float *wImOut = (float*)ImOut.data;
+    float *wImIn[9];
+
+    wImIn[0] = (float*)ImF.data;
+    wImIn[1] = wImIn[0] - maxX;
+    wImIn[2] = wImIn[0] - maxX + 1;
+    wImIn[3] = wImIn[0] + 1;
+    wImIn[4] = wImIn[0] + maxX + 1;
+    wImIn[5] = wImIn[0] + maxX;
+    wImIn[6] = wImIn[0] + maxX - 1;
+    wImIn[7] = wImIn[0] - 1;
+    wImIn[8] = wImIn[0] - maxX - 1;
+
+    float Grad[8];
+    for(int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        Grad[0] = 0;
+
+        if( y > 0 )
+            Grad[0] = *wImIn[1] - *wImIn[0];
+        else
+            Grad[0] = 0;
+
+        if( x < maxXa && y > 0 )
+            Grad[1] = (*wImIn[2] - *wImIn[0])/1.414;
+        else
+            Grad[1] = 0;
+
+        if( x < maxXa )
+            Grad[2] = *wImIn[3]  - *wImIn[0];
+        else
+            Grad[2] = 0;
+
+        if( x < maxXa && y < maxYa )
+            Grad[3] = (*wImIn[4] - *wImIn[0])/1.414;
+        else
+            Grad[3] = 0;
+
+        if(y < maxYa )
+            Grad[4] = *wImIn[5] - *wImIn[0];
+        else
+            Grad[4] = 0;
+
+        if( x > 0 && y < maxYa )
+            Grad[5] = (*wImIn[6] - *wImIn[0])/1.414;
+        else
+            Grad[5] = 0;
+
+        if( x > 0 )
+            Grad[6] = *wImIn[7] - *wImIn[0];
+        else
+            Grad[6] = 0;
+
+        if( x > 0 && y > 0 )
+            Grad[7] = (*wImIn[8] - *wImIn[0])/1.414;
+        else
+            Grad[7] = 0;
+
+        float maxGrad = 0;
+        for(int k = 0; k < 8; k++)
+        {
+            if(maxGrad < Grad[k])
+                maxGrad = Grad[k];
+        }
+        *wImOut = maxGrad;
+
+        for(int k = 0; k < 9; k++)
+        {
+            wImIn[k]++;
+        }
+        wImOut++;
+    }
+    return ImOut;
+}
+//---------------------------------------------------------------------------
 Mat HorizontalGradientDown(Mat ImIn)
 {
     Mat ImF, ImOut;
