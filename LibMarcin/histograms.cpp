@@ -5,58 +5,106 @@ using namespace cv;
 using namespace std;
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
+//                private functions
 //----------------------------------------------------------------------------------------------------------------
-HistogramInteger::HistogramInteger()
+void HistogramInteger::Init()
 {
     histMin = 0;
     histMax = 0;
     histSize = 0;
-    min = 0xfffffffd;
-    max = -0xfffffffe;
+    min = INT64_MAX;
+    max = INT64_MIN;
     mean = 0;
-    Histogram = 0;
+    count = 0;
+    binSize = 1;    
 }
 //----------------------------------------------------------------------------------------------------------------
-HistogramInteger::~HistogramInteger()
-{
-    Release();
-}
 //----------------------------------------------------------------------------------------------------------------
-void HistogramInteger::Release()
+int HistogramInteger::checkMat16U(cv::Mat Im)
 {
-    histMin = 0;
-    histMax = 0;
-    histSize = 0;
-    mean = 0;
-    delete[] Histogram;
-    Histogram = 0;
-}
-//----------------------------------------------------------------------------------------------------------------
-int HistogramInteger::FromMat16U(Mat Im)
-{
-    Release();
-
     if(Im.empty())
         return 0;
     if(Im.channels() != 1)
         return -1;
     if(Im.type() != CV_16U)
         return -2;
-
-
-    int maxX = Im.cols;
-    int maxY = Im.rows;
-    int maxXY = maxX*maxY;
-
-    if(maxXY == 0)
+    if((Im.cols * Im.rows) == 0)
         return -3;
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::checkMat16U(cv::Mat Im, cv::Mat Mask)
+{
+    if(Im.empty())
+        return 0;
+    if(Im.channels() != 1)
+        return -1;
+    if(Im.type() != CV_16U)
+        return -2;
+    if((Im.cols * Im.rows) == 0)
+        return -3;
+
+    if(Mask.empty())
+        return -4;
+    if(Mask.channels() != 1)
+        return -5;
+    if(Mask.type() != CV_16U)
+        return -6;
+
+    if(Mask.cols != Im.cols)
+        return -7;
+    if(Mask.rows != Im.rows)
+        return -8;
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::checkMat32S(cv::Mat Im)
+{
+    if(Im.empty())
+        return 0;
+    if(Im.channels() != 1)
+        return -1;
+    if(Im.type() != CV_32S)
+        return -2;
+    if((Im.cols * Im.rows) == 0)
+        return -3;
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::InitializeHistogram(int binS)
+{
+    binSize = binS;
+    if(binSize < 1)
+        binSize = 1;
+    if(binSize > 256)
+        binSize = 256;
+
+    int64_t valueCount = histMax - histMin + 1;
+    if((valueCount % binSize) == 0)
+        histSize = valueCount/binSize;
+    else
+        histSize = valueCount/binSize+1;
+
+    Histogram = new int[histSize];
+    for(int k = 0; k < histSize; k++)
+    {
+        Histogram[k] = 0;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::BasicStaistics16U(cv::Mat Im)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    int64_t sum = 0;
 
     uint16_t *wIm;
     wIm = (uint16_t*)Im.data;
-
-    int sum = 0;
-    max = 0;
-    min = 65535;
     for(int i = 0; i< maxXY; i++)
     {
         if (max < *wIm)
@@ -68,68 +116,18 @@ int HistogramInteger::FromMat16U(Mat Im)
         wIm++;
     }
 
-    mean = sum/maxXY;
-    histMax = min;
-    histMin = max;
-    histSize = histMax - histMin + 1;
-    Histogram = new int[histSize];
-    for(int k = 0; k < histSize; k++)
-    {
-        Histogram[k] = 0;
-    }
-
-    wIm = (uint16_t*)Im.data;
-    for(int i = 0; i< maxXY; i++)
-    {
-        int val = *wIm - histMin;
-        if(val < 0)
-            val = 0;
-        if(val >= histSize)
-            val = histSize - 1;
-        Histogram[val]++;
-        wIm++;
-    }
-    return 1;
-
+    count = maxXY;
+    if(count)
+        mean = sum/count;
 }
 //----------------------------------------------------------------------------------------------------------------
-int HistogramInteger::FromMat16U(Mat Im, Mat Mask, int roiNr)
+void HistogramInteger::BasicStaistics16U(cv::Mat Im, cv::Mat Mask, int roiNr)
 {
-    Release();
-
-    if(Im.empty())
-        return 0;
-    if(Im.channels() != 1)
-        return -1;
-    if(Im.type() != CV_16U)
-        return -2;
-    if(Mask.empty())
-        return -3;
-    if(Mask.channels() != 1)
-        return -4;
-    if(Mask.type() != CV_16U)
-        return -5;
-
-    if(Mask.cols != Im.cols)
-        return -6;
-    if(Mask.rows != Im.rows)
-        return -7;
-
-
-    int maxX = Im.cols;
-    int maxY = Im.rows;
-    int maxXY = maxX*maxY;
-
-    if(maxXY == 0)
-        return -3;
-
+    int maxXY = Im.cols * Im.rows;
     uint16_t *wIm, *wMask;
     wIm = (uint16_t*)Im.data;
     wMask = (uint16_t*)Mask.data;
-    int sum = 0;
-    int count = 0;
-    max = 0;
-    min = 65535;
+    int64_t sum = 0;
     for(int i = 0; i< maxXY; i++)
     {
         if(*wMask == roiNr || roiNr == 0)
@@ -144,26 +142,64 @@ int HistogramInteger::FromMat16U(Mat Im, Mat Mask, int roiNr)
         wMask++;
         wIm++;
     }
-    histMax = max;
-    histMin = min;
-    histSize = histMax - histMin + 1;
-    if(count==0)
-        count = 1;
-    mean = sum/count;
+    if(count)
+        mean = sum/count;
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::BasicStaistics32S(cv::Mat Im)
+{
+    int maxXY = Im.cols * Im.rows;
 
-    Histogram = new int[histSize];
-    for(int k = 0; k < histSize; k++)
+    int64_t sum = 0;
+
+    int32_t *wIm = (int32_t*)Im.data;
+    for(int i = 0; i< maxXY; i++)
     {
-        Histogram[k] = 0;
+        if (max < *wIm)
+            max = *wIm;
+        if (min > *wIm)
+            min = *wIm;
+
+        sum += *wIm;
+        wIm++;
     }
 
-    wIm = (uint16_t*)Im.data;
-    wMask = (uint16_t*)Mask.data;
+    count = maxXY;
+    if(count)
+        mean = sum/count;
+}
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::FindHistogram16U(cv::Mat Im)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    uint16_t *wIm = (uint16_t*)Im.data;
+
+    for(int i = 0; i< maxXY; i++)
+    {
+        int64_t val = (*wIm - histMin)/binSize;
+        if(val < 0)
+            val = 0;
+        if(val >= histSize)
+            val = histSize - 1;
+        Histogram[val]++;
+        wIm++;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::FindHistogram16U(cv::Mat Im, cv::Mat Mask, int roiNr)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    uint16_t *wIm = (uint16_t*)Im.data;
+    uint16_t *wMask = (uint16_t*)Mask.data;
+
     for(int i = 0; i< maxXY; i++)
     {
         if(*wMask == roiNr || roiNr == 0)
         {
-            int val = *wIm - histMin;
+            int64_t val = (*wIm - histMin)/binSize;
             if(val < 0)
                 val = 0;
             if(val >= histSize)
@@ -173,43 +209,96 @@ int HistogramInteger::FromMat16U(Mat Im, Mat Mask, int roiNr)
         wMask++;
         wIm++;
     }
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::FindHistogram32S(cv::Mat Im)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    int32_t *wIm = (int32_t*)Im.data;
+
+    for(int i = 0; i< maxXY; i++)
+    {
+        int64_t val = (*wIm - histMin)/binSize;
+        if(val < 0)
+            val = 0;
+        if(val >= histSize)
+            val = histSize - 1;
+        Histogram[val]++;
+        wIm++;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//                public functions
+//----------------------------------------------------------------------------------------------------------------
+HistogramInteger::HistogramInteger()
+{
+    Init();
+    Histogram = nullptr;
+}
+//----------------------------------------------------------------------------------------------------------------
+HistogramInteger::~HistogramInteger()
+{
+    Release();
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramInteger::Release()
+{
+    delete[] Histogram;
+    Histogram = nullptr;
+    Init();
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::FromMat16U(Mat Im, int binS)
+{
+    Release();
+
+    int check = checkMat16U(Im);
+    if(check <= 0)
+        return check;
+
+    BasicStaistics16U(Im);
+
+    histMax = min;
+    histMin = max;
+
+    InitializeHistogram(binS);
+
+    FindHistogram16U(Im);
+
+    return 1;
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::FromMat16U(Mat Im, Mat Mask, int roiNr, int binS)
+{
+    Release();
+
+    int check = checkMat16U(Im);
+    if(check <= 0)
+        return check;
+
+    BasicStaistics16U(Im, Mask, roiNr);
+
+    histMax = max;
+    histMin = min;
+
+    InitializeHistogram(binS);
+
+    FindHistogram16U(Im, Mask, roiNr);
     return 1;
 
 }
 //----------------------------------------------------------------------------------------------------------------
-int HistogramInteger::FromMat16ULimit(Mat Im, Mat Mask, int roiNr, int fixedMin, int fixedMax)
+int HistogramInteger::FromMat16ULimit(Mat Im, Mat Mask, int roiNr, int fixedMin, int fixedMax, int binS)
 {
     Release();
 
-    if(Im.empty())
-        return 0;
-    if(Im.channels() != 1)
-        return -1;
-    if(Im.type() != CV_16U)
-        return -2;
-    if(Mask.empty())
-        return -3;
-    if(Mask.channels() != 1)
-        return -4;
-    if(Mask.type() != CV_16U)
-        return -5;
+    int check = checkMat16U(Im);
+    if(check <= 0)
+        return check;
 
-    if(Mask.cols != Im.cols)
-        return -6;
-    if(Mask.rows != Im.rows)
-        return -7;
-
-
-    int maxX = Im.cols;
-    int maxY = Im.rows;
-    int maxXY = maxX*maxY;
-
-    if(maxXY == 0)
-        return -3;
-
-    uint16_t *wIm, *wMask;
-    wIm = (uint16_t*)Im.data;
-    wMask = (uint16_t*)Mask.data;
+    BasicStaistics16U(Im, Mask, roiNr);
 
     histMax = fixedMax;
     histMin = fixedMin;
@@ -219,107 +308,34 @@ int HistogramInteger::FromMat16ULimit(Mat Im, Mat Mask, int roiNr, int fixedMin,
     if(histMin < 0)
         histMin = 0;
 
-    histSize = (histMax - histMin) + 1;
+    if(histMax <= histMin)
+        histMax = histMin + 1;
 
-    if(histSize < 1)
-        histSize = 1;
-    Histogram = new int[histSize];
-    for(int k = 0; k < histSize; k++)
-    {
-        Histogram[k] = 0;
-    }
+    InitializeHistogram(binS);
 
-    wIm = (uint16_t*)Im.data;
-    wMask = (uint16_t*)Mask.data;
-    int sum = 0;
-    int count = 0;
-    min = 65535;
-    max = 0;
-    for(int i = 0; i< maxXY; i++)
-    {
-        if(*wMask == roiNr || roiNr == 0)
-        {
-            int intensity = *wIm;
-            int val = intensity - histMin;
-            if(val < 0)
-                val = 0;
-            if(val >= histSize)
-                val = histSize - 1;
-            Histogram[val]++;
-            sum += intensity;
-            count ++;
-            if(min > intensity)
-                min = intensity;
-            if(max < intensity)
-                max = intensity;
-        }
-        wMask++;
-        wIm++;
-    }
-    if(count==0)
-        count = 1;
-    mean = sum/count;
+    FindHistogram16U(Im, Mask, roiNr);
 
     return 1;
-
 }
 //----------------------------------------------------------------------------------------------------------------
-int HistogramInteger::FromMat32S(Mat Im)
+int HistogramInteger::FromMat32S(Mat Im, int binS)
 {
     Release();
 
-    if(Im.empty())
-        return 0;
-    if(Im.channels() != 1)
-        return 0;
-    if(Im.type() != CV_32S)
-        return 0;
+    int check = checkMat32S(Im);
+    if(check <= 0)
+        return check;
 
+    BasicStaistics32S(Im);
 
-    int maxX = Im.cols;
-    int maxY = Im.rows;
-    int maxXY = maxX*maxY;
-
-    int32_t *wIm;
-    wIm = (int32_t*)Im.data;
-
-    max = -0xfffffffe;
-    min =  0xfffffffd;
-
-    for(int i = 0; i< maxXY; i++)
-    {
-        if (max < *wIm)
-            max = *wIm;
-        if (min > *wIm)
-            min = *wIm;
-        wIm++;
-    }
     histMax = max;
     histMin = min;
-    histSize = histMax - histMin + 1;
 
-    if(histSize < 65536)
-    {
-        Histogram = new int[histSize];
-        for(int k = 0; k < histSize; k++)
-        {
-            Histogram[k] = 0;
-        }
+    InitializeHistogram(binS);
 
-        wIm = (int32_t*)Im.data;
-        for(int i = 0; i< maxXY; i++)
-        {
-            int val = *wIm - histMin;
-            if(val < 0)
-                val = 0;
-            if(val >= histSize)
-                val = histSize - 1;
-            Histogram[val]++;
-            wIm++;
-        }
-    }
+    FindHistogram32S(Im);
+
     return 1;
-
 }
 //----------------------------------------------------------------------------------------------------------------
 string HistogramInteger::GetString()
@@ -338,7 +354,7 @@ string HistogramInteger::GetString()
     Out += "val \t hist\n";
     for(int k = 0; k < histSize; k++)
     {
-        Out +=  to_string(k + histMin) + "\t" + to_string(Histogram[k]) + "\n";
+        Out +=  to_string(k * binSize + histMin) + "\t" + to_string(Histogram[k]) + "\n";
     }
 
     return Out;
@@ -391,7 +407,7 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
         //std::ostringstream ss;
         //ss << std::fixed << std::setprecision(2) << (minValue + x * binRange);
         //std::string text = ss.str();
-        string text = to_string(histMin + x );
+        string text = to_string(histMin + x * binSize);
         int nrOfdigits = (int)(text.size());
         putText(ImToShow,text,Point(leftOffset + x * (1 + barWidth)  - nrOfdigits * digitWidth / 2 ,
                                     yScaleHeight + topOffset + digitHeight * 2 + scaleBarLenht), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));

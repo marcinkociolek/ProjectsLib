@@ -146,7 +146,7 @@ Mat GradientUP(Mat ImIn)
             Grad[1] = 0;
 
         if( x < maxXa )
-            Grad[2] = *wImIn[3]  - *wImIn[0];
+            Grad[2] = *wImIn[3] - *wImIn[0];
         else
             Grad[2] = 0;
 
