@@ -434,7 +434,386 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
     return ImToShow;
 }
 //----------------------------------------------------------------------------------------------------------------
+//Color
 //----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//                private functions
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::Init()
+{
+    count = 0;
+
+    minR = 255;
+    maxR = 0;
+    meanR = 0;
+
+    minG = 255;
+    maxG = 0;
+    meanG = 0;
+
+    minB = 255;
+    maxB = 0;
+    meanB = 0;
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramRGB::checkMat(cv::Mat Im)
+{
+    if(Im.empty())
+        return 0;
+    if(Im.channels() != 3)
+        return -1;
+    if(Im.type() != CV_8U)
+        return -2;
+    if((Im.cols * Im.rows) == 0)
+        return -3;
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramRGB::checkMat(cv::Mat Im, cv::Mat Mask)
+{
+    if(Im.empty())
+        return 0;
+    if(Im.channels() != 3)
+        return -1;
+    if(Im.type() != CV_8U)
+        return -2;
+    if((Im.cols * Im.rows) == 0)
+        return -3;
+
+    if(Mask.empty())
+        return -4;
+    if(Mask.channels() != 1)
+        return -5;
+    if(Mask.type() != CV_16U)
+        return -6;
+
+    if(Mask.cols != Im.cols)
+        return -7;
+    if(Mask.rows != Im.rows)
+        return -8;
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::InitializeHistogram()
+{
+    HistogramR = new int[256];
+    HistogramG = new int[256];
+    HistogramB = new int[256];
+    for(int k = 0; k < 256; k++)
+    {
+        HistogramR[k] = 0;
+        HistogramG[k] = 0;
+        HistogramB[k] = 0;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::BasicStaistics(cv::Mat Im)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    int64_t sumR = 0;
+    int64_t sumG = 0;
+    int64_t sumB = 0;
+
+    uint8_t *wIm;
+    wIm = (uint8_t*)Im.data;
+    for(int i = 0; i< maxXY; i++)
+    {
+        uint8_t b = *wIm;
+        wIm++;
+        uint8_t g = *wIm;
+        wIm++;
+        uint8_t r = *wIm;
+        wIm++;
+
+
+        if (maxB < b)
+            maxB = b;
+        if (minB > b)
+            minB = b;
+        sumB += b;
+
+        if (maxG < g)
+            maxG = g;
+        if (minG > g)
+            minG = g;
+        sumG += g;
+
+        if (maxR < r)
+            maxR = r;
+        if (minR > r)
+            minR = r;
+        sumR += r;
+
+    }
+
+    count = maxXY;
+    if(count)
+    {
+        meanR = sumR/count;
+        meanG = sumG/count;
+        meanB = sumB/count;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::BasicStaistics(cv::Mat Im, cv::Mat Mask, int roiNr)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    int64_t sumR = 0;
+    int64_t sumG = 0;
+    int64_t sumB = 0;
+    count = 0;
+
+    uint8_t *wIm;
+    uint16_t *wMask;
+    wMask = (uint16_t*)Mask.data;
+    wIm = (uint8_t*)Im.data;
+    for(int i = 0; i< maxXY; i++)
+    {
+        uint8_t b = *wIm;
+        wIm++;
+        uint8_t g = *wIm;
+        wIm++;
+        uint8_t r = *wIm;
+        wIm++;
+
+        if(*wMask == roiNr || roiNr == 0)
+        {
+            if (maxB < b)
+                maxB = b;
+            if (minB > b)
+                minB = b;
+            sumB += b;
+
+            if (maxG < g)
+                maxG = g;
+            if (minG > g)
+                minG = g;
+            sumG += g;
+
+            if (maxR < r)
+                maxR = r;
+            if (minR > r)
+                minR = r;
+            sumR += r;
+
+            count++;
+        }
+        wMask++;
+    }
+
+    if(count)
+    {
+        meanR = sumR/count;
+        meanG = sumG/count;
+        meanB = sumB/count;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::FindHistogram(cv::Mat Im)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    uint8_t *wIm = (uint8_t*)Im.data;
+
+    for(int i = 0; i< maxXY; i++)
+    {
+        int64_t b = *wIm;
+        wIm++;
+        int64_t g = *wIm;
+        wIm++;
+        int64_t r = *wIm;
+        wIm++;
+        HistogramR[r]++;
+        HistogramG[g]++;
+        HistogramB[b]++;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::FindHistogram(cv::Mat Im, cv::Mat Mask, int roiNr)
+{
+    int maxXY = Im.cols * Im.rows;
+
+    uint8_t *wIm = (uint8_t*)Im.data;
+    uint16_t *wMask = (uint16_t*)Mask.data;
+
+    for(int i = 0; i< maxXY; i++)
+    {
+        int64_t b = *wIm;
+        wIm++;
+        int64_t g = *wIm;
+        wIm++;
+        int64_t r = *wIm;
+        wIm++;
+        if(*wMask == roiNr || roiNr == 0)
+        {
+            HistogramR[r]++;
+            HistogramG[g]++;
+            HistogramB[b]++;
+        }
+        wMask++;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
+//                public functions
+//----------------------------------------------------------------------------------------------------------------
+HistogramRGB::HistogramRGB()
+{
+    Init();
+    HistogramR = nullptr;
+    HistogramG = nullptr;
+    HistogramB = nullptr;
+}
+//----------------------------------------------------------------------------------------------------------------
+HistogramRGB::~HistogramRGB()
+{
+    Release();
+}
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::Release()
+{
+    delete[] HistogramR;
+    HistogramR = nullptr;
+    delete[] HistogramG;
+    HistogramG = nullptr;
+    delete[] HistogramB;
+    HistogramB = nullptr;
+    Init();
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramRGB::FromMat(Mat Im)
+{
+    Release();
+
+    int check = checkMat(Im);
+    if(check <= 0)
+        return check;
+
+    BasicStaistics(Im);
+
+    InitializeHistogram();
+
+    FindHistogram(Im);
+
+    return 1;
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramRGB::FromMat(Mat Im, Mat Mask, int roiNr)
+{
+    Release();
+
+    int check = checkMat(Im, Mask);
+    if(check <= 0)
+        return check;
+
+    BasicStaistics(Im, Mask, roiNr);
+
+    InitializeHistogram();
+
+    FindHistogram(Im, Mask, roiNr);
+    return 1;
+
+}
+//----------------------------------------------------------------------------------------------------------------
+string HistogramRGB::GetString()
+{
+    string Out = "";
+    Out += " min = \t" + to_string(minR) + "\t" + to_string(minG) + "\t" + to_string(minB) + "\n";
+    Out += " max = \t" + to_string(maxR) + "\n";
+    Out += " mean = \t" + to_string(meanR) + "\n";
+    Out += "\n";
+    Out += "val \t hist\n";
+    for(int k = 0; k < histSize; k++)
+    {
+        Out +=  to_string(k * binSize + histMin) + "\t" + to_string(Histogram[k]) + "\n";
+    }
+
+    return Out;
+}
+//-----------------------------------------------------------------------------------------------------------
+
+Mat HistogramRGB::Plot(int yScale, int scaleCoef, int barWidth)
+{
+    const int topOffset = 30;
+    const int bottomOffset = 30;
+    const int scaleBarLenht = 5;
+    const int leftOffset = 60;
+    const int rightOffset = 20;
+    const int digitWidth = 13;
+    const int digitHeight = 10;
+
+    //int binCount = numberOfBins;
+
+    int yScaleHeight = 100 * yScale;
+
+    int histSizeLocal = histSize;
+    if (histSizeLocal < 10)
+        histSizeLocal = 10;
+
+
+    int plotYSize = yScaleHeight + topOffset + bottomOffset;
+    int plotXSize = leftOffset + rightOffset + histSizeLocal * ( 1 + barWidth);
+    cv::Mat ImToShow = Mat(plotYSize,plotXSize,CV_8UC3,cv::Scalar(255,255,255));
+
+
+    line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),cv::Point(leftOffset - 2,topOffset),cv::Scalar(255.0,0.0,0.0,0.0));
+    line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),Point(leftOffset + histSizeLocal *(1+barWidth),yScaleHeight + topOffset),Scalar(255.0,0.0,0.0,0.0));
+
+    for(int y = 0; y <= yScaleHeight; y+= 100/2)
+    {
+        line(ImToShow,Point(leftOffset - scaleBarLenht,yScaleHeight + topOffset - y),Point(leftOffset-2 ,yScaleHeight + topOffset - y),Scalar(255.0,0.0,0.0,0.0));
+    }
+    for(int y = 0; y <= yScale; y++)
+    {
+        string text = to_string((int)round((double)y * pow(10.0,scaleCoef)));
+        int nrOfdigits = (int)(text.size());
+        putText(ImToShow,text,Point(leftOffset - scaleBarLenht -2 - nrOfdigits * digitWidth, yScaleHeight - y*100 + topOffset + digitHeight / 2), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+    }
+    for(int x = 0; x <= histSizeLocal; x+= 40)
+    {
+        line(ImToShow,Point(leftOffset + x * (1 + barWidth) + barWidth /2, yScaleHeight + topOffset),
+                      Point(leftOffset + x * (1 + barWidth) + barWidth /2,yScaleHeight + topOffset + scaleBarLenht),
+                      Scalar(255.0,0.0,0.0,0.0));
+
+        //std::ostringstream ss;
+        //ss << std::fixed << std::setprecision(2) << (minValue + x * binRange);
+        //std::string text = ss.str();
+        string text = to_string(histMin + x * binSize);
+        int nrOfdigits = (int)(text.size());
+        putText(ImToShow,text,Point(leftOffset + x * (1 + barWidth)  - nrOfdigits * digitWidth / 2 ,
+                                    yScaleHeight + topOffset + digitHeight * 2 + scaleBarLenht), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+    }
+
+    Point orygin = Point(leftOffset, yScaleHeight + topOffset);
+    for(int bin = 0; bin < histSize; bin++)
+    {
+        int barLenght = (int)round((double)Histogram[bin] * pow(10.0,scaleCoef * (-1))*100);
+
+        Point start = orygin + Point(bin*(1 + barWidth), 0);
+        if (barLenght > yScaleHeight)
+        {
+            barLenght = yScaleHeight;
+            Point stop  = start + Point(barWidth - 1,0 - barLenght);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),CV_FILLED);
+        }
+        else
+        {
+            Point stop  = start + Point(barWidth - 1,0 - barLenght);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),CV_FILLED);
+        }
+    }
+    return ImToShow;
+}
+
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------

@@ -50,7 +50,58 @@ public:
     cv::Mat Plot(int yScale, int scaleCoef, int barWidth);
 };
 
+class HistogramRGB
+{
+private:
 
+    int64_t count;
+
+    int64_t meanR;
+    int64_t minR;
+    int64_t maxR;
+
+    int *HistogramR;
+
+    int64_t meanG;
+    int64_t minG;
+    int64_t maxG;
+    int *HistogramG;
+
+    int64_t meanB;
+    int64_t minB;
+    int64_t maxB;
+    int *HistogramB;
+
+
+    void Init();
+
+    int checkMat(cv::Mat Im);
+    int checkMat(cv::Mat Im, cv::Mat Mask);
+
+
+    void InitializeHistogram();
+
+    void BasicStaistics(cv::Mat Im);
+    void BasicStaistics(cv::Mat Im, cv::Mat Mask, int roiNr);
+
+    void FindHistogram(cv::Mat Im);
+    void FindHistogram(cv::Mat Im, cv::Mat Mask, int roiNr);
+
+
+public:
+
+    HistogramRGB();
+    ~HistogramRGB();
+
+    void Release();
+
+    int FromMat(cv::Mat);
+    int FromMat(cv::Mat Im, cv::Mat Mask, int roiNr);
+
+    std::string GetString();
+
+    cv::Mat Plot(int yScale, int scaleCoef, int barWidth);
+};
 
 
 
