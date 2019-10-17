@@ -100,7 +100,8 @@ public:
 
     std::string GetString();
 
-    cv::Mat Plot(int yScale, int scaleCoef, int barWidth);
+    cv::Mat Plot(int yScale, int scaleCoef, int barWidth, char colorPlane);
+    cv::Mat PlotRGB(int yScale, int scaleCoef, int barWidth);
 };
 
 
