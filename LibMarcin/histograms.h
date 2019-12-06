@@ -10,7 +10,8 @@ private:
     int64_t histSize;
     int64_t histMin;
     int64_t histMax;
-    int64_t mean;
+    int64 mean;
+    double meanD;
     int64_t min;
     int64_t max;
     int64_t count;
@@ -48,6 +49,15 @@ public:
     std::string GetString();
 
     cv::Mat Plot(int yScale, int scaleCoef, int barWidth);
+
+    double GetStd();
+    int64_t GetMin();
+    int64_t GetMax();
+    int64_t GetCount();
+    int64_t GetMean();
+    double GetMeanD();
+
+    std::string StatisticStringOut(std::string separator = "\t");
 };
 
 class HistogramRGB
@@ -105,5 +115,7 @@ public:
 };
 
 
+
+std::string StatisticStringHeader(std::string separator = "\t" );
 
 #endif // HISTOGRAMS_H

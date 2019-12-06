@@ -15,6 +15,7 @@ void HistogramInteger::Init()
     min = INT64_MAX;
     max = INT64_MIN;
     mean = 0;
+    meanD = 0.0;
     count = 0;
     binSize = 1;    
 }
@@ -118,7 +119,10 @@ void HistogramInteger::BasicStaistics16U(cv::Mat Im)
 
     count = maxXY;
     if(count)
+    {
         mean = sum/count;
+        meanD = double(sum)/double(count);
+    }
 }
 //----------------------------------------------------------------------------------------------------------------
 void HistogramInteger::BasicStaistics16U(cv::Mat Im, cv::Mat Mask, int roiNr)
@@ -143,7 +147,10 @@ void HistogramInteger::BasicStaistics16U(cv::Mat Im, cv::Mat Mask, int roiNr)
         wIm++;
     }
     if(count)
+    {
         mean = sum/count;
+        meanD = double(sum)/double(count);
+    }
 }
 //----------------------------------------------------------------------------------------------------------------
 void HistogramInteger::BasicStaistics32S(cv::Mat Im)
@@ -166,7 +173,10 @@ void HistogramInteger::BasicStaistics32S(cv::Mat Im)
 
     count = maxXY;
     if(count)
+    {
         mean = sum/count;
+        meanD = double(sum)/double(count);
+    }
 }
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
@@ -433,6 +443,67 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
     }
     return ImToShow;
 }
+//----------------------------------------------------------------------------------------------------------------
+double HistogramInteger::GetStd()
+{
+    if (histSize == 0)
+        return -1.0;
+    if (count == 0)
+        return -2.0;
+
+    double sum = 0;
+    for(int k = 0; k < histSize; k++)
+    {
+        double diff = meanD - double(k);
+        sum += pow(diff, 2.0) * double(Histogram[k]);
+    }
+
+    return sqrt(sum/double(count));
+}
+//----------------------------------------------------------------------------------------------------------------
+int64_t HistogramInteger::GetMin()
+{
+    return min;
+}
+//----------------------------------------------------------------------------------------------------------------
+int64_t HistogramInteger::GetMax()
+{
+    return max;
+}
+//----------------------------------------------------------------------------------------------------------------
+int64_t HistogramInteger::GetCount()
+{
+    return count;
+}
+//----------------------------------------------------------------------------------------------------------------
+int64_t HistogramInteger::GetMean()
+{
+    return mean;
+}
+//----------------------------------------------------------------------------------------------------------------
+double HistogramInteger::GetMeanD()
+{
+    return meanD;
+}
+//----------------------------------------------------------------------------------------------------------------
+string HistogramInteger::StatisticStringOut(string separator)
+{
+    string Out = "";
+    Out += to_string(min);
+    Out += separator;
+    Out += to_string(max);
+    Out += separator;
+    Out += to_string(count);
+    Out += separator;
+    Out += to_string(meanD);
+    Out += separator;
+    Out += to_string(GetStd());
+    Out += "\n";
+    return Out;
+}
+
+
+
 //----------------------------------------------------------------------------------------------------------------
 //Color
 //----------------------------------------------------------------------------------------------------------------
@@ -930,7 +1001,24 @@ Mat HistogramRGB::PlotRGB(int yScale, int scaleCoef, int barWidth)
     }
     return ImToShow;
 }
+//----------------------------------------------------------------------------------------------------------------
+std::string StatisticStringHeader(std::string separator)
+{
+    string Out = "";
+    Out += "min";
+    Out += "\t";
+    Out += "max";
+    Out += "\t";
+    Out += "count";
+    Out += "\t";
+    Out += "mean";
+    Out += "\t";
+    Out += "std";
+    Out += "\n";
+    return Out;
+}
 
+//----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
