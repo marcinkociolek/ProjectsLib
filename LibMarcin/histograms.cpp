@@ -270,8 +270,8 @@ int HistogramInteger::FromMat16U(Mat Im, int binS)
 
     BasicStaistics16U(Im);
 
-    histMax = min;
-    histMin = max;
+    histMax = max;
+    histMin = min;
 
     InitializeHistogram(binS);
 
