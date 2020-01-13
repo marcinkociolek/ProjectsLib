@@ -112,6 +112,23 @@ public:
 
     cv::Mat Plot(int yScale, int scaleCoef, int barWidth, char colorPlane);
     cv::Mat PlotRGB(int yScale, int scaleCoef, int barWidth);
+
+    int64_t GetCount();
+
+    double GetStdB();
+    int64_t GetMinB();
+    int64_t GetMaxB();
+    int64_t GetMeanB();
+
+    double GetStdG();
+    int64_t GetMinG();
+    int64_t GetMaxG();
+    int64_t GetMeanG();
+
+    double GetStdR();
+    int64_t GetMinR();
+    int64_t GetMaxR();
+    int64_t GetMeanR();
 };
 
 
