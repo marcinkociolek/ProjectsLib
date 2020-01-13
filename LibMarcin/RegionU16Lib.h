@@ -53,5 +53,9 @@ int MaskOutside(cv::Mat Im, cv::Mat Mask);
 
 int MaskInside(cv::Mat Im, cv::Mat Mask);
 
+//----------------------------------------------------------------------------------------------------------------------
+int MaskMaskInv(cv::Mat Mask, cv::Mat Mask2);
+
+
 #endif // GRADIENT
 
