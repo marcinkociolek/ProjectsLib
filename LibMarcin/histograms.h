@@ -69,17 +69,19 @@ private:
     int64_t meanR;
     int64_t minR;
     int64_t maxR;
-
+    int64_t maxPositionR;
     int *HistogramR;
 
     int64_t meanG;
     int64_t minG;
     int64_t maxG;
+    int64_t maxPositionG;
     int *HistogramG;
 
     int64_t meanB;
     int64_t minB;
     int64_t maxB;
+    int64_t maxPositionB;
     int *HistogramB;
 
 
@@ -97,7 +99,7 @@ private:
     void FindHistogram(cv::Mat Im);
     void FindHistogram(cv::Mat Im, cv::Mat Mask, int roiNr);
 
-
+    void FindMaxPos();
 public:
 
     HistogramRGB();
@@ -119,16 +121,19 @@ public:
     int64_t GetMinB();
     int64_t GetMaxB();
     int64_t GetMeanB();
+    int64_t GetMaxPositionB();
 
     double GetStdG();
     int64_t GetMinG();
     int64_t GetMaxG();
     int64_t GetMeanG();
+    int64_t GetMaxPositionG();
 
     double GetStdR();
     int64_t GetMinR();
     int64_t GetMaxR();
     int64_t GetMeanR();
+    int64_t GetMaxPositionR();
 };
 
 

@@ -518,14 +518,17 @@ void HistogramRGB::Init()
     minR = 255;
     maxR = 0;
     meanR = 0;
+    maxPositionR = -1;
 
     minG = 255;
     maxG = 0;
     meanG = 0;
+    maxPositionG = -1;
 
     minB = 255;
     maxB = 0;
     meanB = 0;
+    maxPositionB = -1;
 }
 //----------------------------------------------------------------------------------------------------------------
 int HistogramRGB::checkMat(cv::Mat Im)
@@ -734,6 +737,49 @@ void HistogramRGB::FindHistogram(cv::Mat Im, cv::Mat Mask, int roiNr)
 }
 
 //----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::FindMaxPos()
+{
+   if (count == 0)
+       return;
+   int maxHist;
+   int *wHist;
+
+   maxHist = 0;
+   wHist = HistogramB;
+   for(int i = 0; i <255; i++)
+   {
+        if(maxHist < *wHist)
+        {
+            maxHist = *wHist;
+            maxPositionB = i;
+        }
+        wHist++;
+   }
+
+   maxHist = 0;
+   wHist = HistogramG;
+   for(int i = 0; i <255; i++)
+   {
+        if(maxHist < *wHist)
+        {
+            maxHist = *wHist;
+            maxPositionG = i;
+        }
+        wHist++;
+   }
+
+   maxHist = 0;
+   wHist = HistogramR;
+   for(int i = 0; i <255; i++)
+   {
+        if(maxHist < *wHist)
+        {
+            maxHist = *wHist;
+            maxPositionR = i;
+        }
+        wHist++;
+   }
+}
 //----------------------------------------------------------------------------------------------------------------
 //                public functions
 //----------------------------------------------------------------------------------------------------------------
@@ -774,6 +820,7 @@ int HistogramRGB::FromMat(Mat Im)
     InitializeHistogram();
 
     FindHistogram(Im);
+    FindMaxPos();
 
     return 1;
 }
@@ -792,6 +839,7 @@ int HistogramRGB::FromMat(Mat Im, Mat Mask, int roiNr)
 
 
     FindHistogram(Im, Mask, roiNr);
+    FindMaxPos();
     return 1;
 
 }
@@ -1117,8 +1165,20 @@ int64_t HistogramRGB::GetMeanR()
     return meanR;
 }
 //----------------------------------------------------------------------------------------------------------------
+int64_t HistogramRGB::GetMaxPositionB()
+{
+    return maxPositionB;
+}
 //----------------------------------------------------------------------------------------------------------------
+int64_t HistogramRGB::GetMaxPositionG()
+{
+    return maxPositionG;
+}
 //----------------------------------------------------------------------------------------------------------------
+int64_t HistogramRGB::GetMaxPositionR()
+{
+    return maxPositionR;
+}
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
