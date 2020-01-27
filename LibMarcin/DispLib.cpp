@@ -29,7 +29,7 @@ Mat ShowImage8PseudoColor(Mat Im8, double minVal, double maxVal)
     ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
 
     double difference = maxVal - minVal;
-    if(difference == 0)
+    if(difference < 1)
         difference = 1;
     double gain = 255/difference;
     double offset = gain * minVal;
