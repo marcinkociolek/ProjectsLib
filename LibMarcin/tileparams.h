@@ -75,7 +75,7 @@ public:
     ~IntensityStatistics()
     {
         delete[] Hist;
-        Hist = 0;
+        Hist = nullptr;
         FileName.empty();
     }
     void SaveToFile(std::string FileMameOut);
@@ -103,7 +103,7 @@ public:
         featureName.clear();
         numberOfBins = 0;
         delete[] Histogram;
-        Histogram = 0;
+        Histogram = nullptr;
 
         featureName = Params.NamesVector[featureNr+2];
         if(Params.ParamsVect.empty())
@@ -123,11 +123,7 @@ public:
         }
 
         numberOfBins = numberOfBinsIn;
-        Histogram = new int[numberOfBins];
-        for(int i = 0; i < numberOfBins; i++)
-        {
-            Histogram[i] = 0;
-        }
+
 
         minValue = Params.ParamsVect[0].Params[featureNr];
         maxValue = Params.ParamsVect[0].Params[featureNr];
@@ -144,6 +140,20 @@ public:
         double histogramRange = maxValue - minValue;
         binRange = (histogramRange)/(double)numberOfBins;
 
+        if(histogramRange < 0.000000001)
+        {
+            numberOfBins = 0;
+            return;
+        }
+
+        Histogram = new int[numberOfBins];
+        for(int i = 0; i < numberOfBins; i++)
+        {
+            Histogram[i] = 0;
+        }
+
+
+
         numberOfElements = 0;
 
         for(int i = 0; i < Params.ValueCount; i++)
@@ -151,7 +161,7 @@ public:
             if(Params.ParamsVect[0].paramsCount < (featureNr + 1))
                 continue;
 
-            int binVal = (int)floor((Params.ParamsVect[i].Params[featureNr] - minValue)/histogramRange*numberOfBins);
+            int binVal = (int)floor((Params.ParamsVect[i].Params[featureNr] - minValue)/histogramRange);
             if(binVal >= numberOfBins)
                 continue;
             numberOfElements++;
@@ -166,7 +176,7 @@ public:
         featureName.clear();
         numberOfBins = 0;
         delete[] Histogram;
-        Histogram = 0;
+        Histogram = nullptr;
     }
 
     ~FeatureHistogram()
@@ -174,7 +184,7 @@ public:
         featureName.clear();
         numberOfBins = 0;
         delete[] Histogram;
-        Histogram = 0;
+        Histogram = nullptr;
     }
 };
 
