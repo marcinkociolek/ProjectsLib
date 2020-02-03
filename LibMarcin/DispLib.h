@@ -172,6 +172,9 @@ void ShowRegBetweenHLinesOnImage(bool show, std::string WinName, cv::Mat Im1, cv
 cv::Mat GetContour5(cv::Mat ImR);
 //void GetContour9(cv::Mat ImR);
 
+std::string MatPropetiesAsText(cv::Mat Im);
+std::string TiffFilePropetiesAsText(std::string FileName);
+
 
 
 /*

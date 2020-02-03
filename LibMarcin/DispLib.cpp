@@ -7,6 +7,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 //#include <string>
 
+#include <tiffio.h>
+
 using namespace cv;
 using namespace std;
 //---------------------------------------------------------------------------
@@ -48,7 +50,7 @@ Mat ShowImage8PseudoColor(Mat Im8, double minVal, double maxVal)
             value = 255;
         if (value < 0)
             value = 0;
-        index = (char)floor(value);
+        index = (unsigned char)floor(value);
 
         *wImOut = colormapB[index];
         wImOut++;
@@ -94,7 +96,7 @@ Mat ShowImage16PseudoColor(Mat Im16, double minVal, double maxVal)
             value = 255.0;
         if (value < 0.0)
             value = 0.0;
-        index = (char)floor(value);
+        index = (unsigned char)floor(value);
 
 		*wImOut = colormapB[index];
 		wImOut++;
@@ -140,7 +142,7 @@ Mat ShowImage16Gray(Mat Im16, double minVal, double maxVal)
             value = 255;
         if (value < 0)
             value = 0;
-        index = (char)floor(value);
+        index = (unsigned char)floor(value);
 
         *wImOut = index;
         wImOut++;
@@ -257,12 +259,12 @@ Mat ShowRegion(Mat ImReg)
     ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
 
     unsigned short *wImReg = (unsigned short *)ImReg.data;
-    char *wImOut = (char *)ImOut.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
 
     for (int i = 0; i < maxXY; i++)
     {
-		int y = i / maxX;
-		int x = i % maxX;
+        //int y = i / maxX;
+        //int x = i % maxX;
 
 
 		if(*wImReg)
@@ -296,7 +298,7 @@ Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB)
 
 
     unsigned short * wImReg = (unsigned short *)ImReg.data;
-    char *wImOut = (char *)ImOut.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
     for (int i = 0; i < maxXY; i++)
     {
             if(*wImReg)
@@ -421,7 +423,7 @@ cv::Mat ShowSolidRegionOnImageInGray(cv::Mat ImReg, cv::Mat ImRGB, unsigned char
         return ImOut;
 
     unsigned short * wImReg = (unsigned short *)ImReg.data;
-    char *wImOut = (char *)ImOut.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
     for (int i = 0; i < maxXY; i++)
     {
         if (*wImReg)
@@ -783,6 +785,77 @@ void GetContour9(Mat ImR)
     }
     delete[] ImRTemp;
 }
+
+//------------------------------------------------------------------------------------------------------------------------------
+string MatPropetiesAsText(Mat Im)
+{
+    string Out ="Image properties: ";
+    Out += "max x = " + to_string(Im.cols);
+    Out += ", max y = " + to_string(Im.rows);
+    Out += ", # channels = " + to_string(Im.channels());
+    Out += ", depth = " + to_string(Im.depth());
+
+    switch(Im.depth())
+    {
+    case CV_8U:
+        Out += "CV_8U";
+        break;
+    case CV_8S:
+        Out += "CV_8S";
+        break;
+    case CV_16U:
+        Out += "CV_16U";
+        break;
+    case CV_16S:
+        Out += "CV_16S";
+        break;
+    case CV_32S:
+        Out += "CV_32S";
+        break;
+    case CV_32F:
+        Out += "CV_32F";
+        break;
+    case CV_64F:
+        Out += "CV_64F";
+        break;
+    default:
+        Out += " unrecognized ";
+    break;
+    }
+    return Out;
+}
+//------------------------------------------------------------------------------------------------------------------------------
+string TiffFilePropetiesAsText(string FileName)
+{
+    float xRes,yRes;
+    uint32_t imWidth, imLength;
+    uint16_t resolutionUnit;
+    TIFF *tifIm = TIFFOpen(FileName.c_str(),"r");
+    string Out ="Tiff properties: ";
+    if(tifIm)
+    {
+        TIFFGetField(tifIm, TIFFTAG_XRESOLUTION , &xRes);
+        TIFFGetField(tifIm, TIFFTAG_YRESOLUTION , &yRes);
+        TIFFGetField(tifIm, TIFFTAG_IMAGEWIDTH , &imWidth);
+        TIFFGetField(tifIm, TIFFTAG_IMAGELENGTH , &imLength);
+        TIFFGetField(tifIm, TIFFTAG_RESOLUTIONUNIT , &resolutionUnit);
+
+
+        Out += "max x = " + to_string(imLength);
+        Out += ", max y = " + to_string(imWidth);
+        Out += ", ResUnit = " + to_string(resolutionUnit);
+        Out += ", xRes = " + to_string(1.0/xRes);
+        Out += ", yRes = " + to_string(1.0/yRes);
+        TIFFClose(tifIm);
+    }
+    else
+        Out += " improper file ";
+    //TIFFGetField(tifIm, TIFFTAG_IMAGEWIDTH, &width);
+
+    return Out;
+}
+//------------------------------------------------------------------------------------------------------------------------------
+
 
 /*
 //---------------------------------------------------------------------------
