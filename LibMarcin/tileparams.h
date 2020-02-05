@@ -7,6 +7,7 @@
 
 #include <opencv2/core.hpp>
 #include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
 
 class TileParams
 {
@@ -14,7 +15,7 @@ public:
     int tileY;
     int tileX;
     int paramsCount;
-    std::vector<float>Params;
+    std::vector<double>Params;
 
     TileParams();
     ~TileParams();
@@ -35,7 +36,8 @@ public:
 
     FileParams();
     ~FileParams();
-
+    void FileParams::Init();
+    void GetFromFile(boost::filesystem::path FileToOpen);
 };
 
 class IntensityStatistics

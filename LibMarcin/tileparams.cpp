@@ -17,6 +17,9 @@ using namespace boost::filesystem;
 using namespace boost;
 using namespace cv;
 
+//-----------------------------------------------------------------------------------------------------------
+//                         TileParams
+//-----------------------------------------------------------------------------------------------------------
 TileParams::TileParams()
 {
     tileY = -1;
@@ -24,7 +27,7 @@ TileParams::TileParams()
     paramsCount = 0;
     Params.clear();
 }
-
+//-----------------------------------------------------------------------------------------------------------
 TileParams::~TileParams()
 {
     tileY = -1;
@@ -32,8 +35,7 @@ TileParams::~TileParams()
     paramsCount = 0;
     Params.clear();
 }
-
-
+//-----------------------------------------------------------------------------------------------------------
 void TileParams::FromString(std::string InStr)
 {
     std::stringstream InStringStream(InStr);
@@ -55,34 +57,187 @@ void TileParams::FromString(std::string InStr)
         if(subStr == "NAN")
             Params.push_back(-1000.0);
         else
-            Params.push_back(stof(subStr));
+            Params.push_back(stod(subStr));
     }
     Params.push_back(0);
 }
+//-----------------------------------------------------------------------------------------------------------
+//                         FileParams
+//-----------------------------------------------------------------------------------------------------------
+void FileParams::Init()
+{
+    ImFileName.clear();
+    ImFolderName.clear();
+    tileShape = -1;
+    tileSize = -1;
+    ValueCount = 0;
+    NamesVector.clear();
+    ParamsVect.clear();
+}
+//-----------------------------------------------------------------------------------------------------------
+FileParams::FileParams()
+{
+    ImFileName = "";
+    ImFolderName = "";
+    tileShape = -1;
+    tileSize = -1;
+    ValueCount = 0;
+    NamesVector.clear();
+    ParamsVect.clear();
+}
+//-----------------------------------------------------------------------------------------------------------
+FileParams::~FileParams()
+{
+    ImFileName.clear();
+    ImFolderName.clear();
+    tileShape = -1;
+    tileSize = -1;
+    ValueCount = 0;
+    NamesVector.clear();
+    ParamsVect.clear();
+}
+//------------------------------------------------------------------------------------------------------------------------------
+void FileParams::GetFromFile(boost::filesystem::path FileToOpen)
+{
+    Init();
+    //check if file exists
+    if (!exists(FileToOpen))
+        return;
 
+    std::ifstream inFile(FileToOpen.wstring());
+    if (!inFile.is_open())
+    {
+        return;
+    }
 
- FileParams::FileParams()
- {
-     ImFileName = "";
-     ImFolderName = "";
-     tileShape = -1;
-     tileSize = -1;
-     ValueCount = 0;
-     NamesVector.clear();
-     ParamsVect.clear();
- }
+    // ------------------read params from file-----------------------------
+    string Line;
+    //read input directory
+    bool inputDirFound = 0;
+    while (inFile.good())
+    {
+        getline(inFile, Line);
+        regex LinePattern("Input Directory.+");
+        if (regex_match(Line, LinePattern))
+        {
+            inputDirFound = 1;
+            break;
+        }
+    }
+    if(inputDirFound)
+        ImFolderName = path(Line.substr(19));
+    else
+        return;
 
- FileParams::~FileParams()
- {
-     ImFileName.clear();
-     ImFolderName.clear();
-     tileShape = -1;
-     tileSize = -1;
-     ValueCount = 0;
-     NamesVector.clear();
-     ParamsVect.clear();
- }
- //-----------------------------------------------------------------------------------------------------------
+    // read tile shape
+    bool tileShapeFound = 0;
+    while (inFile.good())
+    {
+        getline(inFile, Line);
+        regex LinePattern("Tile Shape:.+");
+        if (regex_match(Line, LinePattern))
+        {
+            tileShapeFound = 1;
+            break;
+        }
+    }
+    if(tileShapeFound)
+        tileShape = stoi(Line.substr(12,1));
+    else
+        return;
+
+    //readTileSizeX
+    bool tileSizeFound = 0;
+    while (inFile.good())
+    {
+        getline(inFile, Line);
+
+        regex LinePattern("Tile width x:.+");
+        if (regex_match(Line, LinePattern))
+        {
+            tileSizeFound = 1;
+            break;
+        }
+    }
+    if(tileSizeFound)
+            tileSize = stoi(Line.substr(13));
+    else
+        return;
+
+    // read input file name
+    bool fileNameFound = 0;
+    while (inFile.good())
+    {
+        getline(inFile, Line);
+
+        regex LinePattern("File Name.+");
+        if (regex_match(Line, LinePattern))
+        {
+            fileNameFound = 1;
+            break;
+        }
+    }
+    if(fileNameFound)
+        ImFileName = path(Line.substr(11));
+    else
+        return;
+
+    // read size of data vector
+    bool namesLineFound = 0;
+    while (inFile.good())
+    {
+        getline(inFile, Line);
+
+        regex LinePattern("Tile Y.+");
+        if (regex_match(Line, LinePattern))
+        {
+            namesLineFound = 1;
+            break;
+        }
+    }
+    if(!namesLineFound)
+        return;
+
+    ValueCount = 0;
+    size_t stringPos = 0;
+    while(1)
+    {
+        stringPos = Line.find("\t",stringPos);
+
+        if(stringPos == string::npos)
+            break;
+        ValueCount++;
+        stringPos++;
+    }
+    // read feature names
+    std::stringstream InStringStream(Line);
+
+    //NamesVector.empty();
+    char ColumnName[256];
+    while(InStringStream.good())
+    {
+        InStringStream.getline(ColumnName,250,'\t');
+        NamesVector.push_back(ColumnName);
+    }
+
+    //list<int> TilesParams;
+    //ParamsVect.empty();
+//read directionalities
+    while(inFile.good())
+    {
+        TileParams params;
+        getline(inFile,Line);
+        params.FromString(Line);
+        if(params.tileX > -1 && params.tileY > -1)
+            ParamsVect.push_back(params);
+    }
+
+    inFile.close();
+    return;
+}
+//-----------------------------------------------------------------------------------------------------------
+//                         IntensityStatistics
+//-----------------------------------------------------------------------------------------------------------
  void IntensityStatistics::SaveToFile(string Filename)
  {
      std::string OutString ="";
