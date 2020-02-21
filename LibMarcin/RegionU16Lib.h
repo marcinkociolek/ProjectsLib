@@ -10,7 +10,7 @@ using namespace cv;
 Mat RemovingTinyReg9(Mat ImReg);
 void FillBorderWithValue(Mat ImReg, float value);
 void OneRegionFill5Fast1(Mat ImR,  unsigned short fillReg);
-void FillHoles(Mat ImR);
+void FillHoles(Mat ImR, unsigned short region = 1);
 void DeleteRegionFromImage(Mat ImR, unsigned short regToRemove);
 unsigned short DivideSeparateRegions(Mat ImReg, unsigned int minRegSize);
 void RegionExchange(unsigned short *ImReg, int stop,

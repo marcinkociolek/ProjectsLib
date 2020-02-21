@@ -342,22 +342,33 @@ Mat ShowTransparentRegionOnImage(Mat ImReg, Mat ImRGB, int transparency)
                 int index = (int(*wImReg)-1)%16;
                 int temp;
 
-                temp = (int)*wImOut + RegColorsB[index]*transparency/100;
+                temp = (int)*wImOut;
+                temp -= transparency * 2;
+                temp += ((int)RegColorsB[index])*transparency/100;
                 if(temp > 255)
                     temp = 255;
+                if(temp < 0)
+                    temp = 0;
                 *wImOut = (unsigned char)temp;
                 wImOut++;
 
-                temp = (int)*wImOut + RegColorsG[index]*transparency/100;
+                temp = (int)*wImOut;
+                temp -= transparency * 2;
+                temp += ((int)RegColorsG[index])*transparency/100;
                 if(temp > 255)
                     temp = 255;
+                if(temp < 0)
+                    temp = 0;
                 *wImOut = (unsigned char)temp;
                 wImOut++;
 
-
-                temp = (int)*wImOut + RegColorsR[index]*transparency/100;
+                temp = (int)*wImOut;
+                temp -= transparency * 2;
+                temp += ((int)RegColorsR[index])*transparency/100;
                 if(temp > 255)
                     temp = 255;
+                if(temp < 0)
+                    temp = 0;
                 *wImOut = (unsigned char)temp;
                 wImOut++;
 

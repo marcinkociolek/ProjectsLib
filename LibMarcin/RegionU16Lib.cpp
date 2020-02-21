@@ -206,7 +206,7 @@ void OneRegionFill5Fast1(Mat ImR,  unsigned short fillReg)
     }
 }
 //------------------------------------------------------------------------------
-void FillHoles(Mat ImR)
+void FillHoles(Mat ImR, unsigned short region)
 {
     int maxX = ImR.cols;
     int maxY = ImR.rows;
@@ -215,7 +215,7 @@ void FillHoles(Mat ImR)
     for (int i = 0; i < maxXY; i++)
     {
         if(*wImR == 0)
-            *wImR = 1;
+            *wImR = region;
         wImR++;
     }
 }
