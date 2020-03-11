@@ -866,6 +866,29 @@ string TiffFilePropetiesAsText(string FileName)
     return Out;
 }
 //------------------------------------------------------------------------------------------------------------------------------
+Mat changeRegionNumber(Mat RegIn, uint16_t regOld, uint16_t regNew)
+{
+    Mat RegOut;
+    if(RegIn.empty())
+        return RegOut;
+    if(!RegIn.isContinuous())
+        return RegOut;
+    RegOut = Mat::zeros(RegIn.size(),CV_16U);
+
+    uint16_t *wRegOut = (uint16_t *)RegOut.data;
+    int maxXY = RegIn.cols * RegIn.rows;
+    uint16_t *wRegIn = (uint16_t *)RegIn.data;
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wRegIn == regOld)
+            *wRegOut = regNew;
+        wRegIn++;
+        wRegOut++;
+        i++;
+    }
+    return RegOut;
+}
+//------------------------------------------------------------------------------------------------------------------------------
 
 
 /*

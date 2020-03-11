@@ -175,7 +175,7 @@ cv::Mat GetContour5(cv::Mat ImR);
 std::string MatPropetiesAsText(cv::Mat Im);
 std::string TiffFilePropetiesAsText(std::string FileName);
 
-
+cv::Mat changeRegionNumber(cv::Mat RegIn, uint16_t regOld, uint16_t regNew);
 
 /*
 
