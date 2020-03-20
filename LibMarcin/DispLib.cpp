@@ -884,7 +884,6 @@ Mat changeRegionNumber(Mat RegIn, uint16_t regOld, uint16_t regNew)
             *wRegOut = regNew;
         wRegIn++;
         wRegOut++;
-        i++;
     }
     return RegOut;
 }
