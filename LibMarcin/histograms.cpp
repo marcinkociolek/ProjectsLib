@@ -1001,6 +1001,8 @@ Mat HistogramRGB::PlotRGB(int yScale, int scaleCoef, int barWidth)
     }
 
     Point orygin = Point(leftOffset, yScaleHeight + topOffset);
+    if(count <= 0)
+        return ImToShow;
     for(int bin = 0; bin < 256; bin++)
     {
         int barLenght = (int)round((double)HistogramR[bin] * pow(10.0,scaleCoef * (-1))*100);
