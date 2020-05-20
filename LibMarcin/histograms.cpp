@@ -573,9 +573,9 @@ int HistogramRGB::checkMat(cv::Mat Im, cv::Mat Mask)
 //----------------------------------------------------------------------------------------------------------------
 void HistogramRGB::InitializeHistogram()
 {
-    HistogramR = new int[256];
-    HistogramG = new int[256];
-    HistogramB = new int[256];
+    HistogramR = new int64_t[256];
+    HistogramG = new int64_t[256];
+    HistogramB = new int64_t[256];
     for(int k = 0; k < 256; k++)
     {
         HistogramR[k] = 0;
@@ -688,7 +688,118 @@ void HistogramRGB::BasicStaistics(cv::Mat Im, cv::Mat Mask, int roiNr)
         meanB = sumB/count;
     }
 }
+//----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::StaisticsFromHist()
+{
+    int64_t sumR = 0;
+    int64_t sumG = 0;
+    int64_t sumB = 0;
+    int64_t countR = 0;
+    int64_t countG = 0;
+    int64_t countB = 0;
 
+    int64_t histVal;
+
+    int64_t maxHist;
+    int64_t *wHist;
+
+    minB = 255;
+    maxB = 0;
+    minG = 255;
+    maxG = 0;
+    minR = 255;
+    maxR = 0;
+
+    maxHist = 0;
+    wHist = HistogramB;
+    for(int i = 0; i <255; i++)
+    {
+        histVal = *wHist;
+
+        countB += histVal;
+        sumB += histVal * i;
+
+        if(maxHist < histVal)
+        {
+            maxHist = histVal;
+            maxPositionB = i;
+        }
+
+        if (minB != 255 && histVal)
+            minB = i;
+
+        if (histVal)
+            maxB = i;
+
+        wHist++;
+    }
+
+    maxHist = 0;
+    wHist = HistogramG;
+    for(int i = 0; i <255; i++)
+    {
+        histVal = *wHist;
+
+        countG += histVal;
+        sumG += histVal * i;
+
+        if(maxHist < histVal)
+        {
+            maxHist = histVal;
+            maxPositionG = i;
+        }
+
+        if (minG != 255 && histVal)
+            minG = i;
+
+        if (histVal)
+            maxG = i;
+
+        wHist++;
+    }
+
+    maxHist = 0;
+    wHist = HistogramR;
+    for(int i = 0; i <255; i++)
+    {
+        histVal = *wHist;
+
+        countR += histVal;
+        sumR += histVal * i;
+
+        if(maxHist < histVal)
+        {
+            maxHist = histVal;
+            maxPositionR = i;
+        }
+
+        if (minR != 255 && histVal)
+            minR = i;
+
+        if (histVal)
+            maxR = i;
+
+        wHist++;
+    }
+    if(countR)
+    {
+        meanR = sumR/countR;
+    }
+    if(countG)
+    {
+        meanG = sumG/countG;
+    }
+    if(countR)
+    {
+        meanB = sumB/countB;
+    }
+
+    count = countR;
+    if(count < countG)
+        count = countG;
+    if(count < countB)
+        count = countB;
+}
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
 void HistogramRGB::FindHistogram(cv::Mat Im)
@@ -741,8 +852,8 @@ void HistogramRGB::FindMaxPos()
 {
    if (count == 0)
        return;
-   int maxHist;
-   int *wHist;
+   int64_t maxHist;
+   int64_t *wHist;
 
    maxHist = 0;
    wHist = HistogramB;
@@ -815,13 +926,13 @@ int HistogramRGB::FromMat(Mat Im)
     if(check <= 0)
         return check;
 
-    BasicStaistics(Im);
+    //BasicStaistics(Im);
 
     InitializeHistogram();
 
     FindHistogram(Im);
-    FindMaxPos();
-
+    //FindMaxPos();
+    StaisticsFromHist();
     return 1;
 }
 //----------------------------------------------------------------------------------------------------------------
@@ -834,12 +945,13 @@ int HistogramRGB::FromMat(Mat Im, Mat Mask, int roiNr)
         return check;
 
     InitializeHistogram();
-    BasicStaistics(Im, Mask, roiNr);
+    //BasicStaistics(Im, Mask, roiNr);
 
 
 
     FindHistogram(Im, Mask, roiNr);
-    FindMaxPos();
+    //FindMaxPos();
+    StaisticsFromHist();
     return 1;
 
 }
@@ -1182,6 +1294,39 @@ int64_t HistogramRGB::GetMaxPositionR()
     return maxPositionR;
 }
 //----------------------------------------------------------------------------------------------------------------
+void HistogramRGB::smoothHistogram()
+{
+    int R0, R1, R2, G0, G1, G2, B0, B1, B2, sum;
+    R0 = 0;
+    R1 = HistogramR[0];
+    G0 = 0;
+    G1 = HistogramG[0];
+    B0 = 0;
+    B1 = HistogramB[0];
+
+
+    for(int k = 1; k < 255; k++)
+    {
+        R2 = HistogramR[k + 1];
+        sum = R0 + R1 + R2;
+        HistogramR[k] = sum/3;
+        R0 = R1;
+        R1 = R2;
+
+        G2 = HistogramG[k + 1];
+        sum = G0 + G1 + G2;
+        HistogramG[k] = sum/3;
+        G0 = G1;
+        G1 = G2;
+
+        B2 = HistogramB[k + 1];
+        sum = B0 + B1 + B2;
+        HistogramB[k] = sum/3;
+        B0 = B1;
+        B1 = B2;
+    }
+    StaisticsFromHist();
+}
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------------

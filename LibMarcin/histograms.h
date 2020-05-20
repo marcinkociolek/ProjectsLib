@@ -70,19 +70,19 @@ private:
     int64_t minR;
     int64_t maxR;
     int64_t maxPositionR;
-    int *HistogramR;
+    int64_t *HistogramR;
 
     int64_t meanG;
     int64_t minG;
     int64_t maxG;
     int64_t maxPositionG;
-    int *HistogramG;
+    int64_t *HistogramG;
 
     int64_t meanB;
     int64_t minB;
     int64_t maxB;
     int64_t maxPositionB;
-    int *HistogramB;
+    int64_t *HistogramB;
 
 
     void Init();
@@ -95,6 +95,8 @@ private:
 
     void BasicStaistics(cv::Mat Im);
     void BasicStaistics(cv::Mat Im, cv::Mat Mask, int roiNr);
+
+    void StaisticsFromHist();
 
     void FindHistogram(cv::Mat Im);
     void FindHistogram(cv::Mat Im, cv::Mat Mask, int roiNr);
@@ -134,6 +136,8 @@ public:
     int64_t GetMaxR();
     int64_t GetMeanR();
     int64_t GetMaxPositionR();
+
+    void smoothHistogram();
 };
 
 

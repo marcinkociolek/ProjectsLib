@@ -45,6 +45,8 @@ void TileParams::FromString(std::string InStr)
     InStringStream >> subStr;
     if(subStr == "")
         return;
+    if(subStr == "!!!!!BREAKED!!!!!")
+        return;
     tileY = std::stoi(subStr);
     InStringStream >> subStr;
     if(subStr == "")
