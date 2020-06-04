@@ -6,9 +6,6 @@
 #include <opencv2/core/core.hpp>
 #include <string>
 
-
-//using namespace cv;
-
 //---------------------------------------------------------------------------
 //const unsigned char outOfImageRed = 128;
 //const unsigned char outOfImageGreen = 128;

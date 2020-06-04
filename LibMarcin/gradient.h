@@ -3,9 +3,6 @@
 
 #include <opencv2/core/core.hpp>
 
-//using namespace cv;
-
-
 cv::Mat GradientDown(cv::Mat ImIn);
 cv::Mat GradientUP(cv::Mat ImIn);
 
