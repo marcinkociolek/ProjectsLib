@@ -537,7 +537,7 @@ int HistogramRGB::checkMat(cv::Mat Im)
         return 0;
     if(Im.channels() != 3)
         return -1;
-    if(Im.type() != CV_8U)
+    if(Im.depth() != CV_8U)
         return -2;
     if((Im.cols * Im.rows) == 0)
         return -3;
