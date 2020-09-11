@@ -247,14 +247,16 @@ Mat ShowImageF64PseudoColor(Mat ImF, double minVal, double maxVal)
 //---------------------------------------------------------------------------
 Mat ShowRegion(Mat ImReg)
 {
+    Mat ImOut;
+
+    if(ImReg.empty())
+        return ImOut;
+
     int maxX = ImReg.cols;
     int maxY = ImReg.rows;
     int maxXY = maxX * maxY;
 
-    Mat ImOut;
 
-    if(!maxXY)
-        return ImOut;
 
     ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
 
