@@ -2,6 +2,37 @@
 #define RegionU16Lib
 
 #include <opencv2/core/core.hpp>
+class RegionParams
+{
+public:
+    int area;
+    int maxX;
+    int maxY;
+    int minX;
+    int minY;
+    int massCenterX;
+    int massCenterY;
+    int temp;
+    bool valid;
+
+    void Init()
+    {
+        area = 0;
+        maxX = 0;
+        maxY = 0;
+        minX = 100000;
+        minY = 100000;
+        massCenterX = 0;
+        massCenterY = 0;
+        temp = 0;
+        valid = true;
+    }
+
+    RegionParams()
+    {
+        Init();
+    }
+};
 
 cv::Mat RemovingTinyReg9(cv::Mat ImReg);
 void FillBorderWithValue(cv::Mat ImReg, float value);
