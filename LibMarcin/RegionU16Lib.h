@@ -12,6 +12,8 @@ public:
     int minY;
     int massCenterX;
     int massCenterY;
+    int sizeX;
+    int sizeY;
     int temp;
     bool valid;
 
@@ -24,6 +26,8 @@ public:
         minY = 100000;
         massCenterX = 0;
         massCenterY = 0;
+        sizeX = -1;
+        sizeY = -1;
         temp = 0;
         valid = true;
     }
@@ -33,6 +37,105 @@ public:
         Init();
     }
 };
+
+class MultiRegionsParams
+{
+public:
+    MultiRegionsParams()
+    {
+        Init();
+    }
+    MultiRegionsParams(cv::Mat Mask)
+    {
+        Init();
+        GetFromMat(Mask);
+    }
+    ~MultiRegionsParams()
+    {
+        Init();
+    }
+    void GetFromMat(cv::Mat Mask)
+    {
+        if(Mask.empty())
+            return;
+        if(Mask.type() != CV_16U)
+            return;
+        int maxRegionNr = 0;
+
+        int maxX = Mask.cols;
+        int maxY = Mask.rows;
+        int maxXY = maxX * maxY;
+
+        uint16_t *wMask;
+        wMask = (uint16_t *)Mask.data;
+        for(int i = 0; i < maxXY; i++)
+        {
+            if(maxRegionNr < *wMask)
+                maxRegionNr = *wMask;
+            wMask++;
+        }
+        count = maxRegionNr;
+        RegionsParams = new RegionParams[count + 1];
+        for(int k = 0; k <= count; k++)
+        {
+            RegionsParams[k].Init();
+        }
+        wMask = (uint16_t *)Mask.data;
+
+        for(int y = 0; y < maxY; y++)
+        {
+            for(int x = 0; x < maxX; x++)
+            {
+                int regionIndex = *wMask;
+                RegionsParams[regionIndex].area++;
+                if(RegionsParams[regionIndex].maxX < x)
+                    RegionsParams[regionIndex].maxX = x;
+                if(RegionsParams[regionIndex].maxY < y)
+                    RegionsParams[regionIndex].maxY = y;
+                if(RegionsParams[regionIndex].minX > x)
+                    RegionsParams[regionIndex].minX = x;
+                if(RegionsParams[regionIndex].minY > y)
+                    RegionsParams[regionIndex].minY = y;
+                RegionsParams[regionIndex].massCenterX += x;
+                RegionsParams[regionIndex].massCenterY += y;
+
+                wMask++;
+            }
+        }
+
+        for(int k = 0; k <= count; k++)
+        {
+            if(RegionsParams[k].area)
+            {
+                RegionsParams[k].sizeX = RegionsParams[k].maxX - RegionsParams[k].minX + 1;
+                RegionsParams[k].sizeY = RegionsParams[k].maxY - RegionsParams[k].minY + 1;
+                RegionsParams[k].massCenterX /= RegionsParams[k].area;
+                RegionsParams[k].massCenterY /= RegionsParams[k].area;
+            }
+        }
+    }
+
+
+    RegionParams GetRegionParams(int regionNr)
+    {
+        if (regionNr > count || regionNr < 0)
+            return RegionParams();
+        else
+            return  RegionsParams[regionNr];
+    }
+
+private:
+    RegionParams * RegionsParams;
+    int count;
+
+    void Init()
+    {
+        RegionsParams = nullptr;
+        count = 0;
+    }
+};
+
+
 
 cv::Mat RemovingTinyReg9(cv::Mat ImReg);
 void FillBorderWithValue(cv::Mat ImReg, float value);
@@ -74,15 +177,19 @@ void Threshold16(cv::Mat ImIn, cv::Mat Mask, unsigned short threshold);
 cv::Mat BuildKernel(int shape);
 void DilationCV(cv::Mat Mask, int shape);
 void ErosionCV(cv::Mat Mask, int shape);
+cv::Mat BuildRoundedKernell(int radius);
+void DilationCircleCV(cv::Mat Mask, int radius);
+void ErosionCircleCV(cv::Mat Mask, int radius);
 
 cv::Mat MaskOutsideMatOut(cv::Mat Im, cv::Mat Mask);
 int MaskOutside(cv::Mat Im, cv::Mat Mask);
 
 int MaskInside(cv::Mat Im, cv::Mat Mask);
-
 //----------------------------------------------------------------------------------------------------------------------
 int MaskMaskInv(cv::Mat Mask, cv::Mat Mask2);
-
+cv::Mat MaskInv(cv::Mat Mask);
+//----------------------------------------------------------------------------------------------------------------------
+cv::Mat Combine2Regions(cv::Mat Mask1, cv::Mat Mask2);
 
 #endif // GRADIENT
 

@@ -1901,23 +1901,41 @@ cv::Mat BuildKernel(int shape)
     }
     return Kernel;
 }
-
+//---------------------------------------------------------------------------
+cv::Mat BuildRoundedKernell(int radius)
+{
+    int diameter = radius * 2 + 1;
+    int center = radius + 1;
+    Mat Kernel = Mat::zeros(diameter, diameter, CV_8U);
+    ellipse(Kernel, Point(center,center), Size(radius,radius), 0.0, 0.0, 360.0, 1, -1);
+    return Kernel;
+}
+//---------------------------------------------------------------------------
 void DilationCV(cv::Mat Mask, int shape)
 {
     Mat Kernel =  BuildKernel(shape);
-    //namedWindow("kernel", WINDOW_NORMAL);
-    //imshow("kernel",Kernel*100);
     dilate(Mask,Mask,Kernel);
-
     return ;
 }
+//---------------------------------------------------------------------------
 void ErosionCV(cv::Mat Mask, int shape)
 {
     Mat Kernel =  BuildKernel(shape);
-    //namedWindow("kernel", WINDOW_NORMAL);
-    //imshow("kernel",Kernel*100);
     erode(Mask,Mask,Kernel);
-
+    return ;
+}
+//---------------------------------------------------------------------------
+void DilationCircleCV(cv::Mat Mask, int radius)
+{
+    Mat Kernel =  BuildRoundedKernell(radius);
+    dilate(Mask,Mask,Kernel);
+    return ;
+}
+//---------------------------------------------------------------------------
+void ErosionCircleCV(cv::Mat Mask, int radius)
+{
+    Mat Kernel =  BuildRoundedKernell(radius);
+    erode(Mask,Mask,Kernel);
     return ;
 }
 
@@ -2049,3 +2067,65 @@ int MaskMaskInv(Mat Mask, Mat Mask2)
     }
     return 1;
 }
+//----------------------------------------------------------------------------------------------------------------------
+cv::Mat MaskInv(cv::Mat Mask)
+{
+    Mat MaskOut;
+
+    if(Mask.empty())
+        return MaskOut;
+    if(Mask.type() != CV_16U)
+        return MaskOut;
+
+    int maxXY = Mask.cols * Mask.rows;
+
+    MaskOut = Mat::zeros(Mask.rows, Mask.cols, CV_16U);
+    unsigned short *wMask = (unsigned short *)Mask.data;
+    unsigned short *wMaskOut = (unsigned short *)MaskOut.data;
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wMask)
+            *wMaskOut = 0;
+        else
+            *wMaskOut = 1;
+
+        wMask++;
+        wMaskOut++;
+    }
+    return MaskOut;
+}
+//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
+cv::Mat Combine2Regions(cv::Mat Mask1, cv::Mat Mask2)
+{
+    Mat Out;
+
+    if(Mask1.empty() || Mask2.empty())
+        return Out;
+    if(Mask1.type() != CV_16U || Mask2.type() != CV_16U)
+        return Out;
+    if(Mask1.cols != Mask2.cols || Mask1.rows != Mask2.rows)
+        return Out;
+
+    int maxX = Mask1.cols;
+    int maxY = Mask1.rows;
+
+    Out = Mat::zeros(maxY, maxX, CV_16U);
+    int maxXY = maxX * maxY;
+
+    uint16_t  *wMask1 = (uint16_t  *)Mask1.data;
+    uint16_t  *wMask2 = (uint16_t  *)Mask2.data;
+    uint16_t  *wOut = (uint16_t  *)Out.data;
+
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wMask1 || *wMask2)
+            *wOut = 1;
+        wMask1++;
+        wMask2++;
+        wOut++;
+    }
+    return Out;
+
+}
+//----------------------------------------------------------------------------------------------------------------------
