@@ -52,7 +52,8 @@ public:
     }
     ~MultiRegionsParams()
     {
-        Init();
+        if((RegionsParams != nullptr) && (count > 0) )
+            delete [] RegionsParams;
     }
     void GetFromMat(cv::Mat Mask)
     {
@@ -115,13 +116,55 @@ public:
         }
     }
 
-
     RegionParams GetRegionParams(int regionNr)
     {
         if (regionNr > count || regionNr < 0)
             return RegionParams();
         else
             return  RegionsParams[regionNr];
+    }
+
+    int GetCountOfNonZeroArea()
+    {
+        int out = 0;
+        for(int k = 1; k <= count; k++)
+        {
+            if(RegionsParams[k].area)
+                out++;
+        }
+        return out;
+    }
+
+    int GetCountOfNonZeroAreaValid()
+    {
+        int out = 0;
+        for(int k = 1; k <= count; k++)
+        {
+            if(RegionsParams[k].area && RegionsParams[k].valid)
+                out++;
+        }
+        return out;
+    }
+
+    int GetCountOfNonZeroAreaNonValid()
+    {
+        int out = 0;
+        for(int k = 1; k <= count; k++)
+        {
+            if(RegionsParams[k].area && (RegionsParams[k].valid == false))
+                out++;
+        }
+        return out;
+    }
+
+    bool SetValid(int regionNr, bool valid)
+    {
+        if(regionNr > count)
+        {
+            return false;
+        }
+        RegionsParams[regionNr].valid = valid;
+        return true;
     }
 
 private:
@@ -190,6 +233,6 @@ int MaskMaskInv(cv::Mat Mask, cv::Mat Mask2);
 cv::Mat MaskInv(cv::Mat Mask);
 //----------------------------------------------------------------------------------------------------------------------
 cv::Mat Combine2Regions(cv::Mat Mask1, cv::Mat Mask2);
-
+cv::Mat Combine3Regions(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3);
 #endif // GRADIENT
 
