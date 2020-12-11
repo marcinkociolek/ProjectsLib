@@ -197,6 +197,7 @@ void RegionDilation9(cv::Mat ImR);
 void RegionDilation13(cv::Mat ImR);
 
 void RegionErosion5(cv::Mat ImR);
+void RegionErosion5ZeroPad(cv::Mat ImR);
 void RegionErosion9(cv::Mat ImR);
 void RegionErosion13(cv::Mat ImR);
 

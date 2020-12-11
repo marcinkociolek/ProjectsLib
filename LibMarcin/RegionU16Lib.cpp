@@ -848,6 +848,64 @@ void RegionErosion5(Mat ImR)
     delete[] ImRTemp;
 }
 //------------------------------------------------------------------------------
+void RegionErosion5ZeroPad(Mat ImR)
+{
+// renewed version erodes whole imaga
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+    int maxXa = maxX - 1;
+    int maxYa = maxY - 1;
+
+    unsigned short *ImRTemp = new unsigned short[maxXY];
+
+    unsigned short *wImRTemp = ImRTemp;
+
+    unsigned short *wImR0 = (unsigned short*)ImR.data;;
+    unsigned short *wImR1 = wImR0 - maxX;
+    unsigned short *wImR2 = wImR0 - 1;
+    unsigned short *wImR3 = wImR0 + 1;
+    unsigned short *wImR4 = wImR0 + maxX;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        int x = i % maxX;
+        int y = i / maxX;
+
+        unsigned int product = (unsigned int)*wImR0;
+        if (y > 0 && x > 0 && x < maxXa && x < maxYa)
+        {
+            product *= (unsigned int)*wImR1;
+            product *= (unsigned int)*wImR2;
+            product *= (unsigned int)*wImR3;
+            product *= (unsigned int)*wImR4;
+        }
+        else
+            product = 0;
+        if(product)
+            *wImRTemp = 1;
+        else
+            *wImRTemp = 0;
+
+        wImRTemp++;
+
+        wImR0++;
+        wImR1++;
+        wImR2++;
+        wImR3++;
+        wImR4++;
+    }
+    wImRTemp = ImRTemp;
+    wImR0 = (unsigned short*)ImR.data;;
+    for (int i = 0; i < maxXY; i++)
+    {
+        *wImR0 = *wImRTemp;
+        wImRTemp++;
+        wImR0++;
+    }
+    delete[] ImRTemp;
+}
+//------------------------------------------------------------------------------
 void RegionErosion9(Mat ImR)
 {
 // renewed version erodes whole imaga
