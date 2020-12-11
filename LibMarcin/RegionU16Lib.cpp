@@ -236,6 +236,24 @@ void DeleteRegionFromImage(Mat ImR, unsigned short regToRemove)
     }
 }
 //---------------------------------------------------------------------------
+void KeepOneRegion(Mat ImR, unsigned short regToKeep)
+{
+    if(!regToKeep)
+        return;
+    int maxX = ImR.cols;
+    int maxY = ImR.rows;
+    int maxXY = maxX * maxY;
+    unsigned short *wImR = (unsigned short*)ImR.data;
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wImR == regToKeep)
+            *wImR = 1;
+        else
+            *wImR = 0;
+        wImR++;
+    }
+}
+//---------------------------------------------------------------------------
 unsigned short DivideSeparateRegions(Mat InReg, unsigned int minRegSize)
 // fonction returns number of new segments
 {
@@ -1934,6 +1952,11 @@ void DilationCircleCV(cv::Mat Mask, int radius)
 //---------------------------------------------------------------------------
 void ErosionCircleCV(cv::Mat Mask, int radius)
 {
+    if(radius < 1)
+        return;
+    if(Mask.empty())
+        return;
+
     Mat Kernel =  BuildRoundedKernell(radius);
     erode(Mask,Mask,Kernel);
     return ;
@@ -2129,6 +2152,39 @@ cv::Mat Combine2Regions(cv::Mat Mask1, cv::Mat Mask2)
 
 }
 //----------------------------------------------------------------------------------------------------------------------
+cv::Mat Combine2RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2)
+{
+    Mat Out;
+
+    if(Mask1.empty() || Mask2.empty())
+        return Out;
+    if(Mask1.type() != CV_16U || Mask2.type() != CV_16U)
+        return Out;
+    if(Mask1.cols != Mask2.cols || Mask1.rows != Mask2.rows)
+        return Out;
+
+    int maxX = Mask1.cols;
+    int maxY = Mask1.rows;
+
+    Out = Mat::zeros(maxY, maxX, CV_8U);
+    int maxXY = maxX * maxY;
+
+    uint16_t  *wMask1 = (uint16_t  *)Mask1.data;
+    uint16_t  *wMask2 = (uint16_t  *)Mask2.data;
+    uint8_t  *wOut = (uint8_t  *)Out.data;
+
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wMask1 || *wMask2)
+            *wOut = 1;
+        wMask1++;
+        wMask2++;
+        wOut++;
+    }
+    return Out;
+
+}
+//----------------------------------------------------------------------------------------------------------------------
 cv::Mat Combine3Regions(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3)
 {
     Mat Out;
@@ -2150,6 +2206,41 @@ cv::Mat Combine3Regions(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3)
     uint16_t  *wMask2 = (uint16_t  *)Mask2.data;
     uint16_t  *wMask3 = (uint16_t  *)Mask3.data;
     uint16_t  *wOut = (uint16_t  *)Out.data;
+
+    for(int i = 0; i < maxXY; i++)
+    {
+        if(*wMask1 || *wMask2 || *wMask3)
+            *wOut = 1;
+        wMask1++;
+        wMask2++;
+        wMask3++;
+        wOut++;
+    }
+    return Out;
+
+}
+//----------------------------------------------------------------------------------------------------------------------
+cv::Mat Combine3RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3)
+{
+    Mat Out;
+
+    if(Mask1.empty() || Mask2.empty() || Mask3.empty())
+        return Out;
+    if(Mask1.type() != CV_16U || Mask2.type() != CV_16U || Mask3.type() != CV_16U)
+        return Out;
+    if(Mask1.cols != Mask2.cols || Mask1.rows != Mask2.rows || Mask1.cols != Mask3.cols || Mask1.rows != Mask3.rows)
+        return Out;
+
+    int maxX = Mask1.cols;
+    int maxY = Mask1.rows;
+
+    Out = Mat::zeros(maxY, maxX, CV_8U);
+    int maxXY = maxX * maxY;
+
+    uint16_t  *wMask1 = (uint16_t  *)Mask1.data;
+    uint16_t  *wMask2 = (uint16_t  *)Mask2.data;
+    uint16_t  *wMask3 = (uint16_t  *)Mask3.data;
+    uint8_t  *wOut = (uint8_t  *)Out.data;
 
     for(int i = 0; i < maxXY; i++)
     {

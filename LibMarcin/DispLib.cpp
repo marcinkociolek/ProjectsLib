@@ -182,10 +182,15 @@ Mat ShowImageF32PseudoColor(Mat ImF, double minVal, double maxVal)
 
     for (int i = 0; i < maxXY; i++)
     {
+        if(!(*wImF != *wImF))
+        {
         value = (double)*wImF * gain - offset;
         if (value > 255.0)
             value = 255.0;
         if (value < 0.0)
+            value = 0.0;
+        }
+        else
             value = 0.0;
         index = (int)floor(value);
 
@@ -197,6 +202,56 @@ Mat ShowImageF32PseudoColor(Mat ImF, double minVal, double maxVal)
 		wImOut++;
 		wImF++;
 	}
+    return ImOut;
+}
+//---------------------------------------------------------------------------
+Mat ShowImageF32Gray(Mat ImF, double minVal, double maxVal)
+{
+    int maxX = ImF.cols;
+    int maxY = ImF.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+
+    if(!maxXY)
+        return ImOut;
+
+    ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
+
+    double difference = maxVal - minVal;
+    if(difference == 0.0)
+        difference = 1.0;
+    double gain = 255.0/difference;
+    double offset = gain * minVal;
+
+    double value;
+    int index;
+
+    float *wImF = (float *)ImF.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        if(!(*wImF != *wImF))
+        {
+            value = (double)*wImF * gain - offset;
+            if (value > 255.0)
+                value = 255.0;
+            if (value < 0.0)
+                value = 0.0;
+        }
+        else
+            value = 0.0;
+        index = (int)floor(value);
+
+        *wImOut = (unsigned char)index;
+        wImOut++;
+        *wImOut = (unsigned char)index;
+        wImOut++;
+        *wImOut = (unsigned char)index;
+        wImOut++;
+        wImF++;
+    }
     return ImOut;
 }
 //---------------------------------------------------------------------------
@@ -806,7 +861,7 @@ string MatPropetiesAsText(Mat Im)
     Out += "max x = " + to_string(Im.cols);
     Out += ", max y = " + to_string(Im.rows);
     Out += ", # channels = " + to_string(Im.channels());
-    Out += ", depth = " + to_string(Im.depth());
+    Out += ", depth = " + to_string(Im.depth()) + " = ";
 
     switch(Im.depth())
     {

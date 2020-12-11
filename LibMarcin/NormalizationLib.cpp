@@ -15,8 +15,8 @@ void NormParamsMinMax(Mat Im, double *maxNorm, double *minNorm)
 	maxY = Im.rows;
 	maxXY = maxX * maxY;
 
-    double max = -100000.0;
-    double min = 100000.0;
+    double max = -1.0E+308;
+    double min = 1.0E+308;
 
     double *wImD = (double *)(ImD.data);
 	for (int i = 0; i < maxXY; i++)
@@ -140,20 +140,24 @@ void NormParamsMinMax(Mat Im, Mat Roi , unsigned short roiNr, double *maxNorm, d
 		*minNorm = -10001;
 		return;
 	}
-    double max = -100000.0;
-    double min = 100000.0;
+    double max = -1.0E+308;
+    double min =  1.0E+308;
 
     double *wImD = (double *)(ImD.data);
 	unsigned short *wRoi = (unsigned short *)Roi.data;
 
 	for (int i = 0; i < maxXY; i++)
 	{
-        if (max < *wImD && *wRoi == roiNr)
-            max = *wImD;
-        if (min > *wImD && *wRoi == roiNr)
-            min = *wImD;
+        double val = *wImD;
+        if(!(val != val))
+        {
+            if (max < val && *wRoi == roiNr)
+                max = val;
+            if (min > val && *wRoi == roiNr)
+                min = val;
+        }
         wImD++;
-		wRoi++;
+        wRoi++;
 	}
 	*maxNorm = max;
 	*minNorm = min;

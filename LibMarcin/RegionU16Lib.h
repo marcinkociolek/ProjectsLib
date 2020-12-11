@@ -185,6 +185,7 @@ void FillBorderWithValue(cv::Mat ImReg, float value);
 void OneRegionFill5Fast1(cv::Mat ImR,  unsigned short fillReg);
 void FillHoles(cv::Mat ImR, unsigned short region = 1);
 void DeleteRegionFromImage(cv::Mat ImR, unsigned short regToRemove);
+void KeepOneRegion(cv::Mat ImR, unsigned short regToKeep);
 unsigned short DivideSeparateRegions(cv::Mat ImReg, unsigned int minRegSize);
 void RegionExchange(unsigned short *ImReg, int stop,
                     unsigned short rI, unsigned  short rO);
@@ -233,6 +234,8 @@ int MaskMaskInv(cv::Mat Mask, cv::Mat Mask2);
 cv::Mat MaskInv(cv::Mat Mask);
 //----------------------------------------------------------------------------------------------------------------------
 cv::Mat Combine2Regions(cv::Mat Mask1, cv::Mat Mask2);
+cv::Mat Combine2RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2);
 cv::Mat Combine3Regions(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3);
+cv::Mat Combine3RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3);
 #endif // GRADIENT
 
