@@ -238,5 +238,9 @@ cv::Mat Combine2Regions(cv::Mat Mask1, cv::Mat Mask2);
 cv::Mat Combine2RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2);
 cv::Mat Combine3Regions(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3);
 cv::Mat Combine3RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3);
+//----------------------------------------------------------------------------------------------------------------------
+cv::Point  GetRegionCentroid(cv::Mat Mask, unsigned short regionNumber);
+
+
 #endif // GRADIENT
 

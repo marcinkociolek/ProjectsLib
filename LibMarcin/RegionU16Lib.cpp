@@ -2313,3 +2313,48 @@ cv::Mat Combine3RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3)
 
 }
 //----------------------------------------------------------------------------------------------------------------------
+cv::Point GetRegionCentroid(cv::Mat Mask, unsigned short regionNumber)
+{
+    Point Out;
+
+    if(Mask.empty())
+        return Out;
+    if(Mask.type() != CV_16U)
+        return Out;
+
+
+    int maxX = Mask.cols;
+    int maxY = Mask.rows;
+
+    int sumX = 0;
+    int sumY = 0;
+    int count = 0;
+    uint16_t  *wMask = (uint16_t  *)Mask.data;
+
+    for(int y = 0; y < maxY; y++)
+    {
+        for(int x = 0; x < maxX; x++)
+        {
+            if(*wMask == regionNumber)
+            {
+                sumX += x;
+                sumY += y;
+                count++;
+            }
+            wMask++;
+        }
+    }
+    if(count)
+    {
+        Out.x = sumX/count;
+        Out.y = sumY/count;
+    }
+    else
+    {
+        Out.x = -1;
+        Out.y = -1;
+    }
+    return Out;
+
+}
+//----------------------------------------------------------------------------------------------------------------------
