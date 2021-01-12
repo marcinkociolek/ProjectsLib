@@ -789,7 +789,7 @@ void HistogramRGB::StaisticsFromHist()
     {
         meanG = sumG/countG;
     }
-    if(countR)
+    if(countB)
     {
         meanB = sumB/countB;
     }

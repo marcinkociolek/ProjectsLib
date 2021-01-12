@@ -435,9 +435,9 @@ void NormParamsMinMax16U(Mat Im, Mat Roi , unsigned short roiNr, double *maxNorm
 
     for (int i = 0; i < maxXY; i++)
     {
-        if (max < *wIm || *wRoi == roiNr)
+        if (max < *wIm && *wRoi == roiNr)
             max = *wIm;
-        if (min > *wIm || *wRoi == roiNr)
+        if (min > *wIm && *wRoi == roiNr)
             min = *wIm;
         wIm++;
         wRoi++;
