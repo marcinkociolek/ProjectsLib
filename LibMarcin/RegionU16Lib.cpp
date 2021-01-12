@@ -2358,3 +2358,79 @@ cv::Point GetRegionCentroid(cv::Mat Mask, unsigned short regionNumber)
 
 }
 //----------------------------------------------------------------------------------------------------------------------
+int RemoveOverlapingRegions(cv::Mat MaskToModify, cv::Mat Mask)
+{
+    if(Mask.empty())
+        return -1;
+    if(Mask.type() != CV_16U)
+        return -2;
+
+    if(MaskToModify.empty())
+        return -3;
+    if(MaskToModify.type() != CV_16U)
+        return -4;
+    if(MaskToModify.size != Mask.size)
+        return -5;
+
+    int maxX = Mask.cols;
+    int maxY = Mask.rows;
+
+
+
+    uint16_t maxRegNr = 0xFFFF;
+    uint16_t *Exchange = new uint16_t[maxRegNr];
+    uint16_t *wExchange;
+
+    wExchange = Exchange;
+    for (unsigned short i = 0; i < maxRegNr; i++)
+    {
+        *wExchange = i;
+        wExchange++;
+    }
+
+    uint16_t  *wMask;
+    uint16_t  *wMaskToModify;
+
+    wMask = (uint16_t  *)Mask.data;
+    wMaskToModify = (uint16_t  *)MaskToModify.data;
+    for(int y = 0; y < maxY; y++)
+    {
+        for(int x = 0; x < maxX; x++)
+        {
+            if(!*wMask && *wMaskToModify)
+            {
+                Exchange[*wMaskToModify] = 0;
+            }
+            wMask++;
+            wMaskToModify++;
+        }
+    }
+    uint16_t newRegNr = 1;
+    wExchange = Exchange;
+    for (unsigned short i = 1; i < maxRegNr; i++)
+    {
+        if(*wExchange)
+        {
+            *wExchange = newRegNr;
+            newRegNr++;
+        }
+        wExchange++;
+    }
+
+    wMaskToModify = (uint16_t  *)MaskToModify.data;
+    for(int y = 0; y < maxY; y++)
+    {
+        for(int x = 0; x < maxX; x++)
+        {
+            uint16_t oldRegNr = *wMaskToModify;
+            if(oldRegNr)
+            {
+                *wMaskToModify = Exchange[oldRegNr];
+            }
+
+            wMaskToModify++;
+        }
+    }
+    return 1;
+}
+//----------------------------------------------------------------------------------------------------------------------

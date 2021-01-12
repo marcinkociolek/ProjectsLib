@@ -241,6 +241,9 @@ cv::Mat Combine3RegionsTo8Bit(cv::Mat Mask1, cv::Mat Mask2, cv::Mat Mask3);
 //----------------------------------------------------------------------------------------------------------------------
 cv::Point  GetRegionCentroid(cv::Mat Mask, unsigned short regionNumber);
 
+//----------------------------------------------------------------------------------------------------------------------
+int RemoveOverlapingRegions(cv::Mat MaskToModify, cv::Mat Mask);
+
 
 #endif // GRADIENT
 
