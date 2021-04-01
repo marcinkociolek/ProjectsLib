@@ -433,12 +433,12 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
         {
             barLenght = yScaleHeight;
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),FILLED);
         }
         else
         {
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),FILLED);
         }
     }
     return ImToShow;
@@ -1048,12 +1048,12 @@ Mat HistogramRGB::Plot(int yScale, int scaleCoef, int barWidth , char colorPlane
         {
             barLenght = yScaleHeight;
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),FILLED);
         }
         else
         {
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),FILLED);
         }
     }
     return ImToShow;
@@ -1125,12 +1125,12 @@ Mat HistogramRGB::PlotRGB(int yScale, int scaleCoef, int barWidth)
         {
             barLenght = yScaleHeight;
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 128.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 128.0, 0.0),FILLED);
         }
         else
         {
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),FILLED);
         }
 
         barLenght = (int)round((double)HistogramG[bin] * pow(10.0,scaleCoef * (-1))*100);
@@ -1140,12 +1140,12 @@ Mat HistogramRGB::PlotRGB(int yScale, int scaleCoef, int barWidth)
         {
             barLenght = yScaleHeight;
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 128.0, 0.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 128.0, 0.0, 0.0),FILLED);
         }
         else
         {
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(0.0, 255.0, 0.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(0.0, 255.0, 0.0, 0.0),FILLED);
         }
         barLenght = (int)round((double)HistogramB[bin] * pow(10.0,scaleCoef * (-1))*100);
 
@@ -1154,12 +1154,12 @@ Mat HistogramRGB::PlotRGB(int yScale, int scaleCoef, int barWidth)
         {
             barLenght = yScaleHeight;
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(128.0, 0.0, 0.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(128.0, 0.0, 0.0, 0.0),FILLED);
         }
         else
         {
             Point stop  = start + Point(barWidth - 1,0 - barLenght);
-            rectangle(ImToShow,start,stop,Scalar(255.0, 0.0, 0.0, 0.0),CV_FILLED);
+            rectangle(ImToShow,start,stop,Scalar(255.0, 0.0, 0.0, 0.0),FILLED);
         }
     }
     return ImToShow;
