@@ -13,7 +13,7 @@ MyImageWidget::MyImageWidget(QWidget *parent) : QWidget(parent)
 void MyImageWidget::paintBitmap(cv::Mat ImIn)
 {
     //QPainter painter(this);
-    cvtColor(ImIn,ImIn,CV_BGR2RGB);
+    cvtColor(ImIn,ImIn,cv::COLOR_BGR2RGB);
     Im = ImIn;
     //QImage QIm((unsigned char*)Im.data, Im.cols, Im.rows, QImage::Format_RGB888);
 
