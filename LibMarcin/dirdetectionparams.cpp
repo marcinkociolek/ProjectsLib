@@ -26,18 +26,18 @@ void DirDetectionParams::DefaultParams(void)
     preprocessKernelSize = 3;
 
     showInputGray = false;
-    displayGrayMax = 250;
+    displayGrayMax = 65535;
     displayGrayMin = 0;
 
     showInputPC = false;
-    displayPCMax = 250;
-    displayPCMin = -40;
+    displayPCMax = 65535;
+    displayPCMin = 0;
 
     tileShape = 1;
     tileSize = 61;
-    tileShift = 45;
-    tileOffsetX = 31;
-    tileOffsetY = 31;
+    tileShift = 64;
+    tileOffsetX = 32;
+    tileOffsetY = 32;
 
     showTileRoiImage = false;
 
@@ -55,16 +55,16 @@ void DirDetectionParams::DefaultParams(void)
     angleStep = 1.0;
 
     minOffset = 8;
-    offsetCount = 4;
+    offsetCount = 8;
     offsetStep = 1;
 
-    showOutputImage = true;
+    showOutputImage = false;
     directionLineWidth = 3;
     directionLineLength = 23;
 
     showTileOutputImage = false;
 
-    showOutputText = true;
+    showOutputText = false;
 
     textOut = true;
     imgOut = false;

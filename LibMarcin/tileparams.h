@@ -36,7 +36,7 @@ public:
 
     FileParams();
     ~FileParams();
-    void FileParams::Init();
+    void Init();
     void GetFromFile(boost::filesystem::path FileToOpen);
 };
 

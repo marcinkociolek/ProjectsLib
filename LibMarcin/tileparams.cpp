@@ -106,7 +106,7 @@ void FileParams::GetFromFile(boost::filesystem::path FileToOpen)
     if (!exists(FileToOpen))
         return;
 
-    std::ifstream inFile(FileToOpen.wstring());
+    std::ifstream inFile(FileToOpen.string());
     if (!inFile.is_open())
     {
         return;
@@ -261,7 +261,7 @@ void FileParams::GetFromFile(boost::filesystem::path FileToOpen)
 {
    Init();
    Mat Image;
-   Image = imread(FileNameExt,CV_LOAD_IMAGE_ANYDEPTH);
+   Image = imread(FileNameExt,cv::IMREAD_ANYDEPTH);
    if(Image.empty())
        return;
    FileName = FileNameExt;
@@ -344,12 +344,12 @@ void FileParams::GetFromFile(boost::filesystem::path FileToOpen)
          {
              barLenght = yScaleHeight;
              Point stop  = start + Point(barWidth - 1,0 - barLenght);
-             rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),CV_FILLED);
+             rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 255.0, 0.0),FILLED);
          }
          else
          {
              Point stop  = start + Point(barWidth - 1,0 - barLenght);
-             rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),CV_FILLED);
+             rectangle(ImToShow,start,stop,Scalar(0.0, 0.0, 0.0, 0.0),FILLED);
          }
      }
      imshow("Feature Hist",ImToShow);
