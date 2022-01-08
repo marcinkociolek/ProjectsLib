@@ -300,6 +300,51 @@ Mat ShowImageF64PseudoColor(Mat ImF, double minVal, double maxVal)
     return ImOut;
 }
 //---------------------------------------------------------------------------
+Mat ShowImageF64PseudoGray(Mat ImF, double minVal, double maxVal)
+{
+    int maxX = ImF.cols;
+    int maxY = ImF.rows;
+    int maxXY = maxX * maxY;
+
+    Mat ImOut;
+
+    if(!maxXY)
+        return ImOut;
+
+    ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
+
+    double difference = maxVal - minVal;
+    if(difference == 0.0)
+        difference = 1.0;
+    double gain = 255.0/difference;
+    double offset = gain * minVal;
+
+    double value;
+    int index;
+
+    double *wImF = (double *)ImF.data;
+    unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+    for (int i = 0; i < maxXY; i++)
+    {
+        value = *wImF * gain - offset;
+        if (value > 255)
+            value = 255;
+        if (value < 0)
+            value = 0;
+        index = (int)floor(value);
+
+        *wImOut = index;
+        wImOut++;
+        *wImOut = index;
+        wImOut++;
+        *wImOut = index;
+        wImOut++;
+        wImF++;
+    }
+    return ImOut;
+}
+//---------------------------------------------------------------------------
 Mat ShowRegion(Mat ImReg)
 {
     Mat ImOut;

@@ -150,7 +150,7 @@ cv::Mat ShowImage16Gray(cv::Mat Im16, double minVal, double maxVal);
 cv::Mat ShowImageF32PseudoColor(cv::Mat ImF, double minVal, double maxVal);
 cv::Mat ShowImageF32Gray(cv::Mat ImF, double minVal, double maxVal);
 cv::Mat ShowImageF64PseudoColor(cv::Mat ImF, double minVal, double maxVal);
-
+cv::Mat ShowImageF64PseudoGray(cv::Mat ImF, double minVal, double maxVal);
 
 cv::Mat ShowRegion(cv::Mat ImReg);
 
