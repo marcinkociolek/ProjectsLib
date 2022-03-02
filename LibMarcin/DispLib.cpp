@@ -300,7 +300,7 @@ Mat ShowImageF64PseudoColor(Mat ImF, double minVal, double maxVal)
     return ImOut;
 }
 //---------------------------------------------------------------------------
-Mat ShowImageF64PseudoGray(Mat ImF, double minVal, double maxVal)
+Mat ShowImageF64Gray(Mat ImF, double minVal, double maxVal)
 {
     int maxX = ImF.cols;
     int maxY = ImF.rows;
