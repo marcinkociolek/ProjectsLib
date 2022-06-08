@@ -442,7 +442,7 @@ void DeleteRegTouchingBorder(Mat ImReg)
 //    int maxXa = maxX - 1;
 //    unsigned short *OutReg = new unsigned short[maxXY];
 
-    bool RegToRemove[0xFFFF];
+    bool RegToRemove[0x10000];
     bool *wRegToRemove = RegToRemove;
     for(int i = 0;i <= 0xFFFF; i++)
     {
@@ -482,7 +482,7 @@ void DeleteRegTouchingBorder(Mat ImReg)
         wImReg += maxX;
     }
 
-    unsigned short RegToRemoveList[65535];
+    unsigned short RegToRemoveList[0x10000];
     int iRegToRemoveList = -1;
     wRegToRemove = RegToRemove + 1;
     for(int i = 1;i <= 0xFFFF; i++)
