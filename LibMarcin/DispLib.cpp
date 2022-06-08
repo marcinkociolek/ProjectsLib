@@ -360,129 +360,289 @@ Mat ShowRegion(Mat ImReg)
 
     ImOut = Mat::zeros(maxY, maxX, CV_8UC3);
 
-    unsigned short *wImReg = (unsigned short *)ImReg.data;
-    unsigned char *wImOut = (unsigned char *)ImOut.data;
-
-    for (int i = 0; i < maxXY; i++)
+    switch(ImReg.type())
     {
-        //int y = i / maxX;
-        //int x = i % maxX;
+    case CV_16UC1:
+        {
+            unsigned short *wImReg = (unsigned short *)ImReg.data;
+            unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+            for (int i = 0; i < maxXY; i++)
+            {
+                //int y = i / maxX;
+                //int x = i % maxX;
 
 
-		if(*wImReg)
-        {
-            *wImOut = RegColorsB[(*wImReg-1)%16];
-            wImOut++;
-            *wImOut = RegColorsG[(*wImReg-1)%16];
-            wImOut++;
-            *wImOut = RegColorsR[(*wImReg-1)%16];
-            wImOut++;
+                if(*wImReg)
+                {
+                    *wImOut = RegColorsB[(*wImReg-1)%16];
+                    wImOut++;
+                    *wImOut = RegColorsG[(*wImReg-1)%16];
+                    wImOut++;
+                    *wImOut = RegColorsR[(*wImReg-1)%16];
+                    wImOut++;
+                }
+                else
+                {
+                    wImOut++;
+                    wImOut++;
+                    wImOut++;
+                }
+                wImReg++;
+            }
         }
-        else
+        break;
+    case CV_8UC1:
         {
-            wImOut++;
-            wImOut++;
-            wImOut++;
+            unsigned char *wImReg = (unsigned char *)ImReg.data;
+            unsigned char *wImOut = (unsigned char *)ImOut.data;
+
+            for (int i = 0; i < maxXY; i++)
+            {
+                //int y = i / maxX;
+                //int x = i % maxX;
+
+
+                if(*wImReg)
+                {
+                    *wImOut = RegColorsB[*wImReg - 1];
+                    wImOut++;
+                    *wImOut = RegColorsG[*wImReg - 1];
+                    wImOut++;
+                    *wImOut = RegColorsR[*wImReg - 1];
+                    wImOut++;
+                }
+                else
+                {
+                    wImOut++;
+                    wImOut++;
+                    wImOut++;
+                }
+                wImReg++;
+            }
         }
-        wImReg++;
+        break;
+    default:
+        break;
+
     }
     return ImOut;
 }
 //---------------------------------------------------------------------------
 Mat ShowSolidRegionOnImage(Mat ImReg, Mat ImRGB)
 {
+    Mat ImOut;
+    if(ImReg.empty())
+        return ImOut;
+    if(ImRGB.empty())
+        return ImOut;
+    if(ImRGB.cols != ImReg.cols)
+        return ImOut;
+    if(ImRGB.rows != ImReg.rows)
+        return ImOut;
+    if(ImRGB.channels() != 3)
+        return ImOut;
+
     int maxX = ImReg.cols;
     int maxY = ImReg.rows;
     int maxXY = maxX * maxY;
 
-    Mat ImOut;
+
     ImRGB.copyTo(ImOut);
 
-
-    unsigned short * wImReg = (unsigned short *)ImReg.data;
-    unsigned char *wImOut = (unsigned char *)ImOut.data;
-    for (int i = 0; i < maxXY; i++)
+    switch(ImReg.type())
     {
-            if(*wImReg)
+    case CV_16UC1:
+        {
+            unsigned short * wImReg = (unsigned short *)ImReg.data;
+            unsigned char *wImOut = (unsigned char *)ImOut.data;
+            for (int i = 0; i < maxXY; i++)
             {
-                int index = (int(*wImReg)-1)%16;
-                *wImOut = RegColorsB[index];
-                wImOut++;
-                *wImOut = RegColorsG[index];
-                wImOut++;
-                *wImOut = RegColorsR[index];
-                wImOut++;
-            }
-            else
-            {
-                wImOut++;
-                wImOut++;
-                wImOut++;
-            }
+                    if(*wImReg)
+                    {
+                        int index = (int(*wImReg)-1)%16;
+                        *wImOut = RegColorsB[index];
+                        wImOut++;
+                        *wImOut = RegColorsG[index];
+                        wImOut++;
+                        *wImOut = RegColorsR[index];
+                        wImOut++;
+                    }
+                    else
+                    {
+                        wImOut++;
+                        wImOut++;
+                        wImOut++;
+                    }
 
-            wImReg++;
+                    wImReg++;
+            }
+        }
+        break;
+    case CV_8UC1:
+        {
+            unsigned char * wImReg = (unsigned char *)ImReg.data;
+            unsigned char *wImOut = (unsigned char *)ImOut.data;
+            for (int i = 0; i < maxXY; i++)
+            {
+                    if(*wImReg)
+                    {
+                        int index = int(*wImReg)-1;
+                        *wImOut = RegColorsB[index];
+                        wImOut++;
+                        *wImOut = RegColorsG[index];
+                        wImOut++;
+                        *wImOut = RegColorsR[index];
+                        wImOut++;
+                    }
+                    else
+                    {
+                        wImOut++;
+                        wImOut++;
+                        wImOut++;
+                    }
+
+                    wImReg++;
+            }
+        }
+        break;
+    default:
+        break;
     }
     return ImOut;
 }
 //---------------------------------------------------------------------------
 Mat ShowTransparentRegionOnImage(Mat ImReg, Mat ImRGB, int transparency)
 {
+    Mat ImOut;
+    if(ImReg.empty())
+        return ImOut;
+    if(ImRGB.empty())
+        return ImOut;
+    if(ImRGB.cols != ImReg.cols)
+        return ImOut;
+    if(ImRGB.rows != ImReg.rows)
+        return ImOut;
+    if(ImRGB.channels() != 3)
+        return ImOut;
+
     int maxX = ImReg.cols;
     int maxY = ImReg.rows;
     int maxXY = maxX * maxY;
 
-    Mat ImOut;
+
     ImRGB.copyTo(ImOut);
 
-
-    unsigned short * wImReg = (unsigned short *)ImReg.data;
-    unsigned char *wImOut = (unsigned char *)ImOut.data;
-    for (int i = 0; i < maxXY; i++)
+    switch(ImReg.type())
     {
-            if(*wImReg)
+    case CV_16UC1:
+        {
+            unsigned short * wImReg = (unsigned short *)ImReg.data;
+            unsigned char *wImOut = (unsigned char *)ImOut.data;
+            for (int i = 0; i < maxXY; i++)
             {
-                int index = (int(*wImReg)-1)%16;
-                int temp;
+                    if(*wImReg)
+                    {
+                        int index = (int(*wImReg)-1)%16;
+                        int temp;
 
-                temp = (int)*wImOut;
-                temp -= transparency * 2;
-                temp += ((int)RegColorsB[index])*transparency/100;
-                if(temp > 255)
-                    temp = 255;
-                if(temp < 0)
-                    temp = 0;
-                *wImOut = (unsigned char)temp;
-                wImOut++;
+                        temp = (int)*wImOut;
+                        temp -= transparency * 2;
+                        temp += ((int)RegColorsB[index])*transparency/100;
+                        if(temp > 255)
+                            temp = 255;
+                        if(temp < 0)
+                            temp = 0;
+                        *wImOut = (unsigned char)temp;
+                        wImOut++;
 
-                temp = (int)*wImOut;
-                temp -= transparency * 2;
-                temp += ((int)RegColorsG[index])*transparency/100;
-                if(temp > 255)
-                    temp = 255;
-                if(temp < 0)
-                    temp = 0;
-                *wImOut = (unsigned char)temp;
-                wImOut++;
+                        temp = (int)*wImOut;
+                        temp -= transparency * 2;
+                        temp += ((int)RegColorsG[index])*transparency/100;
+                        if(temp > 255)
+                            temp = 255;
+                        if(temp < 0)
+                            temp = 0;
+                        *wImOut = (unsigned char)temp;
+                        wImOut++;
 
-                temp = (int)*wImOut;
-                temp -= transparency * 2;
-                temp += ((int)RegColorsR[index])*transparency/100;
-                if(temp > 255)
-                    temp = 255;
-                if(temp < 0)
-                    temp = 0;
-                *wImOut = (unsigned char)temp;
-                wImOut++;
+                        temp = (int)*wImOut;
+                        temp -= transparency * 2;
+                        temp += ((int)RegColorsR[index])*transparency/100;
+                        if(temp > 255)
+                            temp = 255;
+                        if(temp < 0)
+                            temp = 0;
+                        *wImOut = (unsigned char)temp;
+                        wImOut++;
 
+                    }
+                    else
+                    {
+                        wImOut++;
+                        wImOut++;
+                        wImOut++;
+                    }
+
+                    wImReg++;
             }
-            else
+        }
+        break;
+    case CV_8UC1:
+        {
+            unsigned char * wImReg = (unsigned char *)ImReg.data;
+            unsigned char *wImOut = (unsigned char *)ImOut.data;
+            for (int i = 0; i < maxXY; i++)
             {
-                wImOut++;
-                wImOut++;
-                wImOut++;
-            }
+                    if(*wImReg)
+                    {
+                        int index = int(*wImReg)-1;
+                        int temp;
 
-            wImReg++;
+                        temp = (int)*wImOut;
+                        temp -= transparency * 2;
+                        temp += ((int)RegColorsB[index])*transparency/100;
+                        if(temp > 255)
+                            temp = 255;
+                        if(temp < 0)
+                            temp = 0;
+                        *wImOut = (unsigned char)temp;
+                        wImOut++;
+
+                        temp = (int)*wImOut;
+                        temp -= transparency * 2;
+                        temp += ((int)RegColorsG[index])*transparency/100;
+                        if(temp > 255)
+                            temp = 255;
+                        if(temp < 0)
+                            temp = 0;
+                        *wImOut = (unsigned char)temp;
+                        wImOut++;
+
+                        temp = (int)*wImOut;
+                        temp -= transparency * 2;
+                        temp += ((int)RegColorsR[index])*transparency/100;
+                        if(temp > 255)
+                            temp = 255;
+                        if(temp < 0)
+                            temp = 0;
+                        *wImOut = (unsigned char)temp;
+                        wImOut++;
+
+                    }
+                    else
+                    {
+                        wImOut++;
+                        wImOut++;
+                        wImOut++;
+                    }
+
+                    wImReg++;
+            }
+        }
+        break;
+    default:
+        break;
     }
     return ImOut;
 }
@@ -779,6 +939,10 @@ void ShowRegBetweenHLinesOnImage(bool show, string WinName, Mat Im1, Mat Im2, Ma
 //--------------------------------------------------------------------------------------------------
 Mat GetContour5(Mat ImR)
 {
+    Mat ImOut;
+    if(ImR.empty())
+        return ImOut;
+
     //modyfied version works on whole image
     int maxX = ImR.cols;
     int maxY = ImR.rows;
@@ -787,52 +951,112 @@ Mat GetContour5(Mat ImR)
     int maxXa = maxX - 1;
     int maxYa = maxY - 1;
 
-    Mat ImOut = Mat::zeros(maxY,maxX, CV_16U);
-
-    unsigned short *wImOut = (unsigned short*)ImOut.data;
-
-
-
-    unsigned short *wImR0 = (unsigned short*)ImR.data;
-    unsigned short *wImR1 = wImR0 - maxX;
-    unsigned short *wImR2 = wImR0 - 1;
-    unsigned short *wImR3 = wImR0 + 1;
-    unsigned short *wImR4 = wImR0 + maxX;
-
-    for (int i = 0; i < maxXY; i++)
+    switch(ImR.type())
     {
-        int x = i % maxX;
-        int y = i / maxX;
+    case CV_16UC1:
+        {
+            ImOut = Mat::zeros(maxY,maxX, CV_16U);
 
-        unsigned int product = 1;
-        if (y > 0 && *wImR0 != *wImR1)
-        {
-            product *= 0;
-        }
-        if (x > 0 && *wImR0 != *wImR2)
-        {
-            product *= 0;
-        }
-        if (x < maxXa && *wImR0 != *wImR3)
-        {
-            product *= 0;
-        }
-        if (y < maxYa && *wImR0 != *wImR4)
-        {
-            product *= 0;
-        }
-        if(!product && *wImR0)
-            *wImOut = *wImR0;
-        else
-            *wImOut = 0;
+            unsigned short *wImOut = (unsigned short*)ImOut.data;
 
-        wImOut++;
 
-        wImR0++;
-        wImR1++;
-        wImR2++;
-        wImR3++;
-        wImR4++;
+
+            unsigned short *wImR0 = (unsigned short*)ImR.data;
+            unsigned short *wImR1 = wImR0 - maxX;
+            unsigned short *wImR2 = wImR0 - 1;
+            unsigned short *wImR3 = wImR0 + 1;
+            unsigned short *wImR4 = wImR0 + maxX;
+
+            for (int i = 0; i < maxXY; i++)
+            {
+                int x = i % maxX;
+                int y = i / maxX;
+
+                unsigned int product = 1;
+                if (y > 0 && *wImR0 != *wImR1)
+                {
+                    product *= 0;
+                }
+                if (x > 0 && *wImR0 != *wImR2)
+                {
+                    product *= 0;
+                }
+                if (x < maxXa && *wImR0 != *wImR3)
+                {
+                    product *= 0;
+                }
+                if (y < maxYa && *wImR0 != *wImR4)
+                {
+                    product *= 0;
+                }
+                if(!product && *wImR0)
+                    *wImOut = *wImR0;
+                else
+                    *wImOut = 0;
+
+                wImOut++;
+
+                wImR0++;
+                wImR1++;
+                wImR2++;
+                wImR3++;
+                wImR4++;
+            }
+        }
+        break;
+    case CV_8UC1:
+        {
+            ImOut = Mat::zeros(maxY,maxX, CV_8U);
+
+            unsigned char *wImOut = (unsigned char*)ImOut.data;
+
+
+
+            unsigned char *wImR0 = (unsigned char*)ImR.data;
+            unsigned char *wImR1 = wImR0 - maxX;
+            unsigned char *wImR2 = wImR0 - 1;
+            unsigned char *wImR3 = wImR0 + 1;
+            unsigned char *wImR4 = wImR0 + maxX;
+
+            for (int i = 0; i < maxXY; i++)
+            {
+                int x = i % maxX;
+                int y = i / maxX;
+
+                unsigned int product = 1;
+                if (y > 0 && *wImR0 != *wImR1)
+                {
+                    product *= 0;
+                }
+                if (x > 0 && *wImR0 != *wImR2)
+                {
+                    product *= 0;
+                }
+                if (x < maxXa && *wImR0 != *wImR3)
+                {
+                    product *= 0;
+                }
+                if (y < maxYa && *wImR0 != *wImR4)
+                {
+                    product *= 0;
+                }
+                if(!product && *wImR0)
+                    *wImOut = *wImR0;
+                else
+                    *wImOut = 0;
+
+                wImOut++;
+
+                wImR0++;
+                wImR1++;
+                wImR2++;
+                wImR3++;
+                wImR4++;
+            }
+        }
+        break;
+    default:
+        break;
     }
     return ImOut;
 }
