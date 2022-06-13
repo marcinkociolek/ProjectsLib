@@ -1131,7 +1131,6 @@ string MatPropetiesAsText(Mat Im)
     Out += ", max y = " + to_string(Im.rows);
     Out += ", # channels = " + to_string(Im.channels());
     Out += ", depth = " + to_string(Im.depth()) + " = ";
-
     switch(Im.depth())
     {
     case CV_8U:
@@ -1159,6 +1158,11 @@ string MatPropetiesAsText(Mat Im)
         Out += " unrecognized ";
     break;
     }
+    Out += ", continous = ";
+    if(Im.isContinuous())
+        Out += " yes";
+    else
+        Out += " no";
     return Out;
 }
 //------------------------------------------------------------------------------------------------------------------------------
