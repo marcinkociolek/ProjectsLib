@@ -20,6 +20,7 @@ string ItoStrLZ(int nr, int leadZerosCount)
 	{
 		Buf[iBuf] = '-';
 		iBuf++;
+        nr = nr * -1;
 	}
 
 
@@ -33,7 +34,7 @@ string ItoStrLZ(int nr, int leadZerosCount)
 			Buf[iBuf] = '^';
 		iBuf++;
 		nr = rest;
-		divisor /= 10;
+        divisor /= 10;
 	}
 	Buf[iBuf] = 0;
 	return Buf;
