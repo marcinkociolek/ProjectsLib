@@ -26,22 +26,22 @@ void DirDetectionParams::DefaultParams(void)
     preprocessKernelSize = 3;
 
     showInputGray = false;
-    displayGrayMax = 65535;
+    displayGrayMax = 1000;
     displayGrayMin = 0;
 
     showInputPC = false;
-    displayPCMax = 65535;
+    displayPCMax = 1000;
     displayPCMin = 0;
 
-    tileShape = 1;
-    tileSize = 61;
-    tileShift = 64;
-    tileOffsetX = 32;
-    tileOffsetY = 32;
+    tileShape = 0;
+    tileSize = 30;
+    tileShift = 20;
+    tileOffsetX = 15;
+    tileOffsetY = 15;
 
     showTileRoiImage = false;
 
-    showTilesOnImage = true;
+    showTilesOnImage =false;
     tileLineWidth = 1;
 
     imagesScale = 1.0;
@@ -58,25 +58,26 @@ void DirDetectionParams::DefaultParams(void)
     offsetCount = 8;
     offsetStep = 1;
 
-    showOutputImage = false;
-    directionLineWidth = 3;
-    directionLineLength = 23;
+    showOutputImage = true;
+    directionLineWidth = 1;
+    directionLineLength = 15;
 
-    showTileOutputImage = false;
+    showTileOutputImage = true;
 
     showOutputText = false;
 
     textOut = true;
-    imgOut = false;
+    imgOut = true;
 
     granularityCalc = false;
     granularityFirstOfset = 1;
     granularityOffsetCount = 10;
     granularityOffsetStep = 1;
-    maZdaStyleOut = false;
+    maZdaStyleOut = true;
 
     className.clear();
-    dataSeparator = "\t";
+    dataSeparator = ",";
+
 
 }
 

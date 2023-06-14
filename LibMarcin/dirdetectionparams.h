@@ -14,6 +14,7 @@ public:
     std::string OutFolderName;
 
     std::string FileName; //this is only for passing the finamame to the procedude not to store in xmlfile
+    std::string ImId; //this is only for passing the ImID to the procedude not to store in xmlfile
 
     // analisis parameters
     int preprocessType;
