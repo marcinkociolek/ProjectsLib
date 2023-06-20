@@ -72,6 +72,7 @@ public:
     int granularityOffsetCount;
     int granularityOffsetStep;
     bool maZdaStyleOut;
+    bool noHeaderInOut;
 
     //additional
     std::string className;

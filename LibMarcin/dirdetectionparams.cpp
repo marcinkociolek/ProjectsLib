@@ -66,7 +66,7 @@ void DirDetectionParams::DefaultParams(void)
 
     showOutputText = false;
 
-    textOut = true;
+    textOut = false;
     imgOut = true;
 
     granularityCalc = false;
@@ -74,6 +74,7 @@ void DirDetectionParams::DefaultParams(void)
     granularityOffsetCount = 10;
     granularityOffsetStep = 1;
     maZdaStyleOut = true;
+    noHeaderInOut = true;
 
     className.clear();
     dataSeparator = ",";
