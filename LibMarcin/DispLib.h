@@ -13,6 +13,26 @@
 
 const unsigned int RegColorsRGB[16] =
 {
+0x00ff0000,
+0x0000ff00,
+0x000000ff,
+0x0000ffff,
+0x00ff00ff,
+0x00ffff00,
+0x000080FF,
+0x008000FF,
+0x0000FF80,
+0x0080FF00,
+0x00FF0080,
+0x00FF8000,
+0x0000C4FF,
+0x0000FFC4,
+0x00FF00C4,
+0x00C4FF00
+};
+
+const unsigned int RegColorsBGR[16] =
+{
 0x000000ff,
 0x0000ff00,
 0x00ff0000,
@@ -32,7 +52,6 @@ const unsigned int RegColorsRGB[16] =
 };
 const unsigned char RegColorsB[16]=
 {
-
     0x00,
     0x00,
     0xff,
