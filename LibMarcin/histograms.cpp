@@ -328,6 +328,35 @@ int HistogramInteger::FromMat16ULimit(Mat Im, Mat Mask, int roiNr, int fixedMin,
     return 1;
 }
 //----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::FromMat16ULimit(Mat Im, int fixedMin, int fixedMax, int binS)
+{
+    Release();
+
+    int check = checkMat16U(Im);
+    if(check <= 0)
+        return check;
+
+    BasicStaistics16U(Im);
+
+    histMax = fixedMax;
+    histMin = fixedMin;
+
+    if(histMax > 65535)
+        histMax = 65535;
+    if(histMin < 0)
+        histMin = 0;
+
+    if(histMax <= histMin)
+        histMax = histMin + 1;
+
+    InitializeHistogram(binS);
+
+    FindHistogram16U(Im);
+
+    return 1;
+}
+//----------------------------------------------------------------------------------------------------------------
+
 int HistogramInteger::FromMat32S(Mat Im, int binS)
 {
     Release();
@@ -443,6 +472,84 @@ Mat HistogramInteger::Plot(int yScale, int scaleCoef, int barWidth)
     }
     return ImToShow;
 }
+//-----------------------------------------------------------------------------------------------------------
+
+Mat HistogramInteger::PlotCummulative(int yScale)
+{
+    const int topOffset = 30;
+    const int bottomOffset = 30;
+    const int scaleBarLenht = 5;
+    const int leftOffset = 60;
+    const int rightOffset = 20;
+    const int digitWidth = 13;
+    const int digitHeight = 10;
+
+    //int binCount = numberOfBins;
+
+    int yScaleHeight = 100 * yScale;
+
+    int histSizeLocal = histSize;
+    if (histSizeLocal < 10)
+        histSizeLocal = 10;
+
+
+    int plotYSize = yScaleHeight + topOffset + bottomOffset;
+    int plotXSize = leftOffset + rightOffset + histSizeLocal;
+    cv::Mat ImToShow = Mat(plotYSize,plotXSize,CV_8UC3,cv::Scalar(255,255,255));
+
+
+    line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),cv::Point(leftOffset - 2,topOffset),cv::Scalar(255.0,0.0,0.0,0.0));
+    line(ImToShow,Point(leftOffset - 2,yScaleHeight + topOffset),Point(leftOffset + histSizeLocal,yScaleHeight + topOffset),Scalar(255.0,0.0,0.0,0.0));
+
+    for(int y = 0; y <= yScaleHeight; y+= 100/2)
+    {
+        line(ImToShow,Point(leftOffset - scaleBarLenht,yScaleHeight + topOffset - y),Point(leftOffset-2 ,yScaleHeight + topOffset - y),Scalar(255.0,0.0,0.0,0.0));
+    }
+    for(int y = 0; y <= 1; y += yScale)
+    {
+        string text = to_string(1.0/(double)y);
+        int nrOfdigits = (int)(text.size());
+        putText(ImToShow,text,Point(leftOffset - scaleBarLenht -2 - nrOfdigits * digitWidth, yScaleHeight - y*100 + topOffset + digitHeight / 2), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+    }
+    for(int x = 0; x <= histSizeLocal; x+= 100)
+    {
+        line(ImToShow,Point(leftOffset + x, yScaleHeight + topOffset),
+                      Point(leftOffset + x,yScaleHeight + topOffset + scaleBarLenht),
+                      Scalar(255.0,0.0,0.0,0.0));
+
+        //std::ostringstream ss;
+        //ss << std::fixed << std::setprecision(2) << (minValue + x * binRange);
+        //std::string text = ss.str();
+        string text = to_string(histMin + x * binSize);
+        int nrOfdigits = (int)(text.size());
+        putText(ImToShow,text,Point(leftOffset + x  - nrOfdigits * digitWidth / 2 ,
+                                    yScaleHeight + topOffset + digitHeight * 2 + scaleBarLenht), FONT_HERSHEY_COMPLEX_SMALL, 1.0, Scalar(255.0,0.0,0.0,0.0));
+    }
+
+    double *CummulativeHist = new double[histSize];
+    double histSum = 0;
+    for(int bin = 0; bin < histSize; bin++)
+    {
+        histSum += (double)Histogram[bin];
+        CummulativeHist[bin] = histSum / (double)count;
+    }
+    //for(int bin = 0; bin < histSize; bin++)
+    //{
+    //    CummulativeHist[bin] /= histSum;
+    //}
+    Point orygin = Point(leftOffset, yScaleHeight + topOffset);
+    Point pointStart = orygin;
+
+    for(int bin = 0; bin < histSize; bin++)
+    {
+        int yPos = -(int)round(CummulativeHist[bin] * yScale * 100.0);
+
+        Point pointStop = orygin + Point(bin, yPos);
+        line(ImToShow, pointStart, pointStop,Scalar(0.0, 0.0, 255.0, 0.0));
+        pointStart = pointStop;
+    }
+    return ImToShow;
+}
 //----------------------------------------------------------------------------------------------------------------
 double HistogramInteger::GetStd()
 {
@@ -484,6 +591,20 @@ int64_t HistogramInteger::GetMean()
 double HistogramInteger::GetMeanD()
 {
     return meanD;
+}
+//----------------------------------------------------------------------------------------------------------------
+int HistogramInteger::getPosForCumulativeTh(double threshold)
+{
+    double histSum = 0;
+    int bin;
+    for(bin = 0; bin < histSize; bin++)
+    {
+        histSum += (double)Histogram[bin];
+        if ((histSum / (double)count) > threshold)
+            break;
+    }
+    return bin + histMin;
+
 }
 //----------------------------------------------------------------------------------------------------------------
 string HistogramInteger::StatisticStringOut(string separator)

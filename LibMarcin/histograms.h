@@ -43,12 +43,14 @@ public:
 
     int FromMat16U(cv::Mat, int binS = 1);
     int FromMat16U(cv::Mat Im, cv::Mat Mask, int roiNr, int binS = 1);
+    int FromMat16ULimit(cv::Mat Im, int min, int max, int binS = 1);
     int FromMat16ULimit(cv::Mat Im, cv::Mat Mask, int roiNr, int min, int max, int binS = 1);
     int FromMat32S(cv::Mat, int binS = 1);
 
     std::string GetString();
 
     cv::Mat Plot(int yScale, int scaleCoef, int barWidth);
+    cv::Mat PlotCummulative(int yScale);
 
     double GetStd();
     int64_t GetMin();
@@ -56,6 +58,7 @@ public:
     int64_t GetCount();
     int64_t GetMean();
     double GetMeanD();
+    int getPosForCumulativeTh(double threshold);
 
     std::string StatisticStringOut(std::string separator = "\t");
 };
